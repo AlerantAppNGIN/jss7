@@ -18,4 +18,8 @@
 			<artifactId>javolution</artifactId>
 		</dependency>
 	</dependencies>
+	
+	<build>
+		<finalName>${pom.artifactId}-${pom.version}</finalName>
+	</build>
 </project>
