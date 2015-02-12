@@ -158,8 +158,9 @@ public class AspStateMaintenanceHandler extends MessageHandler {
                     // Transition to ACTIVE_SENT
                     try {
                         aspLocalFSM.signal(TransitionState.ASP_ACTIVE_SENT);
-
-                        if (aspFactoryImpl.getFunctionality() == Functionality.IPSP) {
+                        //In the target environment of the alerant.appnging project NTFY is not guaranteed to send by the server
+                        if (aspFactoryImpl.getFunctionality() == Functionality.IPSP
+                           || (aspFactoryImpl.getFunctionality() == Functionality.AS && aspFactoryImpl.getExchangeType() == ExchangeType.SE)) {
                             // If its IPSP, we know NTFY will not be received,
                             // so transition AS FSM here
                             AsImpl asImpl = (AsImpl) aspImpl.getAs();

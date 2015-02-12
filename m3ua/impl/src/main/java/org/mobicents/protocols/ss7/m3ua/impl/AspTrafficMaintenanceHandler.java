@@ -224,8 +224,9 @@ public class AspTrafficMaintenanceHandler extends MessageHandler {
 
         try {
             aspLocalFSM.signal(TransitionState.ASP_ACTIVE_ACK);
-
-            if (aspFactoryImpl.getFunctionality() == Functionality.IPSP) {
+            //In the target environment of the alerant.appnging project NTFY is not guaranteed to send by the server
+            if (aspFactoryImpl.getFunctionality() == Functionality.IPSP
+               || (aspFactoryImpl.getFunctionality() == Functionality.AS && aspFactoryImpl.getExchangeType() == ExchangeType.SE)) {
                 // If its IPSP, we know NTFY will not be received,
                 // so transition AS FSM here
                 FSM asPeerFSM = asImpl.getPeerFSM();
