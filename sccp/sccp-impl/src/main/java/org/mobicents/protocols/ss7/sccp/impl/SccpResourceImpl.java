@@ -55,6 +55,7 @@ import org.mobicents.protocols.ss7.sccp.impl.oam.SccpOAMMessage;
 public class SccpResourceImpl implements SccpResource {
     private static final Logger logger = Logger.getLogger(SccpResourceImpl.class);
 
+    private static final String DISABLE_CONFIG_PERSISTANCE_KEY = "ss7.disableDefaultConfigPersistance";
     private static final String SCCP_RESOURCE_PERSIST_DIR_KEY = "sccpresource.persist.dir";
     private static final String USER_DIR_KEY = "user.dir";
     private static final String PERSIST_FILE_NAME = "sccpresource2.xml";
@@ -343,11 +344,18 @@ public class SccpResourceImpl implements SccpResource {
         }
     }
 
+    private boolean isConfigPersistanceDisabled() {
+        String disableConfigPersistanceString = System.getProperty(DISABLE_CONFIG_PERSISTANCE_KEY, "false");
+        return Boolean.valueOf(disableConfigPersistanceString);
+    }
+
     /**
      * Persist
      */
     public void store() {
-
+        if (isConfigPersistanceDisabled()) {
+            return;
+        }
         // TODO : Should we keep reference to Objects rather than recreating
         // everytime?
         try {
@@ -372,7 +380,9 @@ public class SccpResourceImpl implements SccpResource {
      * @throws Exception
      */
     private void load() {
-
+        if (isConfigPersistanceDisabled()) {
+            return;
+        }
         try {
             File f = new File(persistFile.toString());
             if (f.exists()) {
