@@ -182,6 +182,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 public class RouterImpl implements Router {
     private static final Logger logger = Logger.getLogger(RouterImpl.class);
 
+    private static final String DISABLE_CONFIG_PERSISTANCE_KEY = "ss7.disableDefaultConfigPersistance";
     private static final String SCCP_ROUTER_PERSIST_DIR_KEY = "sccprouter.persist.dir";
     private static final String USER_DIR_KEY = "user.dir";
     private static final String PERSIST_FILE_NAME = "sccprouter2.xml";
@@ -762,11 +763,18 @@ public class RouterImpl implements Router {
         }
     }
 
+    private boolean isConfigPersistanceDisabled() {
+        String disableConfigPersistanceString = System.getProperty(DISABLE_CONFIG_PERSISTANCE_KEY, "false");
+        return Boolean.valueOf(disableConfigPersistanceString);
+    }
+
     /**
      * Persist
      */
     public void store() {
-
+        if (isConfigPersistanceDisabled()) {
+            return;
+        }
         // TODO : Should we keep reference to Objects rather than recreating
         // everytime?
         try {
@@ -794,7 +802,9 @@ public class RouterImpl implements Router {
      * @throws Exception
      */
     private void load() {
-
+        if (isConfigPersistanceDisabled()) {
+            return;
+        }
         try {
             File f = new File(persistFile.toString());
             if (f.exists()) {

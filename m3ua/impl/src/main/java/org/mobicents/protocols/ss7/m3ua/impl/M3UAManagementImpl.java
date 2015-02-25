@@ -76,6 +76,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3UserPartBaseImpl;
  */
 public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAManagement {
     private static final Logger logger = Logger.getLogger(M3UAManagementImpl.class);
+    private static final String DISABLE_CONFIG_PERSISTANCE_KEY = "ss7.disableDefaultConfigPersistance";
     private static final String AS_LIST = "asList";
     private static final String ASP_FACTORY_LIST = "aspFactoryList";
     private static final String DPC_VS_AS_LIST = "route";
@@ -909,7 +910,9 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
      * Persist
      */
     public void store() {
-
+        if (isConfigPersistanceDisabled()) {
+            return;
+        }
         // TODO : Should we keep reference to Objects rather than recreating
         // everytime?
         try {
@@ -928,13 +931,20 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
         }
     }
 
+    private boolean isConfigPersistanceDisabled() {
+        String disableConfigPersistanceString = System.getProperty(DISABLE_CONFIG_PERSISTANCE_KEY, "false");
+        return Boolean.valueOf(disableConfigPersistanceString);
+    }
+
     /**
      * Load and create LinkSets and Link from persisted file
      *
      * @throws Exception
      */
     public void load() throws FileNotFoundException {
-
+        if (isConfigPersistanceDisabled()) {
+            return;
+        }
         XMLObjectReader reader = null;
         try {
             reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));

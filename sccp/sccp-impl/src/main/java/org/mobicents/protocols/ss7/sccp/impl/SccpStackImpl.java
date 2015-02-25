@@ -81,6 +81,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected final Logger logger;
 
+    private static final String DISABLE_CONFIG_PERSISTANCE_KEY = "ss7.disableDefaultConfigPersistance";
     protected static final String SCCP_MANAGEMENT_PERSIST_DIR_KEY = "sccpmanagement.persist.dir";
     protected static final String USER_DIR_KEY = "user.dir";
     protected static final String PERSIST_FILE_NAME = "management2.xml";
@@ -939,11 +940,18 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         }
     }
 
+    private boolean isConfigPersistanceDisabled() {
+        String disableConfigPersistanceString = System.getProperty(DISABLE_CONFIG_PERSISTANCE_KEY, "false");
+        return Boolean.valueOf(disableConfigPersistanceString);
+    }
+
     /**
      * Persist
      */
     public void store() {
-
+        if (isConfigPersistanceDisabled()) {
+            return;
+        }
         // TODO : Should we keep reference to Objects rather than recreating
         // everytime?
         try {
@@ -975,6 +983,9 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
      * @throws Exception
      */
     protected void load() throws FileNotFoundException {
+        if (isConfigPersistanceDisabled()) {
+            return;
+        }
         XMLObjectReader reader = null;
         try {
             reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
