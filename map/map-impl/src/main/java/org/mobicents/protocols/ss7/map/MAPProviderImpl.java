@@ -159,6 +159,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
     private final transient MAPServiceSms mapServiceSms = new MAPServiceSmsImpl(this);
     private final transient MAPServiceLsm mapServiceLsm = new MAPServiceLsmImpl(this);
 
+
+    protected MAPProviderImpl() {
+
+    }
+
     /**
      * public common methods
      */
