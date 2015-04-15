@@ -259,4 +259,17 @@ public class TCAPStackImpl implements TCAPStack {
         return statisticsEnabled;
     }
 
+    /**
+     * Adds a new listener to the underlying counter provider.
+     * <b>WARNING: calling setStatisticsEnabled(true) and start() RESETS the listeners!</b>
+     * Call this method AFTER start() and setStatisticsEnabled() !
+     * @param listener The new listener to add.
+     */
+    public void addTCAPCounterProviderImplListener(TCAPCounterProviderImplListener listener) {
+        this.tcapCounterProvider.addListener(listener);
+    }
+
+    public boolean removeTCAPCounterProviderImplListener(TCAPCounterProviderImplListener listener) {
+        return this.tcapCounterProvider.removeListener(listener);
+    }
 }
