@@ -581,6 +581,14 @@ public abstract class CAPDialogImpl implements CAPDialog {
         return this.tcapDialog.getDialogLock().getLockAction();
     }
 
+    public void setIdleTaskTimeout(long idleTaskTimeoutMs) {
+        tcapDialog.setIdleTaskTimeout(idleTaskTimeoutMs);
+    }
+
+    public long getIdleTaskTimeout() {
+        return tcapDialog.getIdleTaskTimeout();
+    }
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();

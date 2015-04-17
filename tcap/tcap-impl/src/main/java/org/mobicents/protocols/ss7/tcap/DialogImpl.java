@@ -2129,6 +2129,14 @@ public class DialogImpl implements Dialog {
         return this.prevewDialogData;
     }
 
+    public long getIdleTaskTimeout() {
+         return this.idleTaskTimeout;
+    }
+
+    public void setIdleTaskTimeout(long idleTaskTimeoutMs) {
+        this.idleTaskTimeout = idleTaskTimeoutMs;
+    }
+
     /*
      * (non-Javadoc)
      *

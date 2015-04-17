@@ -285,9 +285,19 @@ public interface Dialog extends Serializable {
     boolean getPreviewMode();
 
     /**
-     * @return This ReentrantLock object should for synchronizing of Dialog using in multithread environment
+     * @return This ActionableReentrantLock object should for synchronizing of Dialog using in multithread environment
      */
     ActionableReentrantLock getDialogLock();
 
+    /**
+     * Set IdleTaskTimeout in milliseconds.
+     */
+    void setIdleTaskTimeout(long idleTaskTimeoutMs);
+
+    /**
+     *
+     * @return IdleTaskTimeout value in milliseconds
+     */
+    long getIdleTaskTimeout();
 }
 
