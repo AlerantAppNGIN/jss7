@@ -150,7 +150,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -207,7 +207,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -262,7 +262,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -317,7 +317,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class4);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -371,7 +371,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -439,7 +439,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -494,7 +494,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class4);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -547,7 +547,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -607,7 +607,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class4);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -662,7 +662,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -714,7 +714,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class4);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -774,7 +774,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class3);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -851,7 +851,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -912,7 +912,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Medium);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlMedium());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -969,7 +969,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1010,7 +1010,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1071,7 +1071,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1129,7 +1129,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1181,7 +1181,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1234,7 +1234,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1297,7 +1297,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class4);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1346,7 +1346,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class4);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1414,7 +1414,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Long);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlLong());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1480,7 +1480,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class1);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Long);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlLong());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1618,7 +1618,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1667,7 +1667,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class1);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1740,7 +1740,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class1);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1825,7 +1825,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class1);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 

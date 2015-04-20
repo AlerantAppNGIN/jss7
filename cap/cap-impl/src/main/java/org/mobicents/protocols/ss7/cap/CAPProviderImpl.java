@@ -134,6 +134,8 @@ public class CAPProviderImpl implements CAPProvider, NamedTCListener {
     private final transient CAPServiceGprs capServiceGprs = new CAPServiceGprsImpl(this);
     private final transient CAPServiceSms capServiceSms = new CAPServiceSmsImpl(this);
 
+    protected transient CAPTimerDefault timerDefault=null;
+
     protected String name;
 
     protected CAPProviderImpl() {
@@ -149,6 +151,14 @@ public class CAPProviderImpl implements CAPProvider, NamedTCListener {
         this.capServices.add(this.capServiceCircuitSwitchedCall);
         this.capServices.add(this.capServiceGprs);
         this.capServices.add(this.capServiceSms);
+    }
+
+    public CAPTimerDefault getCAPTimerDefault() {
+        return this.timerDefault;
+    }
+
+    public void setCAPTimerDefault(CAPTimerDefault timerDefault) {
+        this.timerDefault = timerDefault;
     }
 
     public String getName() {
