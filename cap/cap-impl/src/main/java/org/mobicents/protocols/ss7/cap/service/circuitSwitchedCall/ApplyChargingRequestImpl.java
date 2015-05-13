@@ -40,13 +40,16 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChar
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AChChargingAddressImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristicsImpl;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
 
 /**
  *
  * @author sergey vetyutnev
  * @author Amit Bhayani
- *
+ * @author alerant appngin
  */
 public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl implements ApplyChargingRequest {
 
@@ -156,10 +159,9 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
 
         this.aChBillingChargingCharacteristics = null;
         this.partyToCharge = null;
-        // this.partyToCharge = new SendingSideIDImpl(LegType.leg1);
+        this.partyToCharge = new SendingSideIDImpl(LegType.leg1);
         this.extensions = null;
-        this.aChChargingAddress = null; // TODO: DEFAULT
-                                        // legID:sendingSideID:leg1
+        this.aChChargingAddress = new AChChargingAddressImpl(new LegIDImpl(true, LegType.leg1));
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
         while (true) {
@@ -185,7 +187,9 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
                         ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
                         break;
                     case _ID_aChChargingAddress:
-                        ais.advanceElement(); // TODO: implement it
+                        this.aChChargingAddress = new AChChargingAddressImpl();
+                        ((AChChargingAddressImpl) this.aChChargingAddress)
+                                .decodeAll(ais);
                         break;
 
                     default:
@@ -241,7 +245,7 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
             if (this.extensions != null)
                 ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
             if (this.aChChargingAddress != null) {
-                // TODO: implement it - _ID_cause
+                ((AChChargingAddressImpl) aChChargingAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_aChChargingAddress);
             }
 
         } catch (AsnException e) {
@@ -291,12 +295,8 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
             applyChargingRequest.aChBillingChargingCharacteristics = xml.get(A_CH_BILLING_CHARGING_CHARACTERISTICS,
                     CAMELAChBillingChargingCharacteristicsImpl.class);
             applyChargingRequest.partyToCharge = xml.get(PARTY_TO_CHARGE, SendingSideIDImpl.class);
-
-            // TODO AChChargingAddressImpl is not implemented yet
-            // oAnswerSpecificInfo.aChChargingAddress =
-            // xml.get(A_CH_CHARGING_ADDRESS, AChChargingAddressImpl.class);
-
             applyChargingRequest.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
+            applyChargingRequest.aChChargingAddress = xml.get(A_CH_CHARGING_ADDRESS, AChChargingAddressImpl.class);
         }
 
         @Override
@@ -312,16 +312,13 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
             if (applyChargingRequest.partyToCharge != null)
                 xml.add((SendingSideIDImpl) applyChargingRequest.partyToCharge, PARTY_TO_CHARGE, SendingSideIDImpl.class);
 
-            if (applyChargingRequest.aChChargingAddress != null) {
-                // TODO AChChargingAddressImpl is not implemented yet
-                // xml.add((AChChargingAddressImpl)
-                // oAnswerSpecificInfo.aChChargingAddress,
-                // A_CH_CHARGING_ADDRESS,
-                // AChChargingAddressImpl.class);
-            }
-
             if (applyChargingRequest.extensions != null) {
                 xml.add((CAPExtensionsImpl) applyChargingRequest.extensions, EXTENSIONS, CAPExtensionsImpl.class);
+            }
+
+            if (applyChargingRequest.aChChargingAddress != null) {
+                xml.add((AChChargingAddressImpl) applyChargingRequest.aChChargingAddress,
+                        A_CH_CHARGING_ADDRESS, AChChargingAddressImpl.class);
             }
 
         }

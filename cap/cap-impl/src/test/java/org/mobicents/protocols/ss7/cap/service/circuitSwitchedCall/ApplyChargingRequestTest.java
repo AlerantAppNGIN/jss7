@@ -33,6 +33,7 @@ import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsTest;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristicsImpl;
@@ -96,7 +97,7 @@ public class ApplyChargingRequestTest {
     public void testEncode() throws Exception {
 
         CAMELAChBillingChargingCharacteristicsImpl aChBillingChargingCharacteristics = new CAMELAChBillingChargingCharacteristicsImpl(
-                36000, false, null, null, null, false);
+                36000, false, null, null, null, CAPApplicationContextVersion.version2);
         // long maxCallPeriodDuration, boolean releaseIfdurationExceeded, Long
         // tariffSwitchInterval,
         // AudibleIndicator audibleIndicator, CAPExtensions extensions, boolean
@@ -122,7 +123,7 @@ public class ApplyChargingRequestTest {
     @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
     public void testXMLSerializaion() throws Exception {
         CAMELAChBillingChargingCharacteristicsImpl aChBillingChargingCharacteristics = new CAMELAChBillingChargingCharacteristicsImpl(
-                36000, false, null, null, null, false);
+                36000, false, null, null, null, CAPApplicationContextVersion.version2);
         SendingSideIDImpl partyToCharge = new SendingSideIDImpl(LegType.leg1);
         ApplyChargingRequestImpl original = new ApplyChargingRequestImpl(aChBillingChargingCharacteristics, partyToCharge,
                 CAPExtensionsTest.createTestCAPExtensions(), null);
