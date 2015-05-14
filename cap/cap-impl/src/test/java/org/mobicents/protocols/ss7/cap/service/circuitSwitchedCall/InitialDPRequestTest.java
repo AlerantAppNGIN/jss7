@@ -33,6 +33,7 @@ import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CGEncountered;
 import org.mobicents.protocols.ss7.cap.isup.BearerCapImpl;
@@ -74,7 +75,7 @@ import org.testng.annotations.Test;
 /**
  *
  * @author sergey vetyutnev
- *
+ * @author alerant appngin
  */
 public class InitialDPRequestTest {
 
@@ -155,7 +156,7 @@ public class InitialDPRequestTest {
 
         byte[] data = this.getData1();
         AsnInputStream ais = new AsnInputStream(data);
-        InitialDPRequestImpl elem = new InitialDPRequestImpl(false);
+        InitialDPRequestImpl elem = new InitialDPRequestImpl(CAPApplicationContextVersion.version2);
         int tag = ais.readTag();
         elem.decodeAll(ais);
         assertEquals(elem.getServiceKey(), 110);
@@ -187,7 +188,7 @@ public class InitialDPRequestTest {
 
         data = this.getData2();
         ais = new AsnInputStream(data);
-        elem = new InitialDPRequestImpl(false);
+        elem = new InitialDPRequestImpl(CAPApplicationContextVersion.version2);
         tag = ais.readTag();
         elem.decodeAll(ais);
         assertEquals(elem.getServiceKey(), 110);
@@ -260,7 +261,7 @@ public class InitialDPRequestTest {
                 null, null, null, originalCalledPartyID, null, null, null, bearerCapability, EventTypeBCSM.collectedInfo,
                 redirectingPartyID, redirectionInformation, null, null, null, null, null, false, imsi, null, null,
                 extBasicServiceCode, callReferenceNumber, mscAddress, null, timeAndTimezone, false, initialDPArgExtension,
-                false);
+                CAPApplicationContextVersion.version2);
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
@@ -279,7 +280,7 @@ public class InitialDPRequestTest {
                 highLayerCompatibility, additionalCallingPartyNumber, bearerCapability, EventTypeBCSM.collectedInfo,
                 redirectingPartyID, redirectionInformation, null, null, null, null, null, false, imsi, subscriberState,
                 locationInformation, extBasicServiceCode, callReferenceNumber, mscAddress, calledPartyBCDNumber,
-                timeAndTimezone, true, initialDPArgExtension, false);
+                timeAndTimezone, true, initialDPArgExtension, CAPApplicationContextVersion.version2);
         aos = new AsnOutputStream();
         elem.encodeAll(aos);
         byte[] a1 = this.getData2();
@@ -354,7 +355,7 @@ public class InitialDPRequestTest {
                 additionalCallingPartyNumber, bearerCapability, EventTypeBCSM.collectedInfo, redirectingPartyID,
                 redirectionInformation, null, null, null, null, null, false, imsi, subscriberState, locationInformation,
                 extBasicServiceCode, callReferenceNumber, mscAddress, calledPartyBCDNumber, timeAndTimezone, true,
-                initialDPArgExtension, false);
+                initialDPArgExtension, CAPApplicationContextVersion.version2);
         original.setInvokeId(24);
 
         // Writes the area to a file.
@@ -413,7 +414,7 @@ public class InitialDPRequestTest {
 
         original = new InitialDPRequestImpl(110, calledPartyNumber, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null, false, null, null, null, null, null, null, null, null, false,
-                null, false);
+                null, CAPApplicationContextVersion.version2);
         original.setInvokeId(24);
 
         // Writes the area to a file.
