@@ -224,7 +224,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 /**
  *
  * @author sergey vetyutnev
- *
+ * @author alerant appngin
  */
 public interface CAPParameterFactory {
 
@@ -319,6 +319,10 @@ public interface CAPParameterFactory {
             ExtBasicServiceCode extBasicServiceCode2);
 
     ODisconnectSpecificInfo createODisconnectSpecificInfo(CauseCap releaseCause);
+
+    CallAcceptedSpecificInfo createCallAcceptedSpecificInfo(LocationInformation locationInformation);
+
+    OTermSeizedSpecificInfo createOTermSeizedSpecificInfo(LocationInformation locationInformation);
 
     TBusySpecificInfo createTBusySpecificInfo(CauseCap busyCause, boolean callForwarded, boolean routeNotPermitted,
             CalledPartyNumberCap forwardingDestinationNumber);

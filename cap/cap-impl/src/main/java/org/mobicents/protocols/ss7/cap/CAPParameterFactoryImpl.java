@@ -57,6 +57,7 @@ import org.mobicents.protocols.ss7.cap.EsiSms.OSmsFailureSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiSms.OSmsSubmissionSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiSms.TSmsDeliverySpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiSms.TSmsFailureSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.CallAcceptedSpecificInfo;
@@ -228,10 +229,7 @@ import org.mobicents.protocols.ss7.cap.isup.GenericNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.LocationNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.OriginalCalledNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.RedirectingPartyIDCapImpl;
-import org.mobicents.protocols.ss7.cap.primitives.AChChargingAddressImpl;
 import org.mobicents.protocols.ss7.cap.primitives.BCSMEventImpl;
-import org.mobicents.protocols.ss7.cap.primitives.BurstImpl;
-import org.mobicents.protocols.ss7.cap.primitives.BurstListImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CalledPartyBCDNumberImpl;
 import org.mobicents.protocols.ss7.cap.primitives.DateAndTimeImpl;
@@ -364,7 +362,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 /**
  *
  * @author sergey vetyutnev
- *
+ * @author alerant appngin
  */
 public class CAPParameterFactoryImpl implements CAPParameterFactory {
 
@@ -467,9 +465,9 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
     @Override
     public CAMELAChBillingChargingCharacteristics createCAMELAChBillingChargingCharacteristics(long maxCallPeriodDuration,
             boolean releaseIfdurationExceeded, Long tariffSwitchInterval, AudibleIndicator audibleIndicator,
-            CAPExtensions extensions, boolean isCAPVersion3orLater) {
+            CAPExtensions extensions, CAPApplicationContextVersion capVersion) {
         return new CAMELAChBillingChargingCharacteristicsImpl(maxCallPeriodDuration, releaseIfdurationExceeded,
-                tariffSwitchInterval, audibleIndicator, extensions, isCAPVersion3orLater);
+                tariffSwitchInterval, audibleIndicator, extensions, capVersion);
     }
 
     @Override
@@ -617,6 +615,14 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
     @Override
     public ODisconnectSpecificInfo createODisconnectSpecificInfo(CauseCap releaseCause) {
         return new ODisconnectSpecificInfoImpl(releaseCause);
+    }
+
+    public OTermSeizedSpecificInfo createOTermSeizedSpecificInfo(LocationInformation locationInformation) {
+        return new OTermSeizedSpecificInfoImpl((LocationInformationImpl) locationInformation);
+    }
+
+    public CallAcceptedSpecificInfo createCallAcceptedSpecificInfo(LocationInformation locationInformation) {
+        return new CallAcceptedSpecificInfoImpl((LocationInformationImpl) locationInformation);
     }
 
     @Override
