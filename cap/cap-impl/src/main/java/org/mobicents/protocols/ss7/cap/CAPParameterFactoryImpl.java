@@ -21,11 +21,13 @@ package org.mobicents.protocols.ss7.cap;
 
 import java.util.ArrayList;
 
+import org.mobicents.protocols.ss7.cap.EsiBcsm.CallAcceptedSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OAbandonSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OAnswerSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OCalledPartyBusySpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.ODisconnectSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.ONoAnswerSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.OTermSeizedSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.RouteSelectFailureSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.TAnswerSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.TBusySpecificInfoImpl;
@@ -297,6 +299,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.UUData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GPRSChargingID;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSClassmark2;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext2QoSSubscribed;
@@ -305,6 +308,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4Functionalities;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.QoSSubscribed;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationImpl;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
@@ -569,6 +573,14 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
     @Override
     public ODisconnectSpecificInfo createODisconnectSpecificInfo(CauseCap releaseCause) {
         return new ODisconnectSpecificInfoImpl(releaseCause);
+    }
+
+    public OTermSeizedSpecificInfo createOTermSeizedSpecificInfo(LocationInformation locationInformation) {
+        return new OTermSeizedSpecificInfoImpl((LocationInformationImpl) locationInformation);
+    }
+
+    public CallAcceptedSpecificInfo createCallAcceptedSpecificInfo(LocationInformation locationInformation) {
+        return new CallAcceptedSpecificInfoImpl((LocationInformationImpl) locationInformation);
     }
 
     @Override

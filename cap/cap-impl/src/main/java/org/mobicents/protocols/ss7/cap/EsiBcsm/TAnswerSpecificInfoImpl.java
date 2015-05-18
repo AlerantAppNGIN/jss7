@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
+import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
@@ -42,8 +43,10 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext
 /**
  *
  * @author sergey vetyutnev
+ * @author alerant appngin
  *
  */
+@SuppressWarnings("serial")
 public class TAnswerSpecificInfoImpl extends SequenceBase implements TAnswerSpecificInfo {
 
     private static final String DESTINATION_ADDRESS = "destinationAddress";
@@ -132,28 +135,28 @@ public class TAnswerSpecificInfoImpl extends SequenceBase implements TAnswerSpec
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
                 switch (tag) {
                     case _ID_destinationAddress:
-                        ais.advanceElement();
-                        // TODO: implement it
+                        this.destinationAddress = new CalledPartyNumberCapImpl();
+                        ((CalledPartyNumberCapImpl)this.destinationAddress).decodeAll(ais);
                         break;
                     case _ID_orCall:
-                        ais.advanceElement();
-                        // TODO: implement it
+                        this.orCall = true;
+                        ais.readNull();
                         break;
                     case _ID_forwardedCall:
-                        ais.advanceElement();
-                        // TODO: implement it
+                        this.forwardedCall = true;
+                        ais.readNull();
                         break;
                     case _ID_chargeIndicator:
-                        ais.advanceElement();
-                        // TODO: implement it
+                        this.chargeIndicator = new  ChargeIndicatorImpl();
+                        ((ChargeIndicatorImpl)this.chargeIndicator).decodeAll(ais);
                         break;
                     case _ID_extbasicServiceCode:
-                        ais.advanceElement();
-                        // TODO: implement it
+                        this.extBasicServiceCode = new ExtBasicServiceCodeImpl();
+                        ((ExtBasicServiceCodeImpl)this.extBasicServiceCode).decodeAll(ais);
                         break;
                     case _ID_extbasicServiceCode2:
-                        ais.advanceElement();
-                        // TODO: implement it
+                        this.extBasicServiceCode2 = new ExtBasicServiceCodeImpl();
+                        ((ExtBasicServiceCodeImpl)this.extBasicServiceCode2).decodeAll(ais);
                         break;
 
                     default:
@@ -170,22 +173,42 @@ public class TAnswerSpecificInfoImpl extends SequenceBase implements TAnswerSpec
     public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
         if (this.destinationAddress != null) {
-            // TODO: implement it
+            ((CalledPartyNumberCapImpl) this.destinationAddress).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                    _ID_destinationAddress);
         }
         if (this.orCall) {
-            // TODO: implement it
+            try {
+                asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_orCall);
+            } catch (Exception e) {
+                throw new CAPException("Error encoding " + _PrimitiveName + ".or-Call", e);
+            }
         }
         if (this.forwardedCall) {
-            // TODO: implement it
+            try {
+                asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_forwardedCall);
+            } catch (Exception e) {
+                throw new CAPException("Error encoding " + _PrimitiveName + ".forwardedCall", e);
+            }
         }
         if (this.chargeIndicator != null) {
-            // TODO: implement it
+            ((ChargeIndicatorImpl) this.chargeIndicator).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                    _ID_chargeIndicator);
         }
         if (this.extBasicServiceCode != null) {
-            // TODO: implement it
+            try {
+                ((ExtBasicServiceCodeImpl) this.extBasicServiceCode).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_extbasicServiceCode);
+            } catch (MAPException e) {
+                throw new CAPException("Error encoding " + _PrimitiveName + ".ext-basicServiceCode", e);
+            }
         }
         if (this.extBasicServiceCode2 != null) {
-            // TODO: implement it
+            try {
+                ((ExtBasicServiceCodeImpl) this.extBasicServiceCode2).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_extbasicServiceCode2);
+            } catch (MAPException e) {
+                throw new CAPException("Error encoding " + _PrimitiveName + ".ext-basicServiceCode", e);
+            }
         }
     }
 
@@ -246,8 +269,7 @@ public class TAnswerSpecificInfoImpl extends SequenceBase implements TAnswerSpec
             if (bval != null)
                 oAnswerSpecificInfo.forwardedCall = bval;
 
-            // oAnswerSpecificInfo.chargeIndicator = xml.get(CHARGE_INDICATOR,
-            // ChargeIndicatorImpl.class);
+            oAnswerSpecificInfo.chargeIndicator = xml.get(CHARGE_INDICATOR, ChargeIndicatorImpl.class);
 
             oAnswerSpecificInfo.extBasicServiceCode = xml.get(EXT_BASIC_SERVICE_CODE, ExtBasicServiceCodeImpl.class);
             oAnswerSpecificInfo.extBasicServiceCode2 = xml.get(EXT_BASIC_SERVICE_CODE2, ExtBasicServiceCodeImpl.class);
@@ -268,10 +290,8 @@ public class TAnswerSpecificInfoImpl extends SequenceBase implements TAnswerSpec
                 xml.add(oAnswerSpecificInfo.forwardedCall, FORWARDED_CALL, Boolean.class);
 
             if (oAnswerSpecificInfo.chargeIndicator != null) {
-                // TODO ChargeIndicatorImpl not yet implemented
-                // xml.add(((ChargeIndicatorImpl)
-                // oAnswerSpecificInfo.chargeIndicator), CHARGE_INDICATOR,
-                // ChargeIndicatorImpl.class);
+                xml.add(((ChargeIndicatorImpl) oAnswerSpecificInfo.chargeIndicator), CHARGE_INDICATOR,
+                        ChargeIndicatorImpl.class);
             }
 
             if (oAnswerSpecificInfo.extBasicServiceCode != null) {

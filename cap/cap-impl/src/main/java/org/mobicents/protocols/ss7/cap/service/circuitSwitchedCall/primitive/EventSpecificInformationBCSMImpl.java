@@ -28,11 +28,13 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.CallAcceptedSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OAbandonSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OAnswerSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OCalledPartyBusySpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.ODisconnectSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.ONoAnswerSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.OTermSeizedSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.RouteSelectFailureSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.TAnswerSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.TBusySpecificInfoImpl;
@@ -64,7 +66,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 /**
  *
  * @author sergey vetyutnev
- *
+ * @author alerant appngin
  */
 public class EventSpecificInformationBCSMImpl implements EventSpecificInformationBCSM, CAPAsnPrimitive {
 
@@ -422,12 +424,12 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
                     ((TDisconnectSpecificInfoImpl) this.tDisconnectSpecificInfo).decodeData(ais, length);
                     break;
                 case _ID_oTermSeizedSpecificInfo:
-                    // TODO: implement it
-                    ais.advanceElementData(length);
+                    this.oTermSeizedSpecificInfo = new OTermSeizedSpecificInfoImpl();
+                    ((OTermSeizedSpecificInfoImpl)this.oTermSeizedSpecificInfo).decodeData(ais, length);
                     break;
                 case _ID_callAcceptedSpecificInfo:
-                    // TODO: implement it
-                    ais.advanceElementData(length);
+                    this.callAcceptedSpecificInfo = new CallAcceptedSpecificInfoImpl();
+                    ((CallAcceptedSpecificInfoImpl)this.callAcceptedSpecificInfo).decodeData(ais, length);
                     break;
                 case _ID_oAbandonSpecificInfo:
                     this.oAbandonSpecificInfo = new OAbandonSpecificInfoImpl();
@@ -505,9 +507,9 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
             ((TDisconnectSpecificInfoImpl) tDisconnectSpecificInfo).encodeData(asnOs);
             return;
         } else if (oTermSeizedSpecificInfo != null) {
-            // TODO: implement it
+            ((OTermSeizedSpecificInfoImpl) oTermSeizedSpecificInfo).encodeData(asnOs);
         } else if (callAcceptedSpecificInfo != null) {
-            // TODO: implement it
+            ((CallAcceptedSpecificInfoImpl) callAcceptedSpecificInfo).encodeData(asnOs);
         } else if (oAbandonSpecificInfo != null) {
             ((OAbandonSpecificInfoImpl) oAbandonSpecificInfo).encodeData(asnOs);
             return;
@@ -634,11 +636,11 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
             eventSpecificInformationBCSM.tDisconnectSpecificInfo = xml.get(T_DISCONNECT_SPECIFIC_INFO,
                     TDisconnectSpecificInfoImpl.class);
 
-            // eventSpecificInformationBCSM.oTermSeizedSpecificInfo = xml.get(O_TERM_SPECIFIC_INFO,
-            // OTermSeizedSpecificInfoImpl.class);
+            eventSpecificInformationBCSM.oTermSeizedSpecificInfo = xml.get(O_TERM_SPECIFIC_INFO,
+                    OTermSeizedSpecificInfoImpl.class);
 
-            // eventSpecificInformationBCSM.callAcceptedSpecificInfo = xml.get(CALL_ACCEPTED_SPECIFIC_INFO,
-            // CallAcceptedSpecificInfoImpl.class);
+            eventSpecificInformationBCSM.callAcceptedSpecificInfo = xml.get(CALL_ACCEPTED_SPECIFIC_INFO,
+                    CallAcceptedSpecificInfoImpl.class);
 
             eventSpecificInformationBCSM.oAbandonSpecificInfo = xml
                     .get(O_ABONDON_SPECIFIC_INFO, OAbandonSpecificInfoImpl.class);
@@ -708,15 +710,15 @@ public class EventSpecificInformationBCSMImpl implements EventSpecificInformatio
                         T_DISCONNECT_SPECIFIC_INFO, TDisconnectSpecificInfoImpl.class);
             }
 
-            // if (eventSpecificInformationBCSM.oTermSeizedSpecificInfo != null) {
-            // xml.add((OTermSeizedSpecificInfoImpl) eventSpecificInformationBCSM.oTermSeizedSpecificInfo,
-            // O_TERM_SPECIFIC_INFO, OTermSeizedSpecificInfoImpl.class);
-            // }
+            if (eventSpecificInformationBCSM.oTermSeizedSpecificInfo != null) {
+                xml.add((OTermSeizedSpecificInfoImpl) eventSpecificInformationBCSM.oTermSeizedSpecificInfo,
+                        O_TERM_SPECIFIC_INFO, OTermSeizedSpecificInfoImpl.class);
+            }
 
-            // if (eventSpecificInformationBCSM.callAcceptedSpecificInfo != null) {
-            // xml.add((CallAcceptedSpecificInfoImpl) eventSpecificInformationBCSM.callAcceptedSpecificInfo,
-            // CALL_ACCEPTED_SPECIFIC_INFO, CallAcceptedSpecificInfoImpl.class);
-            // }
+            if (eventSpecificInformationBCSM.callAcceptedSpecificInfo != null) {
+                xml.add((CallAcceptedSpecificInfoImpl) eventSpecificInformationBCSM.callAcceptedSpecificInfo,
+                        CALL_ACCEPTED_SPECIFIC_INFO, CallAcceptedSpecificInfoImpl.class);
+            }
 
             if (eventSpecificInformationBCSM.oAbandonSpecificInfo != null) {
                 xml.add((OAbandonSpecificInfoImpl) eventSpecificInformationBCSM.oAbandonSpecificInfo, O_ABONDON_SPECIFIC_INFO,

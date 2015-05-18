@@ -184,6 +184,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.UUData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GPRSChargingID;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSClassmark2;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext2QoSSubscribed;
@@ -201,7 +202,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 /**
  *
  * @author sergey vetyutnev
- *
+ * @author alerant appngin
  */
 public interface CAPParameterFactory {
 
@@ -296,6 +297,10 @@ public interface CAPParameterFactory {
             ExtBasicServiceCode extBasicServiceCode2);
 
     ODisconnectSpecificInfo createODisconnectSpecificInfo(CauseCap releaseCause);
+
+    CallAcceptedSpecificInfo createCallAcceptedSpecificInfo(LocationInformation locationInformation);
+
+    OTermSeizedSpecificInfo createOTermSeizedSpecificInfo(LocationInformation locationInformation);
 
     TBusySpecificInfo createTBusySpecificInfo(CauseCap busyCause, boolean callForwarded, boolean routeNotPermitted,
             CalledPartyNumberCap forwardingDestinationNumber);
