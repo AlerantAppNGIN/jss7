@@ -28,6 +28,7 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
@@ -37,7 +38,10 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.LowLayerCompatibility;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
+import org.mobicents.protocols.ss7.inap.api.INAPException;
+import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
+import org.mobicents.protocols.ss7.inap.isup.HighLayerCompatibilityInapImpl;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
@@ -47,13 +51,20 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4Functionalities;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.MSClassmark2Impl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4FunctionalitiesImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
 
 /**
  *
  * @author sergey vetyutnev
+ * @author alerant appngin
  *
  */
+@SuppressWarnings("serial")
 public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnPrimitive {
 
     public static final int _ID_gmscAddress = 0;
@@ -69,10 +80,25 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
     public static final int _ID_lowLayerCompatibility2 = 10;
     public static final int _ID_enhancedDialledServicesAllowed = 11;
     public static final int _ID_uu_Data = 12;
+    public static final int _ID_collectInformationAllowed = 13;
+    public static final int _ID_releaseCallArgExtensionAllowed = 14;
 
-    private static final String IS_CAP_VERSION_3_OR_LATER = "isCAPVersion3orLater";
+    private static final String CAP_VERSION = "capVersion";
     private static final String GMSC_ADDRESS = "gmscAddress";
     private static final String FORWARDING_DESTINATION_NUMBER = "forwardingDestinationNumber";
+    private static final String MS_CLASSMARK2 = "msClassmark2";
+    private static final String IMEI = "iMEI";
+    private static final String SUPPORTED_CAMEL_PHASES = "supportedCamelPhases";
+    private static final String OFFERED_CAMEL4_FUNCTIONALITIES = "offeredCamel4Functionalities";
+    private static final String BEARER_CAPABILITY2 = "bearerCapability2";
+    private static final String EXT_BASIC_SERVICE_CODE2 = "extBasicServiceCode2";
+    private static final String HIGH_LAYER_COMPATIBILITY2 = "highLayerCompatibility2";
+    private static final String LOW_LAYER_COMPATIBILITY = "lowLayerCompatibility";
+    private static final String LOW_LAYER_COMPATIBILITY2 = "lowLayerCompatibility2";
+    private static final String ENHANCED_DIALLED_SERVICES_ALLOWED = "enhancedDialledServicesAllowed";
+    private static final String UU_DATA = "uuData";
+    private static final String COLLECT_INFORMATION_ALLOWED = "collectInformationAllowed";
+    private static final String RELEASE_CALL_ARG_EXTENSION_ALLOWED = "releaseCallArgExtensionAllowed";
 
     public static final String _PrimitiveName = "InitialDPArgExtension";
 
@@ -89,8 +115,10 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
     private LowLayerCompatibility lowLayerCompatibility2;
     private boolean enhancedDialledServicesAllowed;
     private UUData uuData;
+    private boolean collectInformationAllowed;
+    private boolean releaseCallArgExtensionAllowed;
 
-    protected boolean isCAPVersion3orLater;
+    protected CAPApplicationContextVersion capVersion;
 
     /**
      * This constructor is for deserializing purposes
@@ -98,8 +126,8 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
     public InitialDPArgExtensionImpl() {
     }
 
-    public InitialDPArgExtensionImpl(boolean isCAPVersion3orLater) {
-        this.isCAPVersion3orLater = isCAPVersion3orLater;
+    public InitialDPArgExtensionImpl(CAPApplicationContextVersion capVersion) {
+        this.capVersion = capVersion;
     }
 
     public InitialDPArgExtensionImpl(ISDNAddressString gmscAddress, CalledPartyNumberCap forwardingDestinationNumber,
@@ -107,7 +135,8 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
             OfferedCamel4Functionalities offeredCamel4Functionalities, BearerCapability bearerCapability2,
             ExtBasicServiceCode extBasicServiceCode2, HighLayerCompatibilityInap highLayerCompatibility2,
             LowLayerCompatibility lowLayerCompatibility, LowLayerCompatibility lowLayerCompatibility2,
-            boolean enhancedDialledServicesAllowed, UUData uuData, boolean isCAPVersion3orLater) {
+            boolean enhancedDialledServicesAllowed, UUData uuData, boolean collectInformationAllowed,
+            boolean releaseCallArgExtensionAllowed, CAPApplicationContextVersion capVersion) {
         this.gmscAddress = gmscAddress;
         this.forwardingDestinationNumber = forwardingDestinationNumber;
         this.msClassmark2 = msClassmark2;
@@ -121,7 +150,9 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
         this.lowLayerCompatibility2 = lowLayerCompatibility2;
         this.enhancedDialledServicesAllowed = enhancedDialledServicesAllowed;
         this.uuData = uuData;
-        this.isCAPVersion3orLater = isCAPVersion3orLater;
+        this.collectInformationAllowed = collectInformationAllowed;
+        this.releaseCallArgExtensionAllowed = releaseCallArgExtensionAllowed;
+        this.capVersion = capVersion;
     }
 
     @Override
@@ -189,6 +220,14 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
         return uuData;
     }
 
+    public boolean getCollectInformationAllowed() {
+        return collectInformationAllowed;
+    }
+
+    public boolean getReleaseCallArgExtensionAllowed() {
+        return releaseCallArgExtensionAllowed;
+    }
+
     @Override
     public int getTag() throws CAPException {
         return Tag.SEQUENCE;
@@ -211,14 +250,17 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
                     + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (INAPParsingComponentException e) {
+            throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName
+                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
@@ -228,19 +270,22 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
                     + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
+                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (INAPParsingComponentException e) {
+            throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName
+                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
-            IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
+            MAPParsingComponentException, IOException, AsnException, INAPParsingComponentException {
 
         this.gmscAddress = null;
         this.forwardingDestinationNumber = null;
@@ -255,6 +300,8 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
         this.lowLayerCompatibility2 = null;
         this.enhancedDialledServicesAllowed = false;
         this.uuData = null;
+        this.collectInformationAllowed = false;
+        this.releaseCallArgExtensionAllowed = false;
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
         while (true) {
@@ -266,16 +313,17 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
                 switch (tag) {
                     case _ID_gmscAddress:
-                        if (isCAPVersion3orLater) {
+                        if (capVersion.getVersion() >= 3) {
                             this.gmscAddress = new ISDNAddressStringImpl();
                             ((ISDNAddressStringImpl) this.gmscAddress).decodeAll(ais);
                         } else {
-                            // in CAP V2 naCarrierInformation parameter - we do not implement it
+                            // in CAP V2 naCarrierInformation parameter - we do
+                            // not implement it
                             ais.advanceElement();
                         }
                         break;
                     case _ID_forwardingDestinationNumber:
-                        if (isCAPVersion3orLater) {
+                        if (capVersion.getVersion() >= 3) {
                             this.forwardingDestinationNumber = new CalledPartyNumberCapImpl();
                             ((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).decodeAll(ais);
                         } else {
@@ -285,25 +333,32 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
                         }
                         break;
                     case _ID_ms_Classmark2:
-                        ais.advanceElement(); // TODO: implement it
+                        this.msClassmark2 = new MSClassmark2Impl();
+                        ((MSClassmark2Impl) this.msClassmark2).decodeAll(ais);
                         break;
                     case _ID_iMEI:
-                        ais.advanceElement(); // TODO: implement it
+                        this.imei = new IMEIImpl();
+                        ((IMEIImpl) this.imei).decodeAll(ais);
                         break;
                     case _ID_supportedCamelPhases:
-                        ais.advanceElement(); // TODO: implement it
+                        this.supportedCamelPhases = new SupportedCamelPhasesImpl();
+                        ((SupportedCamelPhasesImpl) this.supportedCamelPhases).decodeAll(ais);
                         break;
                     case _ID_offeredCamel4Functionalities:
-                        ais.advanceElement(); // TODO: implement it
+                        this.offeredCamel4Functionalities = new OfferedCamel4FunctionalitiesImpl();
+                        ((OfferedCamel4FunctionalitiesImpl) this.offeredCamel4Functionalities).decodeAll(ais);
                         break;
                     case _ID_bearerCapability2:
-                        ais.advanceElement(); // TODO: implement it
+                        this.bearerCapability2 = new BearerCapabilityImpl();
+                        ((BearerCapabilityImpl) this.bearerCapability2).decodeAll(ais);
                         break;
                     case _ID_ext_basicServiceCode2:
-                        ais.advanceElement(); // TODO: implement it
+                        this.extBasicServiceCode2 = new ExtBasicServiceCodeImpl();
+                        ((ExtBasicServiceCodeImpl) this.extBasicServiceCode2).decodeAll(ais);
                         break;
                     case _ID_highLayerCompatibility2:
-                        ais.advanceElement(); // TODO: implement it
+                        this.highLayerCompatibility2 = new HighLayerCompatibilityInapImpl();
+                        ((HighLayerCompatibilityInapImpl) this.highLayerCompatibility2).decodeAll(ais);
                         break;
                     case _ID_lowLayerCompatibility:
                         ais.advanceElement(); // TODO: implement it
@@ -312,12 +367,20 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
                         ais.advanceElement(); // TODO: implement it
                         break;
                     case _ID_enhancedDialledServicesAllowed:
-                        ais.advanceElement(); // TODO: implement it
+                        this.enhancedDialledServicesAllowed = true;
+                        ais.readNull();
                         break;
                     case _ID_uu_Data:
                         ais.advanceElement(); // TODO: implement it
                         break;
-
+                    case _ID_collectInformationAllowed:
+                        this.collectInformationAllowed = true;
+                        ais.readNull();
+                        break;
+                    case _ID_releaseCallArgExtensionAllowed:
+                        this.releaseCallArgExtensionAllowed = true;
+                        ais.readNull();
+                        break;
                     default:
                         ais.advanceElement();
                         break;
@@ -350,12 +413,13 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
     public void encodeData(AsnOutputStream aos) throws CAPException {
 
         try {
-            if (isCAPVersion3orLater) {
+            if (capVersion.getVersion() >= 3) {
                 if (this.gmscAddress != null)
-                    ((ISDNAddressStringImpl) this.gmscAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_gmscAddress);
+                    ((ISDNAddressStringImpl) this.gmscAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                            _ID_gmscAddress);
                 if (this.forwardingDestinationNumber != null)
-                    ((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
-                            _ID_forwardingDestinationNumber);
+                    ((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).encodeAll(aos,
+                            Tag.CLASS_CONTEXT_SPECIFIC, _ID_forwardingDestinationNumber);
             } else {
                 if (this.gmscAddress != null)
                     ((ISDNAddressStringImpl) this.gmscAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
@@ -363,25 +427,30 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
             }
 
             if (msClassmark2 != null) {
-                // TODO: implement it
+                ((MSClassmark2Impl) msClassmark2).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_ms_Classmark2);
             }
             if (imei != null) {
-                // TODO: implement it
+                ((IMEIImpl) imei).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_iMEI);
             }
             if (supportedCamelPhases != null) {
-                // TODO: implement it
+                ((SupportedCamelPhasesImpl) supportedCamelPhases).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_supportedCamelPhases);
             }
             if (offeredCamel4Functionalities != null) {
-                // TODO: implement it
+                ((OfferedCamel4FunctionalitiesImpl) offeredCamel4Functionalities).encodeAll(aos,
+                        Tag.CLASS_CONTEXT_SPECIFIC, _ID_offeredCamel4Functionalities);
             }
             if (bearerCapability2 != null) {
-                // TODO: implement it
+                ((BearerCapabilityImpl) bearerCapability2).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_bearerCapability2);
             }
             if (extBasicServiceCode2 != null) {
-                // TODO: implement it
+                ((ExtBasicServiceCodeImpl) extBasicServiceCode2).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_ext_basicServiceCode2);
             }
             if (highLayerCompatibility2 != null) {
-                // TODO: implement it
+                ((HighLayerCompatibilityInapImpl) highLayerCompatibility2).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_highLayerCompatibility2);
             }
             if (lowLayerCompatibility != null) {
                 // TODO: implement it
@@ -390,13 +459,25 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
                 // TODO: implement it
             }
             if (enhancedDialledServicesAllowed) {
-                // TODO: implement it
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_enhancedDialledServicesAllowed);
             }
             if (uuData != null) {
                 // TODO: implement it
             }
+            if (collectInformationAllowed) {
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_collectInformationAllowed);
+            }
+            if (releaseCallArgExtensionAllowed) {
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_releaseCallArgExtensionAllowed);
+            }
         } catch (MAPException e) {
             throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (INAPException e) {
+            throw new CAPException("INAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -458,7 +539,12 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
             sb.append(", uuData=");
             sb.append(uuData.toString());
         }
-
+        if (this.collectInformationAllowed) {
+            sb.append(", collectInformationAllowed");
+        }
+        if (this.releaseCallArgExtensionAllowed) {
+            sb.append(", releaseCallArgExtensionAllowed");
+        }
         sb.append("]");
 
         return sb.toString();
@@ -473,17 +559,47 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, InitialDPArgExtensionImpl initialDPArgExtension)
                 throws XMLStreamException {
-            initialDPArgExtension.isCAPVersion3orLater = xml.getAttribute(IS_CAP_VERSION_3_OR_LATER, false);
+            initialDPArgExtension.capVersion = CAPApplicationContextVersion.valueOf(xml.getAttribute(CAP_VERSION, ""));
 
             initialDPArgExtension.gmscAddress = xml.get(GMSC_ADDRESS, ISDNAddressStringImpl.class);
             initialDPArgExtension.forwardingDestinationNumber = xml.get(FORWARDING_DESTINATION_NUMBER,
                     CalledPartyNumberCapImpl.class);
+
+            initialDPArgExtension.msClassmark2 = xml.get(MS_CLASSMARK2, MSClassmark2Impl.class);
+            initialDPArgExtension.imei = xml.get(IMEI, IMEIImpl.class);
+            initialDPArgExtension.supportedCamelPhases = xml
+                    .get(SUPPORTED_CAMEL_PHASES, SupportedCamelPhasesImpl.class);
+            initialDPArgExtension.offeredCamel4Functionalities = xml.get(OFFERED_CAMEL4_FUNCTIONALITIES,
+                    OfferedCamel4FunctionalitiesImpl.class);
+            initialDPArgExtension.bearerCapability2 = xml.get(BEARER_CAPABILITY2, BearerCapabilityImpl.class);
+            initialDPArgExtension.extBasicServiceCode2 = xml
+                    .get(EXT_BASIC_SERVICE_CODE2, ExtBasicServiceCodeImpl.class);
+            initialDPArgExtension.highLayerCompatibility2 = xml.get(HIGH_LAYER_COMPATIBILITY2,
+                    HighLayerCompatibilityInapImpl.class);
+            // TODO lowlayercomp
+            // TODO lowlayercomp2
+
+            Boolean nullAsBoolean = xml.get(ENHANCED_DIALLED_SERVICES_ALLOWED, Boolean.class);
+            if (nullAsBoolean != null) {
+                initialDPArgExtension.enhancedDialledServicesAllowed = nullAsBoolean;
+            }
+
+            // TODO uuData
+
+            nullAsBoolean = xml.get(COLLECT_INFORMATION_ALLOWED, Boolean.class);
+            if (nullAsBoolean != null) {
+                initialDPArgExtension.collectInformationAllowed = nullAsBoolean;
+            }
+            nullAsBoolean = xml.get(RELEASE_CALL_ARG_EXTENSION_ALLOWED, Boolean.class);
+            if (nullAsBoolean != null) {
+                initialDPArgExtension.releaseCallArgExtensionAllowed = nullAsBoolean;
+            }
         }
 
         @Override
         public void write(InitialDPArgExtensionImpl initialDPArgExtension, javolution.xml.XMLFormat.OutputElement xml)
                 throws XMLStreamException {
-            xml.setAttribute(IS_CAP_VERSION_3_OR_LATER, initialDPArgExtension.isCAPVersion3orLater);
+            xml.setAttribute(CAP_VERSION, initialDPArgExtension.capVersion.name());
 
             if (initialDPArgExtension.getGmscAddress() != null)
                 xml.add((ISDNAddressStringImpl) initialDPArgExtension.getGmscAddress(), GMSC_ADDRESS,
@@ -491,6 +607,40 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
             if (initialDPArgExtension.getForwardingDestinationNumber() != null)
                 xml.add((CalledPartyNumberCapImpl) initialDPArgExtension.getForwardingDestinationNumber(),
                         FORWARDING_DESTINATION_NUMBER, CalledPartyNumberCapImpl.class);
+
+            if (initialDPArgExtension.msClassmark2 != null)
+                xml.add((MSClassmark2Impl) initialDPArgExtension.msClassmark2, MS_CLASSMARK2, MSClassmark2Impl.class);
+            if (initialDPArgExtension.imei != null)
+                xml.add((IMEIImpl) initialDPArgExtension.imei, IMEI, IMEIImpl.class);
+            if (initialDPArgExtension.supportedCamelPhases != null)
+                xml.add((SupportedCamelPhasesImpl) initialDPArgExtension.supportedCamelPhases, SUPPORTED_CAMEL_PHASES,
+                        SupportedCamelPhasesImpl.class);
+            if (initialDPArgExtension.offeredCamel4Functionalities != null)
+                xml.add((OfferedCamel4FunctionalitiesImpl) initialDPArgExtension.offeredCamel4Functionalities,
+                        OFFERED_CAMEL4_FUNCTIONALITIES, OfferedCamel4FunctionalitiesImpl.class);
+            if (initialDPArgExtension.bearerCapability2 != null)
+                xml.add((BearerCapabilityImpl) initialDPArgExtension.bearerCapability2, BEARER_CAPABILITY2,
+                        BearerCapabilityImpl.class);
+            if (initialDPArgExtension.extBasicServiceCode2 != null)
+                xml.add((ExtBasicServiceCodeImpl) initialDPArgExtension.extBasicServiceCode2, EXT_BASIC_SERVICE_CODE2,
+                        ExtBasicServiceCodeImpl.class);
+            if (initialDPArgExtension.highLayerCompatibility2 != null)
+                xml.add((HighLayerCompatibilityInapImpl) initialDPArgExtension.highLayerCompatibility2,
+                        HIGH_LAYER_COMPATIBILITY2, HighLayerCompatibilityInapImpl.class);
+            // TODO lowlayercomp
+            // TODO lowlayercomp2
+
+            if (initialDPArgExtension.enhancedDialledServicesAllowed)
+                xml.add(initialDPArgExtension.enhancedDialledServicesAllowed, ENHANCED_DIALLED_SERVICES_ALLOWED,
+                        Boolean.class);
+
+            // TODO uuData
+
+            if (initialDPArgExtension.collectInformationAllowed)
+                xml.add(initialDPArgExtension.collectInformationAllowed, COLLECT_INFORMATION_ALLOWED, Boolean.class);
+            if (initialDPArgExtension.releaseCallArgExtensionAllowed)
+                xml.add(initialDPArgExtension.releaseCallArgExtensionAllowed, RELEASE_CALL_ARG_EXTENSION_ALLOWED,
+                        Boolean.class);
         }
     };
 }

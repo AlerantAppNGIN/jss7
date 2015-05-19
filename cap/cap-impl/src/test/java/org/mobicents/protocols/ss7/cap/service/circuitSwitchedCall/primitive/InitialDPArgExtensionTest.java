@@ -33,6 +33,7 @@ import javolution.xml.XMLObjectWriter;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
@@ -61,7 +62,7 @@ public class InitialDPArgExtensionTest {
 
         byte[] data = this.getData1();
         AsnInputStream ais = new AsnInputStream(data);
-        InitialDPArgExtensionImpl elem = new InitialDPArgExtensionImpl(false);
+        InitialDPArgExtensionImpl elem = new InitialDPArgExtensionImpl(CAPApplicationContextVersion.version2);
         int tag = ais.readTag();
         elem.decodeAll(ais);
         assertEquals(elem.getGmscAddress().getAddressNature(), AddressNature.international_number);
@@ -71,7 +72,7 @@ public class InitialDPArgExtensionTest {
 
         data = this.getData2();
         ais = new AsnInputStream(data);
-        elem = new InitialDPArgExtensionImpl(true);
+        elem = new InitialDPArgExtensionImpl(CAPApplicationContextVersion.version3);
         tag = ais.readTag();
         elem.decodeAll(ais);
         assertEquals(elem.getGmscAddress().getAddressNature(), AddressNature.international_number);
@@ -90,7 +91,7 @@ public class InitialDPArgExtensionTest {
         ISDNAddressStringImpl gmscAddress = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
                 "2207750007");
         InitialDPArgExtensionImpl elem = new InitialDPArgExtensionImpl(gmscAddress, null, null, null, null, null, null, null,
-                null, null, null, false, null, false);
+                null, null, null, false, null, false, false, CAPApplicationContextVersion.version2);
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 59);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
@@ -100,7 +101,7 @@ public class InitialDPArgExtensionTest {
         // int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator
         CalledPartyNumberCapImpl forwardingDestinationNumber = new CalledPartyNumberCapImpl(calledPartyNumber);
         elem = new InitialDPArgExtensionImpl(gmscAddress, forwardingDestinationNumber, null, null, null, null, null, null,
-                null, null, null, false, null, true);
+                null, null, null, false, null, false,false, CAPApplicationContextVersion.version3);
         aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 59);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
@@ -123,7 +124,7 @@ public class InitialDPArgExtensionTest {
         CalledPartyNumberImpl calledPartyNumber = new CalledPartyNumberImpl(1, "2222", 1, 0);
         CalledPartyNumberCapImpl forwardingDestinationNumber = new CalledPartyNumberCapImpl(calledPartyNumber);
         InitialDPArgExtensionImpl original = new InitialDPArgExtensionImpl(gmscAddress, forwardingDestinationNumber, null,
-                null, null, null, null, null, null, null, null, false, null, false);
+                null, null, null, null, null, null, null, null, false, null, false, false, CAPApplicationContextVersion.version2);
 
         // Writes the area to a file.
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

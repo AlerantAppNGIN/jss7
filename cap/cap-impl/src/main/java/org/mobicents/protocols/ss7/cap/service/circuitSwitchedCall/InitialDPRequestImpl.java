@@ -54,6 +54,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.CallingPartyNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
 import org.mobicents.protocols.ss7.cap.isup.LocationNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.OriginalCalledNumberCapImpl;
@@ -62,8 +63,10 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CalledPartyBCDNumberImpl;
 import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.BearerCapabilityImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CarrierImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.IPSSPCapabilitiesImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InitialDPArgExtensionImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwoImpl;
 import org.mobicents.protocols.ss7.inap.api.INAPException;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.inap.api.isup.CallingPartysCategoryInap;
@@ -87,6 +90,8 @@ import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.service.callhandling.CallReferenceNumberImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.SubscriberStateImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUGIndexImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUGInterlockImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
 
 /**
@@ -94,6 +99,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext
  * @author sergey vetyutnev
  * @author alerant appngin
  */
+@SuppressWarnings("serial")
 public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl implements InitialDPRequest {
 
     public static final int _ID_serviceKey = 0;
@@ -144,6 +150,12 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
     private static final String EVENT_TYPE_BCSM = "eventTypeBCSM";
     private static final String REDIRECTING_PARTY_ID = "redirectingPartyID";
     private static final String REDIRECTION_INFORMATION = "redirectionInformation";
+    private static final String CAUSE = "cause";
+    private static final String SERVICE_INTERACTION_INDICATORS_TWO = "serviceInteractionIndicatorsTwo";
+    private static final String CARRIER = "carrier";
+    private static final String CUG_INDEX = "cugIndex";
+    private static final String CUG_INTERLOCK = "cugInterlock";
+    private static final String CUG_OUTGOING_ACCESS = "cugOutgoingAccess";
     private static final String IMSI = "imsi";
     private static final String SUBSCRIBER_STATE = "subscriberState";
     private static final String LOCATION_INFORMATION = "locationInformation";
@@ -539,7 +551,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
                         ((CallingPartysCategoryInapImpl) this.callingPartysCategory).decodeAll(ais);
                         break;
                     case _ID_cGEncountered:
-                        ais.advanceElement(); // TODO: implement it
+                        this.CGEncountered = CGEncountered.getInstance((int)ais.readInteger());
                         break;
                     case _ID_iPSSPCapabilities:
                         this.IPSSPCapabilities = new IPSSPCapabilitiesImpl();
@@ -585,22 +597,29 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
                         ((RedirectionInformationInapImpl) this.redirectionInformation).decodeAll(ais);
                         break;
                     case _ID_cause:
-                        ais.advanceElement(); // TODO: implement it
+                        this.cause = new CauseCapImpl();
+                        ((CauseCapImpl) this.cause).decodeAll(ais);
                         break;
                     case _ID_serviceInteractionIndicatorsTwo:
-                        ais.advanceElement(); // TODO: implement it
+                        this.serviceInteractionIndicatorsTwo = new ServiceInteractionIndicatorsTwoImpl();
+                        ((ServiceInteractionIndicatorsTwoImpl) this.serviceInteractionIndicatorsTwo)
+                                .decodeAll(ais);
                         break;
                     case _ID_carrier:
-                        ais.advanceElement(); // TODO: implement it
+                        this.carrier = new CarrierImpl();
+                        ((CarrierImpl) this.carrier).decodeAll(ais);
                         break;
                     case _ID_cug_Index:
-                        ais.advanceElement(); // TODO: implement it
+                        this.cugIndex = new CUGIndexImpl();
+                        ((CUGIndexImpl)this.cugIndex).decodeAll(ais);
                         break;
                     case _ID_cug_Interlock:
-                        ais.advanceElement(); // TODO: implement it
+                        this.cugInterlock = new CUGInterlockImpl();
+                        ((CUGInterlockImpl)this.cugInterlock).decodeAll(ais);
                         break;
                     case _ID_cug_OutgoingAccess:
-                        ais.advanceElement(); // TODO: implement it
+                        this.cugOutgoingAccess=true;
+                        ais.readNull();
                         break;
                     case _ID_iMSI:
                         int len = ais.readLength();
@@ -648,7 +667,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
                         this.callForwardingSSPending = true;
                         break;
                     case _ID_initialDPArgExtension:
-                        this.initialDPArgExtension = new InitialDPArgExtensionImpl(this.capVersion.getVersion()>=3);
+                        this.initialDPArgExtension = new InitialDPArgExtensionImpl(this.capVersion);
                         ((InitialDPArgExtensionImpl) this.initialDPArgExtension).decodeAll(ais);
                         break;
 
@@ -705,7 +724,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
                 ((CallingPartysCategoryInapImpl) this.callingPartysCategory).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
                         _ID_callingPartysCategory);
             if (this.CGEncountered != null) {
-                // TODO: implement it - _ID_cGEncountered
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC,_ID_cGEncountered, this.CGEncountered.getCode());
             }
             if (this.IPSSPCapabilities != null)
                 ((IPSSPCapabilitiesImpl) this.IPSSPCapabilities).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
@@ -738,22 +757,23 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
                 ((RedirectionInformationInapImpl) this.redirectionInformation).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
                         _ID_redirectionInformation);
             if (this.cause != null) {
-                // TODO: implement it - _ID_cause
+                ((CauseCapImpl) this.cause).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_cause);
             }
             if (this.serviceInteractionIndicatorsTwo != null) {
-                // TODO: implement it - _ID_serviceInteractionIndicatorsTwo
+                ((ServiceInteractionIndicatorsTwoImpl) this.serviceInteractionIndicatorsTwo).encodeAll(aos,
+                        Tag.CLASS_CONTEXT_SPECIFIC, _ID_serviceInteractionIndicatorsTwo);
             }
             if (this.carrier != null) {
-                // TODO: implement it - _ID_carrier
+                ((CarrierImpl) this.carrier).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_carrier);
             }
             if (this.cugIndex != null) {
-                // TODO: implement it - _ID_cug_Index
+                ((CUGIndexImpl) this.cugIndex).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_cug_Index);
             }
             if (this.cugInterlock != null) {
-                // TODO: implement it - _ID_cug_Interlock
+                ((CUGInterlockImpl) this.cugInterlock).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_cug_Interlock);
             }
             if (this.cugOutgoingAccess) {
-                // TODO: implement it - _ID_cug_OutgoingAccess
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_cug_OutgoingAccess);
             }
             if (this.imsi != null)
                 ((IMSIImpl) this.imsi).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_iMSI);
@@ -968,6 +988,17 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
             initialDP.redirectingPartyID = xml.get(REDIRECTING_PARTY_ID, RedirectingPartyIDCapImpl.class);
 
             initialDP.redirectionInformation = xml.get(REDIRECTION_INFORMATION, RedirectionInformationInapImpl.class);
+
+            initialDP.cause = xml.get(CAUSE, CauseCapImpl.class);
+            initialDP.serviceInteractionIndicatorsTwo = xml.get(SERVICE_INTERACTION_INDICATORS_TWO,
+                    ServiceInteractionIndicatorsTwoImpl.class);
+            initialDP.carrier = xml.get(CARRIER, CarrierImpl.class);
+            initialDP.cugIndex = xml.get(CUG_INDEX, CUGIndexImpl.class);
+            initialDP.cugInterlock = xml.get(CUG_INTERLOCK, CUGInterlockImpl.class);
+            Boolean cugOutgoingAccess = xml.get(CUG_OUTGOING_ACCESS, Boolean.class);
+            if (cugOutgoingAccess != null)
+                initialDP.cugOutgoingAccess = cugOutgoingAccess;
+
             initialDP.imsi = xml.get(IMSI, IMSIImpl.class);
             initialDP.subscriberState = xml.get(SUBSCRIBER_STATE, SubscriberStateImpl.class);
             initialDP.locationInformation = xml.get(LOCATION_INFORMATION, LocationInformationImpl.class);
@@ -1030,6 +1061,21 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
             if (initialDP.getRedirectionInformation() != null)
                 xml.add((RedirectionInformationInapImpl) initialDP.getRedirectionInformation(), REDIRECTION_INFORMATION,
                         RedirectionInformationInapImpl.class);
+
+            if (initialDP.getCause() != null)
+                xml.add((CauseCapImpl) initialDP.getCause(), CAUSE, CauseCapImpl.class);
+            if (initialDP.getServiceInteractionIndicatorsTwo() != null)
+                xml.add((ServiceInteractionIndicatorsTwoImpl) initialDP.getServiceInteractionIndicatorsTwo(),
+                        SERVICE_INTERACTION_INDICATORS_TWO, ServiceInteractionIndicatorsTwoImpl.class);
+            if (initialDP.getCarrier() != null)
+                xml.add((CarrierImpl) initialDP.getCarrier(), CARRIER, CarrierImpl.class);
+            if (initialDP.getCugIndex() != null)
+                xml.add((CUGIndexImpl) initialDP.getCugIndex(), CUG_INDEX, CUGIndexImpl.class);
+            if (initialDP.getCugInterlock() != null)
+                xml.add((CUGInterlockImpl) initialDP.getCugInterlock(), CUG_INTERLOCK, CUGInterlockImpl.class);
+            if (initialDP.getCugOutgoingAccess())
+                xml.add(initialDP.getCugOutgoingAccess(), CUG_OUTGOING_ACCESS, Boolean.class);
+
             if (initialDP.getIMSI() != null)
                 xml.add((IMSIImpl) initialDP.getIMSI(), IMSI, IMSIImpl.class);
             if (initialDP.getSubscriberState() != null)

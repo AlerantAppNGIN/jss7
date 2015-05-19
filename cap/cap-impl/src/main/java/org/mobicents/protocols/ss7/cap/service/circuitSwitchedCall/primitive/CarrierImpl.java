@@ -19,15 +19,21 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Carrier;
 import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ * @author alerant appngin
+ *
+ */
+@SuppressWarnings("serial")
 public class CarrierImpl extends OctetStringBase implements Carrier {
+    private static final String DATA = "data";
 
     public CarrierImpl() {
         super(4, 4, "Carrier");
@@ -42,4 +48,20 @@ public class CarrierImpl extends OctetStringBase implements Carrier {
         return data;
     }
 
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<CarrierImpl> CARRIER_XML = new XMLFormat<CarrierImpl>(CarrierImpl.class) {
+
+        @Override
+        public void write(CarrierImpl obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(DATA, OctetStringBase.bytesToHex(obj.data));
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, CarrierImpl obj) throws XMLStreamException {
+            obj.data = OctetStringBase.hexToBytes(xml.getAttribute(DATA, (String) null));
+        }
+
+    };
 }
