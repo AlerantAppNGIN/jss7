@@ -22,6 +22,7 @@ package org.mobicents.protocols.ss7.cap;
 import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.cap.EsiBcsm.CallAcceptedSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.EsiBcsm.ChargeIndicatorImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OAbandonSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OAnswerSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiBcsm.OCalledPartyBusySpecificInfoImpl;
@@ -47,6 +48,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.CallAcceptedSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ChargeIndicator;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ChargeIndicatorValue;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAbandonSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OCalledPartyBusySpecificInfo;
@@ -581,6 +583,10 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 
     public CallAcceptedSpecificInfo createCallAcceptedSpecificInfo(LocationInformation locationInformation) {
         return new CallAcceptedSpecificInfoImpl((LocationInformationImpl) locationInformation);
+    }
+
+    public ChargeIndicator createChargeIndicator(ChargeIndicatorValue value) {
+        return new ChargeIndicatorImpl(value);
     }
 
     @Override

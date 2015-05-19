@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.CallAcceptedSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ChargeIndicator;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ChargeIndicatorValue;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAbandonSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OCalledPartyBusySpecificInfo;
@@ -299,6 +300,8 @@ public interface CAPParameterFactory {
     ODisconnectSpecificInfo createODisconnectSpecificInfo(CauseCap releaseCause);
 
     CallAcceptedSpecificInfo createCallAcceptedSpecificInfo(LocationInformation locationInformation);
+
+    ChargeIndicator createChargeIndicator(ChargeIndicatorValue value);
 
     OTermSeizedSpecificInfo createOTermSeizedSpecificInfo(LocationInformation locationInformation);
 
