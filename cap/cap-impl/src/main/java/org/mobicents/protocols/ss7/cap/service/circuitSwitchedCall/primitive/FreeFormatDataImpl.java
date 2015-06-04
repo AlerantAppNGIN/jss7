@@ -19,14 +19,19 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
+import javolution.text.CharArray;
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FreeFormatData;
 import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
 
 /**
-*
-* @author Lasith Waruna Perera
-*
-*/
+ *
+ * @author Lasith Waruna Perera
+ * @author alerant appngin
+ */
+@SuppressWarnings("serial")
 public class FreeFormatDataImpl extends OctetStringBase implements FreeFormatData {
 
     public FreeFormatDataImpl() {
@@ -41,5 +46,27 @@ public class FreeFormatDataImpl extends OctetStringBase implements FreeFormatDat
     public byte[] getData() {
         return data;
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<FreeFormatDataImpl> FREE_FORMAT_DATA_XML = new XMLFormat<FreeFormatDataImpl>(
+            FreeFormatDataImpl.class) {
+
+        // serialize as simple text content
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, FreeFormatDataImpl obj) throws XMLStreamException {
+
+            CharArray arr = xml.getText();
+            obj.data = hexToBytes(arr.array(), arr.offset(), arr.length());
+        }
+
+        @Override
+        public void write(FreeFormatDataImpl obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+
+            xml.addText(bytesToHex(obj.data));
+        }
+    };
 
 }

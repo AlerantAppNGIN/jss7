@@ -21,10 +21,14 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
@@ -39,9 +43,14 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 /**
  *
  * @author sergey vetyutnev
- *
+ * @author alerant appngin
  */
+@SuppressWarnings("serial")
 public class FCIBCCCAMELsequence1Impl implements FCIBCCCAMELsequence1, CAPAsnPrimitive {
+
+    private static final String FREE_FORMAT_DATA = "freeFormatData";
+    private static final String PARTY_TO_CHARGE = "partyToCharge";
+    private static final String APPEND_FREE_FORMAT_DATA = "appendFreeFormatData";
 
     public static final int _ID_freeFormatData = 0;
     public static final int _ID_partyToCharge = 1;
@@ -51,7 +60,11 @@ public class FCIBCCCAMELsequence1Impl implements FCIBCCCAMELsequence1, CAPAsnPri
 
     private FreeFormatData freeFormatData;
     private SendingSideID partyToCharge;
+    // only present from CAP version 3
     private AppendFreeFormatData appendFreeFormatData;
+
+    // set to the appropriate value by the CAP dialog before calling encodeX()
+    private CAPApplicationContextVersion capVersion = CAPApplicationContextVersion.version4;
 
     public FCIBCCCAMELsequence1Impl() {
     }
@@ -60,6 +73,12 @@ public class FCIBCCCAMELsequence1Impl implements FCIBCCCAMELsequence1, CAPAsnPri
         this.freeFormatData = freeFormatData;
         this.partyToCharge = partyToCharge;
         this.appendFreeFormatData = appendFreeFormatData;
+    }
+
+    public void setCapVersion(CAPApplicationContextVersion capVersion) {
+        if (capVersion == null)
+            throw new IllegalArgumentException("capVersion cannot be null");
+        this.capVersion = capVersion;
     }
 
     @Override
@@ -205,7 +224,7 @@ public class FCIBCCCAMELsequence1Impl implements FCIBCCCAMELsequence1, CAPAsnPri
                 ((SendingSideIDImpl) this.partyToCharge).encodeAll(aos);
                 aos.FinalizeContent(pos);
             }
-            if (this.appendFreeFormatData != null)
+            if (this.appendFreeFormatData != null && this.capVersion.getVersion() >= 3)
                 aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_appendFreeFormatData, this.appendFreeFormatData.getCode());
 
         } catch (IOException e) {
@@ -241,13 +260,44 @@ public class FCIBCCCAMELsequence1Impl implements FCIBCCCAMELsequence1, CAPAsnPri
         return sb.toString();
     }
 
-    private String printDataArr(byte[] arr) {
-        StringBuilder sb = new StringBuilder();
-        for (int b : arr) {
-            sb.append(b);
-            sb.append(", ");
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<FCIBCCCAMELsequence1Impl> FCI_BCC_CAMEL_SEQUENCE1_XML = new XMLFormat<FCIBCCCAMELsequence1Impl>(
+            FCIBCCCAMELsequence1Impl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, FCIBCCCAMELsequence1Impl fcibcc)
+                throws XMLStreamException {
+
+            // default value is overwrite
+            fcibcc.appendFreeFormatData = AppendFreeFormatData.valueOf(xml.getAttribute(APPEND_FREE_FORMAT_DATA,
+                    "overwrite"));
+
+            fcibcc.freeFormatData = xml.get(FREE_FORMAT_DATA, FreeFormatDataImpl.class);
+            fcibcc.partyToCharge = xml.get(PARTY_TO_CHARGE, SendingSideIDImpl.class);
+            if (fcibcc.partyToCharge == null) {
+                // default value
+                fcibcc.partyToCharge = new SendingSideIDImpl(LegType.leg1);
+            }
         }
 
-        return sb.toString();
-    }
+        @Override
+        public void write(FCIBCCCAMELsequence1Impl fcibcc, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            // write non-default value only, skip null (phase2) and "overwrite" (default)
+            if (fcibcc.appendFreeFormatData == AppendFreeFormatData.append && fcibcc.capVersion.getVersion() >= 3) {
+                xml.setAttribute(APPEND_FREE_FORMAT_DATA, fcibcc.appendFreeFormatData.name());
+            }
+
+            xml.add((FreeFormatDataImpl) fcibcc.freeFormatData, FREE_FORMAT_DATA, FreeFormatDataImpl.class);
+
+            // write non-default value only
+            if (fcibcc.partyToCharge != null && fcibcc.partyToCharge.getSendingSideID() != LegType.leg1) {
+                xml.add((SendingSideIDImpl) fcibcc.partyToCharge, PARTY_TO_CHARGE, SendingSideIDImpl.class);
+            }
+
+        }
+    };
 }

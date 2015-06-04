@@ -210,13 +210,26 @@ public class OctetStringBase implements CAPAsnPrimitive {
     protected static byte[] hexToBytes(String hex) {
         if (hex == null)
             return null;
-        char[] c = hex.toCharArray();
-        if ((c.length & 1) > 0)
-            throw new IllegalArgumentException(
-                    "Hex string must be 2n characters long!");
-        byte[] b = new byte[c.length / 2];
-        for (int i = 0, j = i; i < b.length; i++, j += 2) {
-            b[i] = (byte) ((byteFromHexChar(c[j]) << 4) + byteFromHexChar(c[j + 1]));
+        return hexToBytes(hex.toCharArray());
+    }
+
+    protected static byte[] hexToBytes(char[] hex) {
+        if (hex == null)
+            return null;
+        return hexToBytes(hex, 0, hex.length);
+    }
+
+    protected static byte[] hexToBytes(char[] hex, int offset, int length) {
+        if (hex == null)
+            return null;
+        if (offset < 0 || length < 1 || hex.length - offset - length + 1 < 0)
+            throw new IndexOutOfBoundsException("Array of length " + hex.length + " has no subarray with offset "
+                    + offset + " and length " + length);
+        if ((length & 1) > 0)
+            throw new IllegalArgumentException("Hex string must be 2n characters long!");
+        byte[] b = new byte[length / 2];
+        for (int i = 0, j = offset; i < b.length; i++, j += 2) {
+            b[i] = (byte) ((byteFromHexChar(hex[j]) << 4) + byteFromHexChar(hex[j + 1]));
         }
         return b;
     }

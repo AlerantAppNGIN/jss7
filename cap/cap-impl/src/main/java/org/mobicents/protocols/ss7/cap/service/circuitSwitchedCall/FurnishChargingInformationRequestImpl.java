@@ -21,6 +21,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -37,10 +40,14 @@ import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.FCI
 /**
  *
  * @author sergey vetyutnev
+ * @author alerant appngin
  *
  */
+@SuppressWarnings("serial")
 public class FurnishChargingInformationRequestImpl extends CircuitSwitchedCallMessageImpl implements
         FurnishChargingInformationRequest {
+
+    private static final String FCI_BCC_CAMEL_SEQUENCE1 = "fCIBCCCAMELsequence1";
 
     public static final int _ID_fCIBCCCAMELsequence1 = 0;
 
@@ -206,4 +213,32 @@ public class FurnishChargingInformationRequestImpl extends CircuitSwitchedCallMe
 
         return sb.toString();
     }
+
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<FurnishChargingInformationRequestImpl> FURNISH_CHARGING_INFORMATION_REQUEST_XML = new XMLFormat<FurnishChargingInformationRequestImpl>(
+            FurnishChargingInformationRequestImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, FurnishChargingInformationRequestImpl fciRequest)
+                throws XMLStreamException {
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, fciRequest);
+
+            fciRequest.FCIBCCCAMELsequence1 = xml.get(FCI_BCC_CAMEL_SEQUENCE1,
+                    FCIBCCCAMELsequence1Impl.class);
+        }
+
+        @Override
+        public void write(FurnishChargingInformationRequestImpl fciRequest, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(fciRequest, xml);
+
+            if (fciRequest.FCIBCCCAMELsequence1 != null)
+                xml.add((FCIBCCCAMELsequence1Impl) fciRequest.FCIBCCCAMELsequence1,
+                        FCI_BCC_CAMEL_SEQUENCE1, FCIBCCCAMELsequence1Impl.class);
+        }
+    };
 }
