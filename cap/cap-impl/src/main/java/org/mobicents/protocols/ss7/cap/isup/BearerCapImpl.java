@@ -33,6 +33,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
+import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserServiceInformationImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
@@ -41,13 +42,15 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation
  *
  *
  * @author sergey vetyutnev
- *
+ * @author alerant appngin
  */
+@SuppressWarnings("serial")
 public class BearerCapImpl implements BearerCap, CAPAsnPrimitive {
 
     public static final String _PrimitiveName = "BearerCap";
 
     private static final String USER_SERVICE_INFORMATION_XML = "userServiceInformation";
+    private static final String OCTET_STRING = "octets";
 
     private byte[] data;
 
@@ -230,6 +233,9 @@ public class BearerCapImpl implements BearerCap, CAPAsnPrimitive {
         @Override
         public void write(BearerCapImpl bearerCap, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
             try {
+                // include original unparsed data as well
+                // max 22 hex characters as a simple string, fine as an attribute
+                xml.setAttribute(OCTET_STRING, OctetStringBase.bytesToHex(bearerCap.data));
                 xml.add(((UserServiceInformationImpl) bearerCap.getUserServiceInformation()), USER_SERVICE_INFORMATION_XML,
                         UserServiceInformationImpl.class);
             } catch (CAPException e) {
@@ -237,4 +243,5 @@ public class BearerCapImpl implements BearerCap, CAPAsnPrimitive {
             }
         }
     };
+
 }

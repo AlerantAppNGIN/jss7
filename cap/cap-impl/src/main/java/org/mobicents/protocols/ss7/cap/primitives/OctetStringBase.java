@@ -186,7 +186,7 @@ public class OctetStringBase implements CAPAsnPrimitive {
         return sb.toString();
     }
 
-    protected static String bytesToHex(byte[] data) {
+    public static String bytesToHex(byte[] data) {
         if (data == null)
             return null;
         char[] c = new char[data.length * 2];
@@ -197,29 +197,23 @@ public class OctetStringBase implements CAPAsnPrimitive {
         return new String(c);
     }
 
-    private static byte byteFromHexChar(char c) {
-        if ('0' <= c && c <= '9')
-            return (byte) (c - '0');
-        c = Character.toUpperCase(c);
-        if ('A' <= c && c <= 'F')
-            return (byte) (c - 'A' + 10);
-        else
-            throw new IllegalArgumentException("Invalid hex character: " + c);
+    public static byte byteFromHexChar(char c) {
+        return (byte)Character.digit(c, 16);
     }
 
-    protected static byte[] hexToBytes(String hex) {
+    public static byte[] hexToBytes(String hex) {
         if (hex == null)
             return null;
         return hexToBytes(hex.toCharArray());
     }
 
-    protected static byte[] hexToBytes(char[] hex) {
+    public static byte[] hexToBytes(char[] hex) {
         if (hex == null)
             return null;
         return hexToBytes(hex, 0, hex.length);
     }
 
-    protected static byte[] hexToBytes(char[] hex, int offset, int length) {
+    public static byte[] hexToBytes(char[] hex, int offset, int length) {
         if (hex == null)
             return null;
         if (offset < 0 || length < 1 || hex.length - offset - length + 1 < 0)
