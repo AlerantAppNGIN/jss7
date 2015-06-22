@@ -318,6 +318,10 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
                         int pos2 = aos.StartContentDefiniteLength();
                         if(this.audibleIndicator!=null && this.audibleIndicator.getTone()!=null) {
                             aos.writeBoolean(this.audibleIndicator.getTone());
+                        } else {
+                            // if releaseIfDurationExceeded structure is present, always include tone value,
+                            // even if it is the default false
+                            aos.writeBoolean(false); // no tone
                         }
                         if (this.extensions != null) {
                             ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,

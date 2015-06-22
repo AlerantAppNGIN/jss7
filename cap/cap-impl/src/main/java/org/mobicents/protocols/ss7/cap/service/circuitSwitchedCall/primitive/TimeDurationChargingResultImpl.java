@@ -39,7 +39,6 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.ReceivingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
-import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
@@ -126,7 +125,7 @@ public class TimeDurationChargingResultImpl extends SequenceBase implements Time
         this.legActive = true;
         this.callLegReleasedAtTcpExpiry = false;
         this.extensions = null;
-        this.aChChargingAddress = new AChChargingAddressImpl(new LegIDImpl(false, LegType.leg1));
+        this.aChChargingAddress = null;
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
         while (true) {
@@ -178,6 +177,15 @@ public class TimeDurationChargingResultImpl extends SequenceBase implements Time
             throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
                     + ": partyToCharge and timeInformation are mandatory but not found",
                     CAPParsingComponentExceptionReason.MistypedParameter);
+
+        if (this.aChChargingAddress == null) {
+            // If there was no explicit achChargingAddress, then set it to the
+            // same as the partyToCharge (otherwise the default value might be
+            // conflicting). In this case, the charged address must have been
+            // a call party - the one indicated in PTC -, not an srfConnection.
+            this.aChChargingAddress = new AChChargingAddressImpl(new LegIDImpl(false,
+                    this.partyToCharge.getReceivingSideID()));
+        }
     }
 
     @Override
