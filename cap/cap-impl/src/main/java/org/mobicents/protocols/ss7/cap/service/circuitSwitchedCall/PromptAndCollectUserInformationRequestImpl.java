@@ -21,6 +21,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -41,10 +44,19 @@ import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.Inf
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
-public class PromptAndCollectUserInformationRequestImpl extends CircuitSwitchedCallMessageImpl implements
+public class PromptAndCollectUserInformationRequestImpl extends
+        CircuitSwitchedCallMessageImpl implements
         PromptAndCollectUserInformationRequest {
+
+    private static final String COLLECTED_INFO = "collectedInfo";
+    private static final String DISCONNECT_FROM_IP_FORBIDDEN = "disconnectFromIPForbidden";
+    private static final String INFORMATION_TO_SEND = "informationToSend";
+    private static final String EXTENSIONS = "extensions";
+    private static final String CALL_SEGMENT_ID = "callSegmentID";
+    private static final String REQUEST_ANNOUNCEMENT_STARTED_NOTIFICATION = "requestAnnouncementStartedNotification";
 
     public static final int _ID_collectedInfo = 0;
     public static final int _ID_disconnectFromIPForbidden = 1;
@@ -65,8 +77,10 @@ public class PromptAndCollectUserInformationRequestImpl extends CircuitSwitchedC
     public PromptAndCollectUserInformationRequestImpl() {
     }
 
-    public PromptAndCollectUserInformationRequestImpl(CollectedInfo collectedInfo, Boolean disconnectFromIPForbidden,
-            InformationToSend informationToSend, CAPExtensions extensions, Integer callSegmentID,
+    public PromptAndCollectUserInformationRequestImpl(
+            CollectedInfo collectedInfo, Boolean disconnectFromIPForbidden,
+            InformationToSend informationToSend, CAPExtensions extensions,
+            Integer callSegmentID,
             Boolean requestAnnouncementStartedNotification) {
         this.collectedInfo = collectedInfo;
         this.disconnectFromIPForbidden = disconnectFromIPForbidden;
@@ -132,35 +146,44 @@ public class PromptAndCollectUserInformationRequestImpl extends CircuitSwitchedC
     }
 
     @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    public void decodeAll(AsnInputStream ansIS)
+            throws CAPParsingComponentException {
 
         try {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
     @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    public void decodeData(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException {
 
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.collectedInfo = null;
         this.disconnectFromIPForbidden = null;
@@ -178,35 +201,37 @@ public class PromptAndCollectUserInformationRequestImpl extends CircuitSwitchedC
 
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
                 switch (tag) {
-                    case _ID_collectedInfo:
-                        AsnInputStream ais2 = ais.readSequenceStream();
-                        ais2.readTag();
-                        this.collectedInfo = new CollectedInfoImpl();
-                        ((CollectedInfoImpl) this.collectedInfo).decodeAll(ais2);
-                        break;
-                    case _ID_disconnectFromIPForbidden:
-                        this.disconnectFromIPForbidden = ais.readBoolean();
-                        break;
-                    case _ID_informationToSend:
-                        ais2 = ais.readSequenceStream();
-                        ais2.readTag();
-                        this.informationToSend = new InformationToSendImpl();
-                        ((InformationToSendImpl) this.informationToSend).decodeAll(ais2);
-                        break;
-                    case _ID_extensions:
-                        this.extensions = new CAPExtensionsImpl();
-                        ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
-                        break;
-                    case _ID_callSegmentID:
-                        this.callSegmentID = (int) ais.readInteger();
-                        break;
-                    case _ID_requestAnnouncementStartedNotification:
-                        this.requestAnnouncementStartedNotification = ais.readBoolean();
-                        break;
+                case _ID_collectedInfo:
+                    AsnInputStream ais2 = ais.readSequenceStream();
+                    ais2.readTag();
+                    this.collectedInfo = new CollectedInfoImpl();
+                    ((CollectedInfoImpl) this.collectedInfo).decodeAll(ais2);
+                    break;
+                case _ID_disconnectFromIPForbidden:
+                    this.disconnectFromIPForbidden = ais.readBoolean();
+                    break;
+                case _ID_informationToSend:
+                    ais2 = ais.readSequenceStream();
+                    ais2.readTag();
+                    this.informationToSend = new InformationToSendImpl();
+                    ((InformationToSendImpl) this.informationToSend)
+                            .decodeAll(ais2);
+                    break;
+                case _ID_extensions:
+                    this.extensions = new CAPExtensionsImpl();
+                    ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
+                    break;
+                case _ID_callSegmentID:
+                    this.callSegmentID = (int) ais.readInteger();
+                    break;
+                case _ID_requestAnnouncementStartedNotification:
+                    this.requestAnnouncementStartedNotification = ais
+                            .readBoolean();
+                    break;
 
-                    default:
-                        ais.advanceElement();
-                        break;
+                default:
+                    ais.advanceElement();
+                    break;
                 }
             } else {
                 ais.advanceElement();
@@ -214,7 +239,8 @@ public class PromptAndCollectUserInformationRequestImpl extends CircuitSwitchedC
         }
 
         if (this.collectedInfo == null)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+            throw new CAPParsingComponentException("Error while decoding "
+                    + _PrimitiveName
                     + ": parameter collectedInfo is mandatory but not found",
                     CAPParsingComponentExceptionReason.MistypedParameter);
     }
@@ -225,7 +251,8 @@ public class PromptAndCollectUserInformationRequestImpl extends CircuitSwitchedC
     }
 
     @Override
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
+            throws CAPException {
 
         try {
             asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
@@ -233,7 +260,8 @@ public class PromptAndCollectUserInformationRequestImpl extends CircuitSwitchedC
             this.encodeData(asnOs);
             asnOs.FinalizeContent(pos);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -241,7 +269,8 @@ public class PromptAndCollectUserInformationRequestImpl extends CircuitSwitchedC
     public void encodeData(AsnOutputStream aos) throws CAPException {
 
         if (this.collectedInfo == null)
-            throw new CAPException("Error while encoding " + _PrimitiveName + ": collectedInfo must not be null");
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": collectedInfo must not be null");
 
         try {
 
@@ -251,28 +280,36 @@ public class PromptAndCollectUserInformationRequestImpl extends CircuitSwitchedC
             aos.FinalizeContent(pos);
 
             if (this.disconnectFromIPForbidden != null)
-                aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_disconnectFromIPForbidden, this.disconnectFromIPForbidden);
+                aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_disconnectFromIPForbidden,
+                        this.disconnectFromIPForbidden);
 
             if (this.informationToSend != null) {
-                aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_informationToSend);
+                aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false,
+                        _ID_informationToSend);
                 pos = aos.StartContentDefiniteLength();
                 ((InformationToSendImpl) this.informationToSend).encodeAll(aos);
                 aos.FinalizeContent(pos);
             }
 
             if (this.extensions != null)
-                ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+                ((CAPExtensionsImpl) this.extensions).encodeAll(aos,
+                        Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
 
             if (this.callSegmentID != null)
-                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callSegmentID, this.callSegmentID);
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callSegmentID,
+                        this.callSegmentID);
             if (this.requestAnnouncementStartedNotification != null)
-                aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_requestAnnouncementStartedNotification,
+                aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_requestAnnouncementStartedNotification,
                         this.requestAnnouncementStartedNotification);
 
         } catch (IOException e) {
-            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("IOException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -312,4 +349,137 @@ public class PromptAndCollectUserInformationRequestImpl extends CircuitSwitchedC
 
         return sb.toString();
     }
+
+    protected static final XMLFormat<PromptAndCollectUserInformationRequestImpl> PROMPT_AND_COLLECT_USER_INFORMATION_REQUEST_XML = new XMLFormat<PromptAndCollectUserInformationRequestImpl>(
+            PromptAndCollectUserInformationRequestImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                PromptAndCollectUserInformationRequestImpl pacui)
+                throws XMLStreamException {
+            pacui.collectedInfo = xml.get(COLLECTED_INFO,
+                    CollectedInfoImpl.class);
+            pacui.disconnectFromIPForbidden = xml.get(
+                    DISCONNECT_FROM_IP_FORBIDDEN, Boolean.class);
+            InformationToSendImpl informationToSend = xml.get(
+                    INFORMATION_TO_SEND, InformationToSendImpl.class);
+            if (informationToSend != null) {
+                pacui.informationToSend = informationToSend;
+            }
+            CAPExtensionsImpl extensions = xml.get(EXTENSIONS,
+                    CAPExtensionsImpl.class);
+            if (extensions != null) {
+                pacui.extensions = extensions;
+            }
+            Integer callSegmentID = xml.get(CALL_SEGMENT_ID, Integer.class);
+            if (callSegmentID != null) {
+                pacui.callSegmentID = callSegmentID;
+            }
+            pacui.requestAnnouncementStartedNotification = xml.get(
+                    REQUEST_ANNOUNCEMENT_STARTED_NOTIFICATION, Boolean.class);
+
+        }
+
+        @Override
+        public void write(PromptAndCollectUserInformationRequestImpl obj,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            xml.add((CollectedInfoImpl) obj.getCollectedInfo(), COLLECTED_INFO,
+                    CollectedInfoImpl.class);
+
+            // it has a default value, true
+            if (obj.getDisconnectFromIPForbidden() != null
+                    && !obj.getDisconnectFromIPForbidden()) {
+                xml.add(obj.getDisconnectFromIPForbidden(),
+                        DISCONNECT_FROM_IP_FORBIDDEN, Boolean.class);
+            }
+            if (obj.getInformationToSend() != null) {
+                xml.add((InformationToSendImpl) obj.getInformationToSend(),
+                        INFORMATION_TO_SEND, InformationToSendImpl.class);
+            }
+            if (obj.getExtensions() != null) {
+                xml.add((CAPExtensionsImpl) obj.getExtensions(), EXTENSIONS,
+                        CAPExtensionsImpl.class);
+            }
+            if (obj.getCallSegmentID() != null) {
+                xml.add(obj.getCallSegmentID(), CALL_SEGMENT_ID, Integer.class);
+            }
+
+            // it has a default value, false
+            if (obj.getRequestAnnouncementStartedNotification() != null
+                    && obj.getRequestAnnouncementStartedNotification()) {
+                xml.add(obj.getRequestAnnouncementStartedNotification(),
+                        REQUEST_ANNOUNCEMENT_STARTED_NOTIFICATION,
+                        Boolean.class);
+            }
+        }
+
+    };
+
+    /*
+     * TODO: move this code into the appropriate test class
+    public static void main(String[] args) throws UnsupportedEncodingException,
+            XMLStreamException {
+        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
+                .setOutput(System.out).setIndentation(" ");
+
+        ArrayList<VariablePart> aL = new ArrayList<VariablePart>();
+        aL.add(new VariablePartImpl(new VariablePartDateImpl(2015, 6, 27)));
+        aL.add(new VariablePartImpl(new VariablePartTimeImpl(15, 10)));
+        aL.add(new VariablePartImpl(new Integer(145)));
+        VariableMessageImpl vm = new VariableMessageImpl(145, aL);
+        MessageIDImpl mi = new MessageIDImpl(vm);
+        InbandInfoImpl inbandInfoImpl = new InbandInfoImpl(mi, new Integer(5),
+                new Integer(8), new Integer(2));
+
+        CollectedDigitsImpl collectedDigits = new CollectedDigitsImpl(10, 20,
+                "#".getBytes(), "*".getBytes(), "1".getBytes(), 5, 10,
+                ErrorTreatment.stdErrorAndInfo, false, false, false);
+        x.write(new PromptAndCollectUserInformationRequestImpl(
+                new CollectedInfoImpl(collectedDigits), true,
+                new InformationToSendImpl(inbandInfoImpl), null, 1, false),
+                "promptAndCollect");
+        x.flush();
+
+        String xml_1 = "<promptAndCollect>" + "<collectedInfo>"
+                + "<collectedDigits>" + "<minimumNbOfDigits value=\"10\"/>"
+                + "<maximumNbOfDigits value=\"20\"/>"
+                + "<endOfReplyDigit value=\"23\"/>"
+                + "<cancelDigit value=\"2A\"/>" + "<startDigit value=\"31\"/>"
+                + "<firstDigitTimeOut value=\"5\"/>"
+                + "<interDigitTimeOut value=\"10\"/>"
+                + "<errorTreatment value=\"stdErrorAndInfo\"/>"
+                + "<interruptableAnnInd value=\"false\"/>"
+                + "<voiceInformation value=\"false\"/>"
+                + "<voiceBack value=\"false\"/>" + "</collectedDigits>"
+                + "</collectedInfo>"
+                + "<disconnectFromIPForbidden value=\"true\"/>"
+                + "<informationToSend>" + "<inbandInfo>" + "<messageID>"
+                + "<variableMessage>" + "<elementaryMessageID value=\"145\"/>"
+                + "<variablePart>" + "<date data=\"02516072\"/>"
+                + "</variablePart>" + "<variablePart>"
+                + "<time data=\"5101\"/>" + "</variablePart>"
+                + "<variablePart>" + "<integer value=\"145\"/>"
+                + "</variablePart>" + "</variableMessage>" + "</messageID>"
+                + "<numberOfRepetitions value=\"5\"/>"
+                + "<duration value=\"8\"/>" + "<interval value=\"2\"/>"
+                + "</inbandInfo>" + "</informationToSend>"
+                + "<callSegmentID value=\"1\"/>"
+                + "<requestAnnouncementStartedNotification value=\"false\"/>"
+                + "</promptAndCollect>";
+
+        System.out.println("");
+        XMLObjectReader r_1 = new XMLObjectReader().setInput(
+                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
+                        .name()))).setBinding(new XMLBinding());
+        PromptAndCollectUserInformationRequestImpl readHere_1 = null;
+        if (r_1.hasNext()) {
+            readHere_1 = r_1.read("promptAndCollect",
+                    PromptAndCollectUserInformationRequestImpl.class);
+        }
+        System.out.println("");
+        System.out.println(readHere_1.toString());
+    }
+    */
 }

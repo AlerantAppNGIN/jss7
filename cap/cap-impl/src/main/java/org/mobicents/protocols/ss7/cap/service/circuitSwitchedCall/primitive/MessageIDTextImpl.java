@@ -34,6 +34,7 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class MessageIDTextImpl implements MessageIDText, CAPAsnPrimitive {
@@ -80,35 +81,44 @@ public class MessageIDTextImpl implements MessageIDText, CAPAsnPrimitive {
     }
 
     @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    public void decodeAll(AsnInputStream ansIS)
+            throws CAPParsingComponentException {
 
         try {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
     @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    public void decodeData(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException {
 
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.messageContent = null;
         this.attributes = null;
@@ -122,24 +132,32 @@ public class MessageIDTextImpl implements MessageIDText, CAPAsnPrimitive {
 
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
                 switch (tag) {
-                    case _ID_messageContent:
-                        this.messageContent = ais.readIA5String();
-                        if (this.messageContent.length() < 1 || this.messageContent.length() > 127)
-                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + ": messageContent length must be from 1 to 127, found " + this.messageContent.length(),
-                                    CAPParsingComponentExceptionReason.MistypedParameter);
-                        break;
-                    case _ID_attributes:
-                        this.attributes = ais.readOctetString();
-                        if (this.attributes.length < 2 || this.attributes.length > 10)
-                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + ": attributes length must be from 2 to 10, found " + this.attributes.length,
-                                    CAPParsingComponentExceptionReason.MistypedParameter);
-                        break;
+                case _ID_messageContent:
+                    this.messageContent = ais.readIA5String();
+                    if (this.messageContent.length() < 1
+                            || this.messageContent.length() > 127)
+                        throw new CAPParsingComponentException(
+                                "Error while decoding "
+                                        + _PrimitiveName
+                                        + ": messageContent length must be from 1 to 127, found "
+                                        + this.messageContent.length(),
+                                CAPParsingComponentExceptionReason.MistypedParameter);
+                    break;
+                case _ID_attributes:
+                    this.attributes = ais.readOctetString();
+                    if (this.attributes.length < 2
+                            || this.attributes.length > 10)
+                        throw new CAPParsingComponentException(
+                                "Error while decoding "
+                                        + _PrimitiveName
+                                        + ": attributes length must be from 2 to 10, found "
+                                        + this.attributes.length,
+                                CAPParsingComponentExceptionReason.MistypedParameter);
+                    break;
 
-                    default:
-                        ais.advanceElement();
-                        break;
+                default:
+                    ais.advanceElement();
+                    break;
                 }
             } else {
                 ais.advanceElement();
@@ -147,8 +165,10 @@ public class MessageIDTextImpl implements MessageIDText, CAPAsnPrimitive {
         }
 
         if (this.messageContent == null)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": messageContent is mandatory but not found ", CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException("Error while decoding "
+                    + _PrimitiveName
+                    + ": messageContent is mandatory but not found ",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
     }
 
     @Override
@@ -157,7 +177,8 @@ public class MessageIDTextImpl implements MessageIDText, CAPAsnPrimitive {
     }
 
     @Override
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
+            throws CAPException {
 
         try {
             asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
@@ -165,7 +186,8 @@ public class MessageIDTextImpl implements MessageIDText, CAPAsnPrimitive {
             this.encodeData(asnOs);
             asnOs.FinalizeContent(pos);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -173,24 +195,36 @@ public class MessageIDTextImpl implements MessageIDText, CAPAsnPrimitive {
     public void encodeData(AsnOutputStream aos) throws CAPException {
 
         if (this.messageContent == null)
-            throw new CAPException("Error while encoding " + _PrimitiveName + ": messageContent must not be null");
-        if (this.messageContent.length() < 1 || this.messageContent.length() > 127)
             throw new CAPException("Error while encoding " + _PrimitiveName
-                    + ": messageContent length must not be from 1 to 127, found: " + this.messageContent.length());
+                    + ": messageContent must not be null");
+        if (this.messageContent.length() < 1
+                || this.messageContent.length() > 127)
+            throw new CAPException(
+                    "Error while encoding "
+                            + _PrimitiveName
+                            + ": messageContent length must not be from 1 to 127, found: "
+                            + this.messageContent.length());
 
         try {
-            aos.writeStringIA5(Tag.CLASS_CONTEXT_SPECIFIC, _ID_messageContent, this.messageContent);
+            aos.writeStringIA5(Tag.CLASS_CONTEXT_SPECIFIC, _ID_messageContent,
+                    this.messageContent);
             if (this.attributes != null) {
                 if (this.attributes.length < 2 || this.attributes.length > 10)
-                    throw new CAPException("Error while encoding " + _PrimitiveName
-                            + ": messageContent length must not be from 2 to 10, found: " + this.attributes.length);
-                aos.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_attributes, this.attributes);
+                    throw new CAPException(
+                            "Error while encoding "
+                                    + _PrimitiveName
+                                    + ": messageContent length must not be from 2 to 10, found: "
+                                    + this.attributes.length);
+                aos.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_attributes, this.attributes);
             }
 
         } catch (IOException e) {
-            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("IOException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 

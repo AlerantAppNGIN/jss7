@@ -21,6 +21,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -31,13 +34,27 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.primitives.ErrorTreatment;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedDigits;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
+import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
 
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
+
+    public static final String MINIMUM_NB_OF_DIGITS = "minimumNbOfDigits";
+    public static final String MAXIMUM_NB_OF_DIGITS = "maximumNbOfDigits";
+    public static final String END_OF_REPLY_DIGIT = "endOfReplyDigit";
+    public static final String CANCEL_DIGIT = "cancelDigit";
+    public static final String START_DIGIT = "startDigit";
+    public static final String FIRST_DIGIT_TIMEOUT = "firstDigitTimeOut";
+    public static final String INTER_DIGIT_TIMEOUT = "interDigitTimeOut";
+    public static final String ERROR_TREATMENT = "errorTreatment";
+    public static final String INTERRUPTABLE_ANN_IND = "interruptableAnnInd";
+    public static final String VOICE_INFORMATION = "voiceInformation";
+    public static final String VOICE_BACK = "voiceBack";
 
     public static final int _ID_minimumNbOfDigits = 0;
     public static final int _ID_maximumNbOfDigits = 1;
@@ -68,9 +85,12 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
     public CollectedDigitsImpl() {
     }
 
-    public CollectedDigitsImpl(Integer minimumNbOfDigits, int maximumNbOfDigits, byte[] endOfReplyDigit, byte[] cancelDigit,
-            byte[] startDigit, Integer firstDigitTimeOut, Integer interDigitTimeOut, ErrorTreatment errorTreatment,
-            Boolean interruptableAnnInd, Boolean voiceInformation, Boolean voiceBack) {
+    public CollectedDigitsImpl(Integer minimumNbOfDigits,
+            int maximumNbOfDigits, byte[] endOfReplyDigit, byte[] cancelDigit,
+            byte[] startDigit, Integer firstDigitTimeOut,
+            Integer interDigitTimeOut, ErrorTreatment errorTreatment,
+            Boolean interruptableAnnInd, Boolean voiceInformation,
+            Boolean voiceBack) {
         this.minimumNbOfDigits = minimumNbOfDigits;
         this.maximumNbOfDigits = maximumNbOfDigits;
         this.endOfReplyDigit = endOfReplyDigit;
@@ -155,35 +175,44 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
     }
 
     @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    public void decodeAll(AsnInputStream ansIS)
+            throws CAPParsingComponentException {
 
         try {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
     @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    public void decodeData(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException {
 
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.minimumNbOfDigits = null;
         this.maximumNbOfDigits = -1;
@@ -217,44 +246,44 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
 
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
                 switch (tag) {
-                    case _ID_minimumNbOfDigits:
-                        this.minimumNbOfDigits = (int) ais.readInteger();
-                        break;
-                    case _ID_maximumNbOfDigits:
-                        this.maximumNbOfDigits = (int) ais.readInteger();
-                        break;
-                    case _ID_endOfReplyDigit:
-                        this.endOfReplyDigit = ais.readOctetString();
-                        break;
-                    case _ID_cancelDigit:
-                        this.cancelDigit = ais.readOctetString();
-                        break;
-                    case _ID_startDigit:
-                        this.startDigit = ais.readOctetString();
-                        break;
-                    case _ID_firstDigitTimeOut:
-                        this.firstDigitTimeOut = (int) ais.readInteger();
-                        break;
-                    case _ID_interDigitTimeOut:
-                        this.interDigitTimeOut = (int) ais.readInteger();
-                        break;
-                    case _ID_errorTreatment:
-                        int i1 = (int) ais.readInteger();
-                        this.errorTreatment = ErrorTreatment.getInstance(i1);
-                        break;
-                    case _ID_interruptableAnnInd:
-                        this.interruptableAnnInd = ais.readBoolean();
-                        break;
-                    case _ID_voiceInformation:
-                        this.voiceInformation = ais.readBoolean();
-                        break;
-                    case _ID_voiceBack:
-                        this.voiceBack = ais.readBoolean();
-                        break;
+                case _ID_minimumNbOfDigits:
+                    this.minimumNbOfDigits = (int) ais.readInteger();
+                    break;
+                case _ID_maximumNbOfDigits:
+                    this.maximumNbOfDigits = (int) ais.readInteger();
+                    break;
+                case _ID_endOfReplyDigit:
+                    this.endOfReplyDigit = ais.readOctetString();
+                    break;
+                case _ID_cancelDigit:
+                    this.cancelDigit = ais.readOctetString();
+                    break;
+                case _ID_startDigit:
+                    this.startDigit = ais.readOctetString();
+                    break;
+                case _ID_firstDigitTimeOut:
+                    this.firstDigitTimeOut = (int) ais.readInteger();
+                    break;
+                case _ID_interDigitTimeOut:
+                    this.interDigitTimeOut = (int) ais.readInteger();
+                    break;
+                case _ID_errorTreatment:
+                    int i1 = (int) ais.readInteger();
+                    this.errorTreatment = ErrorTreatment.getInstance(i1);
+                    break;
+                case _ID_interruptableAnnInd:
+                    this.interruptableAnnInd = ais.readBoolean();
+                    break;
+                case _ID_voiceInformation:
+                    this.voiceInformation = ais.readBoolean();
+                    break;
+                case _ID_voiceBack:
+                    this.voiceBack = ais.readBoolean();
+                    break;
 
-                    default:
-                        ais.advanceElement();
-                        break;
+                default:
+                    ais.advanceElement();
+                    break;
                 }
             } else {
                 ais.advanceElement();
@@ -262,8 +291,10 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
         }
 
         if (maximumNbOfDigits == -1)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": maximumNbOfDigits is mandatory but not found", CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException("Error while decoding "
+                    + _PrimitiveName
+                    + ": maximumNbOfDigits is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
     }
 
     @Override
@@ -272,7 +303,8 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
     }
 
     @Override
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
+            throws CAPException {
 
         try {
             asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
@@ -280,7 +312,8 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
             this.encodeData(asnOs);
             asnOs.FinalizeContent(pos);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -290,58 +323,82 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
         try {
             if (this.minimumNbOfDigits != null) {
                 if (this.minimumNbOfDigits < 1 || this.minimumNbOfDigits > 30)
-                    throw new CAPException("Error while encoding " + _PrimitiveName
-                            + ": minimumNbOfDigits must have value from 1 to 30");
-                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_minimumNbOfDigits, this.minimumNbOfDigits);
+                    throw new CAPException(
+                            "Error while encoding "
+                                    + _PrimitiveName
+                                    + ": minimumNbOfDigits must have value from 1 to 30");
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_minimumNbOfDigits, this.minimumNbOfDigits);
             }
 
             if (this.maximumNbOfDigits < 1 || this.maximumNbOfDigits > 30)
                 throw new CAPException("Error while encoding " + _PrimitiveName
                         + ": maximumNbOfDigits must have value from 1 to 30");
-            aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_maximumNbOfDigits, this.maximumNbOfDigits);
+            aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_maximumNbOfDigits,
+                    this.maximumNbOfDigits);
 
             if (this.endOfReplyDigit != null) {
-                if (this.endOfReplyDigit.length < 1 || this.endOfReplyDigit.length > 2)
-                    throw new CAPException("Error while encoding " + _PrimitiveName
+                if (this.endOfReplyDigit.length < 1
+                        || this.endOfReplyDigit.length > 2)
+                    throw new CAPException("Error while encoding "
+                            + _PrimitiveName
                             + ": endOfReplyDigit length must be from 1 to 2");
-                aos.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_endOfReplyDigit, this.endOfReplyDigit);
+                aos.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_endOfReplyDigit, this.endOfReplyDigit);
             }
             if (this.cancelDigit != null) {
                 if (this.cancelDigit.length < 1 || this.cancelDigit.length > 2)
-                    throw new CAPException("Error while encoding " + _PrimitiveName
+                    throw new CAPException("Error while encoding "
+                            + _PrimitiveName
                             + ": cancelDigit length must be from 1 to 2");
-                aos.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_cancelDigit, this.cancelDigit);
+                aos.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_cancelDigit, this.cancelDigit);
             }
             if (this.startDigit != null) {
                 if (this.startDigit.length < 1 || this.startDigit.length > 2)
-                    throw new CAPException("Error while encoding " + _PrimitiveName + ": startDigit length must be from 1 to 2");
-                aos.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_startDigit, this.startDigit);
+                    throw new CAPException("Error while encoding "
+                            + _PrimitiveName
+                            + ": startDigit length must be from 1 to 2");
+                aos.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_startDigit, this.startDigit);
             }
             if (this.firstDigitTimeOut != null) {
                 if (this.firstDigitTimeOut < 1 || this.firstDigitTimeOut > 127)
-                    throw new CAPException("Error while encoding " + _PrimitiveName
-                            + ": firstDigitTimeOut must have value from 1 to 127");
-                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_firstDigitTimeOut, this.firstDigitTimeOut);
+                    throw new CAPException(
+                            "Error while encoding "
+                                    + _PrimitiveName
+                                    + ": firstDigitTimeOut must have value from 1 to 127");
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_firstDigitTimeOut, this.firstDigitTimeOut);
             }
             if (this.interDigitTimeOut != null) {
                 if (this.interDigitTimeOut < 1 || this.interDigitTimeOut > 127)
-                    throw new CAPException("Error while encoding " + _PrimitiveName
-                            + ": interDigitTimeOut must have value from 1 to 127");
-                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_interDigitTimeOut, this.interDigitTimeOut);
+                    throw new CAPException(
+                            "Error while encoding "
+                                    + _PrimitiveName
+                                    + ": interDigitTimeOut must have value from 1 to 127");
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_interDigitTimeOut, this.interDigitTimeOut);
             }
             if (this.errorTreatment != null)
-                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_errorTreatment, this.errorTreatment.getCode());
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_errorTreatment, this.errorTreatment.getCode());
             if (this.interruptableAnnInd != null)
-                aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_interruptableAnnInd, this.interruptableAnnInd);
+                aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_interruptableAnnInd, this.interruptableAnnInd);
             if (this.voiceInformation != null)
-                aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_voiceInformation, this.voiceInformation);
+                aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_voiceInformation, this.voiceInformation);
             if (this.voiceBack != null)
-                aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_voiceBack, this.voiceBack);
+                aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_voiceBack,
+                        this.voiceBack);
 
         } catch (IOException e) {
-            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("IOException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -409,4 +466,145 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
 
         return sb.toString();
     }
+
+    protected static final XMLFormat<CollectedDigitsImpl> COLLECTED_DIGITS_XML = new XMLFormat<CollectedDigitsImpl>(
+            CollectedDigitsImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                CollectedDigitsImpl collectedDigits) throws XMLStreamException {
+
+            collectedDigits.minimumNbOfDigits = xml.get(MINIMUM_NB_OF_DIGITS,
+                    Integer.class);
+            collectedDigits.maximumNbOfDigits = xml.get(MAXIMUM_NB_OF_DIGITS,
+                    Integer.class);
+
+            String endOFReplyDigit = xml.get(END_OF_REPLY_DIGIT, String.class);
+            collectedDigits.endOfReplyDigit = endOFReplyDigit != null ? OctetStringBase
+                    .hexToBytes(endOFReplyDigit) : null;
+
+            String cancelDigit = xml.get(CANCEL_DIGIT, String.class);
+            collectedDigits.cancelDigit = cancelDigit != null ? OctetStringBase
+                    .hexToBytes(cancelDigit) : null;
+
+            String startDigit = xml.get(START_DIGIT, String.class);
+            collectedDigits.startDigit = startDigit != null ? OctetStringBase
+                    .hexToBytes(startDigit) : null;
+
+            collectedDigits.firstDigitTimeOut = xml.get(FIRST_DIGIT_TIMEOUT,
+                    Integer.class);
+            collectedDigits.interDigitTimeOut = xml.get(INTER_DIGIT_TIMEOUT,
+                    Integer.class);
+
+            String errorTreatment = xml.get(ERROR_TREATMENT, String.class);
+            collectedDigits.errorTreatment = errorTreatment != null ? ErrorTreatment
+                    .valueOf(errorTreatment) : ErrorTreatment.stdErrorAndInfo;
+            collectedDigits.interruptableAnnInd = xml.get(
+                    INTERRUPTABLE_ANN_IND, Boolean.class);
+            collectedDigits.voiceInformation = xml.get(VOICE_INFORMATION,
+                    Boolean.class);
+            collectedDigits.voiceBack = xml.get(VOICE_BACK, Boolean.class);
+        }
+
+        @Override
+        public void write(CollectedDigitsImpl obj,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            // it has a default value, 1
+            if (obj.getMinimumNbOfDigits() != null
+                    && !obj.getMinimumNbOfDigits().equals(1)) {
+                xml.add(obj.getMinimumNbOfDigits(), MINIMUM_NB_OF_DIGITS,
+                        Integer.class);
+            }
+            xml.add(obj.getMaximumNbOfDigits(), MAXIMUM_NB_OF_DIGITS,
+                    Integer.class);
+            if (obj.getEndOfReplyDigit() != null) {
+                xml.add(OctetStringBase.bytesToHex(obj.getEndOfReplyDigit()),
+                        END_OF_REPLY_DIGIT, String.class);
+            }
+            if (obj.getCancelDigit() != null) {
+                xml.add(OctetStringBase.bytesToHex(obj.getCancelDigit()),
+                        CANCEL_DIGIT, String.class);
+            }
+            if (obj.getStartDigit() != null) {
+                xml.add(OctetStringBase.bytesToHex(obj.getStartDigit()),
+                        START_DIGIT, String.class);
+            }
+
+            if (obj.getFirstDigitTimeOut() != null) {
+                xml.add(obj.getFirstDigitTimeOut(), FIRST_DIGIT_TIMEOUT,
+                        Integer.class);
+            }
+
+            if (obj.getInterDigitTimeOut() != null) {
+                xml.add(obj.getInterDigitTimeOut(), INTER_DIGIT_TIMEOUT,
+                        Integer.class);
+            }
+            // it has a default value, stdErrorAndInfo
+            if (obj.getErrorTreatment() != null
+                    && obj.getErrorTreatment() != ErrorTreatment.stdErrorAndInfo) {
+                xml.add(obj.getErrorTreatment().toString(), ERROR_TREATMENT,
+                        String.class);
+            }
+
+            // it has a default value, true
+            if (obj.getInterruptableAnnInd() != null
+                    && !obj.getInterruptableAnnInd()) {
+                xml.add(obj.getInterruptableAnnInd(), INTERRUPTABLE_ANN_IND,
+                        Boolean.class);
+            }
+
+            // it has a default value, false
+            if (obj.getVoiceInformation() != null && obj.getVoiceInformation()) {
+                xml.add(obj.getVoiceInformation(), VOICE_INFORMATION,
+                        Boolean.class);
+            }
+
+            // it has a default value, false
+            if (obj.getVoiceBack() != null && obj.getVoiceBack()) {
+                xml.add(obj.getVoiceBack(), VOICE_BACK, Boolean.class);
+            }
+        }
+
+    };
+
+    /*
+     * TODO: move this code into the appropriate test class
+    public static void main(String[] args) throws UnsupportedEncodingException,
+            XMLStreamException {
+        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
+                .setOutput(System.out).setIndentation(" ");
+
+        x.write(new CollectedDigitsImpl(null, 20, "#".getBytes(), "*"
+                .getBytes(), "1".getBytes(), 5, 10,
+                ErrorTreatment.stdErrorAndInfo, false, false, false),
+                "collectedDigits");
+        x.flush();
+
+        String xml_1 = "<collectedDigits>"
+                + "<minimumNbOfDigits value=\"10\"/>"
+                + "<maximumNbOfDigits value=\"20\"/>"
+                + "<endOfReplyDigit value=\"23\"/>"
+                + "<cancelDigit value=\"2A\"/>" + "<startDigit value=\"31\"/>"
+                + "<firstDigitTimeOut value=\"5\"/>"
+                + "<interDigitTimeOut value=\"10\"/>"
+                + "<errorTreatment value=\"stdErrorAndInfo\"/>"
+                + "<interruptableAnnInd value=\"false\"/>"
+                + "<voiceInformation value=\"false\"/>"
+                + "<voiceBack value=\"false\"/>" + "</collectedDigits>";
+
+        System.out.println("");
+        XMLObjectReader r_1 = new XMLObjectReader().setInput(
+                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
+                        .name()))).setBinding(new XMLBinding());
+        CollectedDigitsImpl readHere_1 = null;
+        if (r_1.hasNext()) {
+            readHere_1 = r_1.read("collectedDigits", CollectedDigitsImpl.class);
+        }
+        System.out.println("");
+        System.out.println(readHere_1.toString());
+    }
+    */
+
 }

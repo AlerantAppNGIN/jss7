@@ -43,7 +43,8 @@ import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.Tim
  * @author Amit Bhayani
  *
  */
-public class ApplyChargingReportRequestImpl extends CircuitSwitchedCallMessageImpl implements ApplyChargingReportRequest {
+public class ApplyChargingReportRequestImpl extends
+        CircuitSwitchedCallMessageImpl implements ApplyChargingReportRequest {
 
     private static final String TIME_DURATION_CHARGING_RESULT = "timeDurationChargingResult";
 
@@ -58,7 +59,8 @@ public class ApplyChargingReportRequestImpl extends CircuitSwitchedCallMessageIm
     public ApplyChargingReportRequestImpl() {
     }
 
-    public ApplyChargingReportRequestImpl(TimeDurationChargingResult timeDurationChargingResult) {
+    public ApplyChargingReportRequestImpl(
+            TimeDurationChargingResult timeDurationChargingResult) {
         this.timeDurationChargingResult = timeDurationChargingResult;
     }
 
@@ -93,35 +95,44 @@ public class ApplyChargingReportRequestImpl extends CircuitSwitchedCallMessageIm
     }
 
     @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    public void decodeAll(AsnInputStream ansIS)
+            throws CAPParsingComponentException {
 
         try {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
     @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    public void decodeData(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException {
 
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.timeDurationChargingResult = null;
 
@@ -130,13 +141,18 @@ public class ApplyChargingReportRequestImpl extends CircuitSwitchedCallMessageIm
 
         int tag = aiss.readTag();
 
-        if (tag != _ID_timeDurationChargingResult || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || aiss.isTagPrimitive())
-            throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
-                    + ": bad tag or tagClass or is primitive of the choice timeDurationChargingResult",
+        if (tag != _ID_timeDurationChargingResult
+                || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC
+                || aiss.isTagPrimitive())
+            throw new CAPParsingComponentException(
+                    "Error when decoding "
+                            + _PrimitiveName
+                            + ": bad tag or tagClass or is primitive of the choice timeDurationChargingResult",
                     CAPParsingComponentExceptionReason.MistypedParameter);
 
         this.timeDurationChargingResult = new TimeDurationChargingResultImpl();
-        ((TimeDurationChargingResultImpl) this.timeDurationChargingResult).decodeAll(aiss);
+        ((TimeDurationChargingResultImpl) this.timeDurationChargingResult)
+                .decodeAll(aiss);
     }
 
     @Override
@@ -145,7 +161,8 @@ public class ApplyChargingReportRequestImpl extends CircuitSwitchedCallMessageIm
     }
 
     @Override
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
+            throws CAPException {
 
         try {
             asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
@@ -153,7 +170,8 @@ public class ApplyChargingReportRequestImpl extends CircuitSwitchedCallMessageIm
             this.encodeData(asnOs);
             asnOs.FinalizeContent(pos);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -161,15 +179,19 @@ public class ApplyChargingReportRequestImpl extends CircuitSwitchedCallMessageIm
     public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
         if (this.timeDurationChargingResult == null)
-            throw new CAPException("Error while encoding " + _PrimitiveName + ": timeDurationChargingResult must not be null");
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": timeDurationChargingResult must not be null");
 
         try {
-            asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_timeDurationChargingResult);
+            asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false,
+                    _ID_timeDurationChargingResult);
             int pos = asnOs.StartContentDefiniteLength();
-            ((TimeDurationChargingResultImpl) this.timeDurationChargingResult).encodeData(asnOs);
+            ((TimeDurationChargingResultImpl) this.timeDurationChargingResult)
+                    .encodeData(asnOs);
             asnOs.FinalizeContent(pos);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -197,21 +219,28 @@ public class ApplyChargingReportRequestImpl extends CircuitSwitchedCallMessageIm
             ApplyChargingReportRequestImpl.class) {
 
         @Override
-        public void read(javolution.xml.XMLFormat.InputElement xml, ApplyChargingReportRequestImpl applyChargingReportRequest)
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                ApplyChargingReportRequestImpl applyChargingReportRequest)
                 throws XMLStreamException {
-            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, applyChargingReportRequest);
-            applyChargingReportRequest.timeDurationChargingResult = xml.get(TIME_DURATION_CHARGING_RESULT,
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml,
+                    applyChargingReportRequest);
+            applyChargingReportRequest.timeDurationChargingResult = xml.get(
+                    TIME_DURATION_CHARGING_RESULT,
                     TimeDurationChargingResultImpl.class);
         }
 
         @Override
-        public void write(ApplyChargingReportRequestImpl applyChargingReportRequest, javolution.xml.XMLFormat.OutputElement xml)
+        public void write(
+                ApplyChargingReportRequestImpl applyChargingReportRequest,
+                javolution.xml.XMLFormat.OutputElement xml)
                 throws XMLStreamException {
 
-            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(applyChargingReportRequest, xml);
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(applyChargingReportRequest,
+                    xml);
 
             xml.add((TimeDurationChargingResultImpl) applyChargingReportRequest.timeDurationChargingResult,
-                    TIME_DURATION_CHARGING_RESULT, TimeDurationChargingResultImpl.class);
+                    TIME_DURATION_CHARGING_RESULT,
+                    TimeDurationChargingResultImpl.class);
         }
     };
 

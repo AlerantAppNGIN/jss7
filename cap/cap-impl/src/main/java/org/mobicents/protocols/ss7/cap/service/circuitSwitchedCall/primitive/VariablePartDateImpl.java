@@ -19,37 +19,39 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
-import java.io.IOException;
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
-import org.mobicents.protocols.asn.AsnException;
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.cap.api.CAPException;
-import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
-import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.VariablePartDate;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
+import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
 
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
-public class VariablePartDateImpl implements VariablePartDate, CAPAsnPrimitive {
+public class VariablePartDateImpl extends OctetStringBase implements
+        VariablePartDate, CAPAsnPrimitive {
 
-    public static final String _PrimitiveName = "VariablePartDate";
+    // public static final String _PrimitiveName = "VariablePartDate";
 
-    private byte[] data;
+    private static final String DATA = "data";
+
+    // private byte[] data;
 
     public VariablePartDateImpl() {
+        super(4, 4, "VariablePartDate");
     }
 
     public VariablePartDateImpl(byte[] data) {
-        this.data = data;
+        // this.data = data;
+        super(4, 4, "VariablePartDate", data);
     }
 
     public VariablePartDateImpl(int year, int month, int day) {
+        super(4, 4, "VariablePartDate");
         this.data = new byte[4];
 
         this.data[0] = (byte) this.encodeByte(year / 100);
@@ -99,88 +101,6 @@ public class VariablePartDateImpl implements VariablePartDate, CAPAsnPrimitive {
     }
 
     @Override
-    public int getTag() throws CAPException {
-        return Tag.STRING_OCTET;
-    }
-
-    @Override
-    public int getTagClass() {
-        return Tag.CLASS_UNIVERSAL;
-    }
-
-    @Override
-    public boolean getIsPrimitive() {
-        return true;
-    }
-
-    @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-
-        try {
-            int length = ansIS.readLength();
-            this._decode(ansIS, length);
-        } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-
-        try {
-            this._decode(ansIS, length);
-        } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
-
-        this.data = ansIS.readOctetStringData(length);
-        if (this.data.length < 4 || this.data.length > 4)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": data must be from 4 to 4 bytes length, found: " + this.data.length,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-    }
-
-    @Override
-    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-    }
-
-    @Override
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-
-        try {
-            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-            int pos = asnOs.StartContentDefiniteLength();
-            this.encodeData(asnOs);
-            asnOs.FinalizeContent(pos);
-        } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void encodeData(AsnOutputStream asnOs) throws CAPException {
-
-        if (this.data == null)
-            throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
-        if (this.data.length != 4)
-            throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be equal 4");
-
-        asnOs.writeOctetStringData(data);
-    }
-
-    @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
@@ -200,4 +120,50 @@ public class VariablePartDateImpl implements VariablePartDate, CAPAsnPrimitive {
 
         return sb.toString();
     }
+
+    protected static final XMLFormat<VariablePartDateImpl> VARIABLE_PART_DATE_XML = new XMLFormat<VariablePartDateImpl>(
+            VariablePartDateImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                VariablePartDateImpl variablePartDate)
+                throws XMLStreamException {
+            variablePartDate.data = OctetStringBase.hexToBytes(xml
+                    .getAttribute(DATA, (String) null));
+
+        }
+
+        @Override
+        public void write(VariablePartDateImpl obj,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            xml.setAttribute(DATA, OctetStringBase.bytesToHex(obj.data));
+
+        }
+
+    };
+
+    /*
+     * TODO: move this code into the appropriate test class
+    public static void main(String[] args) throws UnsupportedEncodingException,
+            XMLStreamException {
+        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
+                .setOutput(System.out).setIndentation(" ");
+        x.write(new VariablePartDateImpl(2015, 6, 25), "variablePartDateImpl");
+        x.flush();
+
+        String xml = "<variablePartDateImpl data=\"02516052\"/>";
+
+        XMLObjectReader r = new XMLObjectReader().setInput(
+                new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8
+                        .name()))).setBinding(new XMLBinding());
+        VariablePartDateImpl readHere = null;// = new VariablePartPriceImpl();
+        if (r.hasNext()) {
+            readHere = r.read("variablePartDateImpl",
+                    VariablePartDateImpl.class);
+        }
+        System.out.println("");
+        System.out.println(readHere.toString());
+    }
+    */
 }
