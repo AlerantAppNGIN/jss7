@@ -21,6 +21,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -36,9 +39,14 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
-public class InformationToSendImpl implements InformationToSend, CAPAsnPrimitive {
+public class InformationToSendImpl implements InformationToSend,
+        CAPAsnPrimitive {
+
+    private static final String INBAND_INFO = "inbandInfo";
+    private static final String TONE = "tone";
 
     public static final int _ID_inbandInfo = 0;
     public static final int _ID_tone = 1;
@@ -77,7 +85,8 @@ public class InformationToSendImpl implements InformationToSend, CAPAsnPrimitive
         } else if (this.tone != null) {
             return _ID_tone;
         } else {
-            throw new CAPException("Error while encoding " + _PrimitiveName + ": no of choices has been definite");
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": no of choices has been definite");
         }
     }
 
@@ -92,55 +101,67 @@ public class InformationToSendImpl implements InformationToSend, CAPAsnPrimitive
     }
 
     @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    public void decodeAll(AsnInputStream ansIS)
+            throws CAPParsingComponentException {
 
         try {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
     @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    public void decodeData(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException {
 
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ais, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.inbandInfo = null;
         this.tone = null;
 
-        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass or is primitive",
+        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC
+                || ais.isTagPrimitive())
+            throw new CAPParsingComponentException("Error while decoding "
+                    + _PrimitiveName + ": bad tagClass or is primitive",
                     CAPParsingComponentExceptionReason.MistypedParameter);
 
         switch (ais.getTag()) {
-            case _ID_inbandInfo:
-                this.inbandInfo = new InbandInfoImpl();
-                ((InbandInfoImpl) this.inbandInfo).decodeData(ais, length);
-                break;
-            case _ID_tone:
-                this.tone = new ToneImpl();
-                ((ToneImpl) this.tone).decodeData(ais, length);
-                break;
-            default:
-                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
-                        CAPParsingComponentExceptionReason.MistypedParameter);
+        case _ID_inbandInfo:
+            this.inbandInfo = new InbandInfoImpl();
+            ((InbandInfoImpl) this.inbandInfo).decodeData(ais, length);
+            break;
+        case _ID_tone:
+            this.tone = new ToneImpl();
+            ((ToneImpl) this.tone).decodeData(ais, length);
+            break;
+        default:
+            throw new CAPParsingComponentException("Error while decoding "
+                    + _PrimitiveName + ": bad tag: " + ais.getTag(),
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
@@ -150,7 +171,8 @@ public class InformationToSendImpl implements InformationToSend, CAPAsnPrimitive
     }
 
     @Override
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
+            throws CAPException {
 
         try {
             asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
@@ -158,7 +180,8 @@ public class InformationToSendImpl implements InformationToSend, CAPAsnPrimitive
             this.encodeData(asnOs);
             asnOs.FinalizeContent(pos);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -172,8 +195,8 @@ public class InformationToSendImpl implements InformationToSend, CAPAsnPrimitive
             choiceCnt++;
 
         if (choiceCnt != 1)
-            throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: "
-                    + choiceCnt);
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": only one choice must be definite, found: " + choiceCnt);
 
         if (this.inbandInfo != null)
             ((InbandInfoImpl) this.inbandInfo).encodeData(asnOs);
@@ -201,4 +224,103 @@ public class InformationToSendImpl implements InformationToSend, CAPAsnPrimitive
 
         return sb.toString();
     }
+
+    protected static final XMLFormat<InformationToSendImpl> INFORMATION_TO_SEND_XML = new XMLFormat<InformationToSendImpl>(
+            InformationToSendImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                InformationToSendImpl informationToSend)
+                throws XMLStreamException {
+
+            informationToSend.inbandInfo = xml.get(INBAND_INFO,
+                    InbandInfoImpl.class);
+            if (informationToSend.inbandInfo != null) {
+                return;
+            }
+            informationToSend.tone = xml.get(TONE, ToneImpl.class);
+        }
+
+        @Override
+        public void write(InformationToSendImpl obj,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            if (obj.getInbandInfo() != null) {
+                xml.add((InbandInfoImpl) obj.getInbandInfo(), INBAND_INFO,
+                        InbandInfoImpl.class);
+                return;
+            }
+
+            if (obj.getTone() != null) {
+                xml.add((ToneImpl) obj.getTone(), TONE, ToneImpl.class);
+                return;
+            }
+
+        }
+
+    };
+
+    /*
+     * TODO: move this code into the appropriate test class
+    public static void main(String[] args) throws UnsupportedEncodingException,
+            XMLStreamException {
+        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
+                .setOutput(System.out).setIndentation(" ");
+
+        ArrayList<VariablePart> aL = new ArrayList<VariablePart>();
+        aL.add(new VariablePartImpl(new VariablePartDateImpl(2015, 6, 27)));
+        aL.add(new VariablePartImpl(new VariablePartTimeImpl(15, 10)));
+        aL.add(new VariablePartImpl(new Integer(145)));
+        VariableMessageImpl vm = new VariableMessageImpl(145, aL);
+        MessageIDImpl mi = new MessageIDImpl(vm);
+        InbandInfoImpl inbandInfoImpl = new InbandInfoImpl(mi, new Integer(5),
+                new Integer(8), new Integer(2));
+
+        x.write(new InformationToSendImpl(inbandInfoImpl), "informationToSend");
+        x.flush();
+
+        String xml_1 = "<informationToSend>" + "<inbandInfo>"
+                + "<duration value=\"8\"/>" + "<interval value=\"2\"/>"
+                + "<numberOfRepetitions value=\"5\"/>" + "<messageID>"
+                + "<variableMessage>" + "<elementaryMessageID value=\"145\"/>"
+                + "<variablePart>" + "<date data=\"02516072\"/>"
+                + "</variablePart>" + "<variablePart>"
+                + "<time data=\"5101\"/>" + "</variablePart>"
+                + "<variablePart>" + "<integer value=\"145\"/>"
+                + "</variablePart>" + "</variableMessage>" + "</messageID>"
+                + "</inbandInfo>" + "</informationToSend>";
+
+        System.out.println("");
+        XMLObjectReader r_1 = new XMLObjectReader().setInput(
+                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
+                        .name()))).setBinding(new XMLBinding());
+        InformationToSendImpl readHere_1 = null;
+        if (r_1.hasNext()) {
+            readHere_1 = r_1.read("informationToSend",
+                    InformationToSendImpl.class);
+        }
+        System.out.println("");
+        System.out.println(readHere_1.toString());
+
+        x.write(new InformationToSendImpl(new ToneImpl(25, null)),
+                "informationToSend");
+        x.flush();
+
+        String xml_2 = "<informationToSend>" + "<tone>"
+                + "<toneID value=\"25\"/>" + "</tone>" + "</informationToSend>";
+
+        System.out.println("");
+        XMLObjectReader r_2 = new XMLObjectReader().setInput(
+                new ByteArrayInputStream(xml_2.getBytes(StandardCharsets.UTF_8
+                        .name()))).setBinding(new XMLBinding());
+        InformationToSendImpl readHere_2 = null;
+        if (r_2.hasNext()) {
+            readHere_2 = r_2.read("informationToSend",
+                    InformationToSendImpl.class);
+        }
+        System.out.println("");
+        System.out.println(readHere_2.toString());
+    }
+    */
 }

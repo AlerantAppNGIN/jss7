@@ -21,6 +21,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -37,10 +40,14 @@ import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
-public class PromptAndCollectUserInformationResponseImpl extends CircuitSwitchedCallMessageImpl implements
+public class PromptAndCollectUserInformationResponseImpl extends
+        CircuitSwitchedCallMessageImpl implements
         PromptAndCollectUserInformationResponse {
+
+    private static final String DIGITS_RESPONSE = "digitsResponse";
 
     public static final int _ID_digitsResponse = 0;
 
@@ -86,51 +93,63 @@ public class PromptAndCollectUserInformationResponseImpl extends CircuitSwitched
     }
 
     @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    public void decodeAll(AsnInputStream ansIS)
+            throws CAPParsingComponentException {
 
         try {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
     @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    public void decodeData(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException {
 
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ais, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.digitsResponse = null;
 
-        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": bad tagClass or is not primitive", CAPParsingComponentExceptionReason.MistypedParameter);
+        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC
+                || !ais.isTagPrimitive())
+            throw new CAPParsingComponentException("Error while decoding "
+                    + _PrimitiveName + ": bad tagClass or is not primitive",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
         switch (ais.getTag()) {
-            case _ID_digitsResponse:
-                this.digitsResponse = new DigitsImpl();
-                ((DigitsImpl) this.digitsResponse).decodeData(ais, length);
-                this.digitsResponse.setIsGenericDigits();
-                break;
-            default:
-                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
-                        CAPParsingComponentExceptionReason.MistypedParameter);
+        case _ID_digitsResponse:
+            this.digitsResponse = new DigitsImpl();
+            ((DigitsImpl) this.digitsResponse).decodeData(ais, length);
+            this.digitsResponse.setIsGenericDigits();
+            break;
+        default:
+            throw new CAPParsingComponentException("Error while decoding "
+                    + _PrimitiveName + ": bad tag: " + ais.getTag(),
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
@@ -140,7 +159,8 @@ public class PromptAndCollectUserInformationResponseImpl extends CircuitSwitched
     }
 
     @Override
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
+            throws CAPException {
 
         try {
             asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
@@ -148,7 +168,8 @@ public class PromptAndCollectUserInformationResponseImpl extends CircuitSwitched
             this.encodeData(asnOs);
             asnOs.FinalizeContent(pos);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -160,8 +181,8 @@ public class PromptAndCollectUserInformationResponseImpl extends CircuitSwitched
             choiceCnt++;
 
         if (choiceCnt != 1)
-            throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: "
-                    + choiceCnt);
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": only one choice must be definite, found: " + choiceCnt);
 
         if (this.digitsResponse != null)
             ((DigitsImpl) this.digitsResponse).encodeData(asnOs);
@@ -183,4 +204,58 @@ public class PromptAndCollectUserInformationResponseImpl extends CircuitSwitched
 
         return sb.toString();
     }
+
+    protected static final XMLFormat<PromptAndCollectUserInformationResponseImpl> PROMPT_AND_COLLECT_USER_INFORMATION_RESPONSE_XML = new XMLFormat<PromptAndCollectUserInformationResponseImpl>(
+            PromptAndCollectUserInformationResponseImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                PromptAndCollectUserInformationResponseImpl pacui)
+                throws XMLStreamException {
+
+            pacui.digitsResponse = xml.get(DIGITS_RESPONSE, DigitsImpl.class);
+
+        }
+
+        @Override
+        public void write(PromptAndCollectUserInformationResponseImpl obj,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            xml.add((DigitsImpl) obj.getDigitsResponse(), DIGITS_RESPONSE,
+                    DigitsImpl.class);
+        }
+
+    };
+
+    /*
+     * TODO: move this code into the appropriate test class
+    public static void main(String[] args) throws UnsupportedEncodingException,
+            XMLStreamException, ParameterException, CAPException {
+        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
+                .setOutput(System.out).setIndentation(" ");
+
+        GenericDigitsImpl gd = new GenericDigitsImpl("123".getBytes());
+        x.write(new PromptAndCollectUserInformationResponseImpl(new DigitsImpl(
+                gd)), "promptAndCollectResult");
+        x.flush();
+
+        String xml_1 = "<promptAndCollectResult>" + "<digitsResponse>"
+                + "<genericDigits encodingScheme=\"1\" typeOfDigits=\"17\">"
+                + "<digits value=\"3233\"/>" + "</genericDigits>"
+                + "</digitsResponse>" + "</promptAndCollectResult>";
+
+        System.out.println("");
+        XMLObjectReader r_1 = new XMLObjectReader().setInput(
+                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
+                        .name()))).setBinding(new XMLBinding());
+        PromptAndCollectUserInformationResponseImpl readHere_1 = null;
+        if (r_1.hasNext()) {
+            readHere_1 = r_1.read("promptAndCollectResult",
+                    PromptAndCollectUserInformationResponseImpl.class);
+        }
+        System.out.println("");
+        System.out.println(readHere_1.toString());
+    }
+    */
 }

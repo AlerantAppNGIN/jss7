@@ -51,7 +51,8 @@ import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
  * @author Amit Bhayani
  * @author alerant appngin
  */
-public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl implements ApplyChargingRequest {
+public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl
+        implements ApplyChargingRequest {
 
     private static final String A_CH_BILLING_CHARGING_CHARACTERISTICS = "aChBillingChargingCharacteristics";
     private static final String PARTY_TO_CHARGE = "partyToCharge";
@@ -73,8 +74,10 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
     public ApplyChargingRequestImpl() {
     }
 
-    public ApplyChargingRequestImpl(CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics,
-            SendingSideID partyToCharge, CAPExtensions extensions, AChChargingAddress aChChargingAddress) {
+    public ApplyChargingRequestImpl(
+            CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics,
+            SendingSideID partyToCharge, CAPExtensions extensions,
+            AChChargingAddress aChChargingAddress) {
         this.aChBillingChargingCharacteristics = aChBillingChargingCharacteristics;
         this.partyToCharge = partyToCharge;
         this.extensions = extensions;
@@ -127,41 +130,51 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
     }
 
     @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    public void decodeAll(AsnInputStream ansIS)
+            throws CAPParsingComponentException {
 
         try {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
     @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    public void decodeData(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException {
 
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.aChBillingChargingCharacteristics = null;
         this.partyToCharge = null;
         this.partyToCharge = new SendingSideIDImpl(LegType.leg1);
         this.extensions = null;
-        this.aChChargingAddress = new AChChargingAddressImpl(new LegIDImpl(true, LegType.leg1));
+        this.aChChargingAddress = new AChChargingAddressImpl(new LegIDImpl(
+                true, LegType.leg1));
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
         while (true) {
@@ -172,29 +185,30 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
 
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
                 switch (tag) {
-                    case _ID_aChBillingChargingCharacteristics:
-                        this.aChBillingChargingCharacteristics = new CAMELAChBillingChargingCharacteristicsImpl();
-                        ((CAMELAChBillingChargingCharacteristicsImpl) this.aChBillingChargingCharacteristics).decodeAll(ais);
-                        break;
-                    case _ID_partyToCharge:
-                        AsnInputStream ais2 = ais.readSequenceStream();
-                        ais2.readTag();
-                        this.partyToCharge = new SendingSideIDImpl();
-                        ((SendingSideIDImpl) this.partyToCharge).decodeAll(ais2);
-                        break;
-                    case _ID_extensions:
-                        this.extensions = new CAPExtensionsImpl();
-                        ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
-                        break;
-                    case _ID_aChChargingAddress:
-                        this.aChChargingAddress = new AChChargingAddressImpl();
-                        ((AChChargingAddressImpl) this.aChChargingAddress)
-                                .decodeAll(ais);
-                        break;
+                case _ID_aChBillingChargingCharacteristics:
+                    this.aChBillingChargingCharacteristics = new CAMELAChBillingChargingCharacteristicsImpl();
+                    ((CAMELAChBillingChargingCharacteristicsImpl) this.aChBillingChargingCharacteristics)
+                            .decodeAll(ais);
+                    break;
+                case _ID_partyToCharge:
+                    AsnInputStream ais2 = ais.readSequenceStream();
+                    ais2.readTag();
+                    this.partyToCharge = new SendingSideIDImpl();
+                    ((SendingSideIDImpl) this.partyToCharge).decodeAll(ais2);
+                    break;
+                case _ID_extensions:
+                    this.extensions = new CAPExtensionsImpl();
+                    ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
+                    break;
+                case _ID_aChChargingAddress:
+                    this.aChChargingAddress = new AChChargingAddressImpl();
+                    ((AChChargingAddressImpl) this.aChChargingAddress)
+                            .decodeAll(ais);
+                    break;
 
-                    default:
-                        ais.advanceElement();
-                        break;
+                default:
+                    ais.advanceElement();
+                    break;
                 }
             } else {
                 ais.advanceElement();
@@ -202,8 +216,10 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
         }
 
         if (this.aChBillingChargingCharacteristics == null)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": aChBillingChargingCharacteristics is mandatory but not found ",
+            throw new CAPParsingComponentException(
+                    "Error while decoding "
+                            + _PrimitiveName
+                            + ": aChBillingChargingCharacteristics is mandatory but not found ",
                     CAPParsingComponentExceptionReason.MistypedParameter);
     }
 
@@ -213,7 +229,8 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
     }
 
     @Override
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
+            throws CAPException {
 
         try {
             asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
@@ -221,7 +238,8 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
             this.encodeData(asnOs);
             asnOs.FinalizeContent(pos);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -234,22 +252,27 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
 
         try {
             if (this.aChBillingChargingCharacteristics != null)
-                ((CAMELAChBillingChargingCharacteristicsImpl) this.aChBillingChargingCharacteristics).encodeAll(aos,
-                        Tag.CLASS_CONTEXT_SPECIFIC, _ID_aChBillingChargingCharacteristics);
+                ((CAMELAChBillingChargingCharacteristicsImpl) this.aChBillingChargingCharacteristics)
+                        .encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                                _ID_aChBillingChargingCharacteristics);
             if (this.partyToCharge != null) {
-                aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_partyToCharge);
+                aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false,
+                        _ID_partyToCharge);
                 int pos = aos.StartContentDefiniteLength();
                 ((SendingSideIDImpl) this.partyToCharge).encodeAll(aos);
                 aos.FinalizeContent(pos);
             }
             if (this.extensions != null)
-                ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+                ((CAPExtensionsImpl) this.extensions).encodeAll(aos,
+                        Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
             if (this.aChChargingAddress != null) {
-                ((AChChargingAddressImpl) aChChargingAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_aChChargingAddress);
+                ((AChChargingAddressImpl) aChChargingAddress).encodeAll(aos,
+                        Tag.CLASS_CONTEXT_SPECIFIC, _ID_aChChargingAddress);
             }
 
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -289,31 +312,40 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
             ApplyChargingRequestImpl.class) {
 
         @Override
-        public void read(javolution.xml.XMLFormat.InputElement xml, ApplyChargingRequestImpl applyChargingRequest)
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                ApplyChargingRequestImpl applyChargingRequest)
                 throws XMLStreamException {
             CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, applyChargingRequest);
-            applyChargingRequest.aChBillingChargingCharacteristics = xml.get(A_CH_BILLING_CHARGING_CHARACTERISTICS,
+            applyChargingRequest.aChBillingChargingCharacteristics = xml.get(
+                    A_CH_BILLING_CHARGING_CHARACTERISTICS,
                     CAMELAChBillingChargingCharacteristicsImpl.class);
-            applyChargingRequest.partyToCharge = xml.get(PARTY_TO_CHARGE, SendingSideIDImpl.class);
-            applyChargingRequest.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
-            applyChargingRequest.aChChargingAddress = xml.get(A_CH_CHARGING_ADDRESS, AChChargingAddressImpl.class);
+            applyChargingRequest.partyToCharge = xml.get(PARTY_TO_CHARGE,
+                    SendingSideIDImpl.class);
+            applyChargingRequest.extensions = xml.get(EXTENSIONS,
+                    CAPExtensionsImpl.class);
+            applyChargingRequest.aChChargingAddress = xml.get(
+                    A_CH_CHARGING_ADDRESS, AChChargingAddressImpl.class);
         }
 
         @Override
-        public void write(ApplyChargingRequestImpl applyChargingRequest, javolution.xml.XMLFormat.OutputElement xml)
+        public void write(ApplyChargingRequestImpl applyChargingRequest,
+                javolution.xml.XMLFormat.OutputElement xml)
                 throws XMLStreamException {
 
             CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(applyChargingRequest, xml);
 
             if (applyChargingRequest.aChBillingChargingCharacteristics != null)
                 xml.add((CAMELAChBillingChargingCharacteristicsImpl) applyChargingRequest.aChBillingChargingCharacteristics,
-                        A_CH_BILLING_CHARGING_CHARACTERISTICS, CAMELAChBillingChargingCharacteristicsImpl.class);
+                        A_CH_BILLING_CHARGING_CHARACTERISTICS,
+                        CAMELAChBillingChargingCharacteristicsImpl.class);
 
             if (applyChargingRequest.partyToCharge != null)
-                xml.add((SendingSideIDImpl) applyChargingRequest.partyToCharge, PARTY_TO_CHARGE, SendingSideIDImpl.class);
+                xml.add((SendingSideIDImpl) applyChargingRequest.partyToCharge,
+                        PARTY_TO_CHARGE, SendingSideIDImpl.class);
 
             if (applyChargingRequest.extensions != null) {
-                xml.add((CAPExtensionsImpl) applyChargingRequest.extensions, EXTENSIONS, CAPExtensionsImpl.class);
+                xml.add((CAPExtensionsImpl) applyChargingRequest.extensions,
+                        EXTENSIONS, CAPExtensionsImpl.class);
             }
 
             if (applyChargingRequest.aChChargingAddress != null) {

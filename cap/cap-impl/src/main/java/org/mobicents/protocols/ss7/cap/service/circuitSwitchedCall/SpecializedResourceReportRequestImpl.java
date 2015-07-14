@@ -21,6 +21,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -36,10 +39,15 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
-public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMessageImpl implements
+public class SpecializedResourceReportRequestImpl extends
+        CircuitSwitchedCallMessageImpl implements
         SpecializedResourceReportRequest {
+
+    private static final String ALL_ANNOUNCEMENTS_COMPLETE = "allAnnouncementsComplete";
+    private static final String FIRST_ANNOUNCEMENT_STARTED = "firstAnnouncementStarted";
 
     public static final int _ID_allAnnouncementsComplete = 50;
     public static final int _ID_firstAnnouncementStarted = 51;
@@ -54,12 +62,17 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
 
     private boolean isCAPVersion4orLater;
 
+    public SpecializedResourceReportRequestImpl() {
+
+    }
+
     public SpecializedResourceReportRequestImpl(boolean isCAPVersion4orLater) {
         this.isCAPVersion4orLater = isCAPVersion4orLater;
     }
 
-    public SpecializedResourceReportRequestImpl(boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted,
-            boolean isCAPVersion4orLater) {
+    public SpecializedResourceReportRequestImpl(
+            boolean isAllAnnouncementsComplete,
+            boolean isFirstAnnouncementStarted, boolean isCAPVersion4orLater) {
         this.isAllAnnouncementsComplete = isAllAnnouncementsComplete;
         this.isFirstAnnouncementStarted = isFirstAnnouncementStarted;
         this.isCAPVersion4orLater = isCAPVersion4orLater;
@@ -132,56 +145,68 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
     }
 
     @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    public void decodeAll(AsnInputStream ansIS)
+            throws CAPParsingComponentException {
 
         try {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
     @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    public void decodeData(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException {
 
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.isAllAnnouncementsComplete = false;
         this.isFirstAnnouncementStarted = false;
 
         if (this.isCAPVersion4orLater) {
             switch (ansIS.getTag()) {
-                case _ID_allAnnouncementsComplete:
-                    this.isAllAnnouncementsComplete = true;
-                    break;
-                case _ID_firstAnnouncementStarted:
-                    this.isFirstAnnouncementStarted = true;
-                    break;
-                default:
-                    throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                            + ": bad tag for CAP V4 or later.", CAPParsingComponentExceptionReason.MistypedParameter);
+            case _ID_allAnnouncementsComplete:
+                this.isAllAnnouncementsComplete = true;
+                break;
+            case _ID_firstAnnouncementStarted:
+                this.isFirstAnnouncementStarted = true;
+                break;
+            default:
+                throw new CAPParsingComponentException("Error while decoding "
+                        + _PrimitiveName + ": bad tag for CAP V4 or later.",
+                        CAPParsingComponentExceptionReason.MistypedParameter);
             }
 
         } else {
             if (ansIS.getTagClass() != Tag.CLASS_UNIVERSAL)
-                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                        + ": bad tag class for CAP V2 or V3. It must must be UNIVERSAL",
+                throw new CAPParsingComponentException(
+                        "Error while decoding "
+                                + _PrimitiveName
+                                + ": bad tag class for CAP V2 or V3. It must must be UNIVERSAL",
                         CAPParsingComponentExceptionReason.MistypedParameter);
         }
 
@@ -194,7 +219,8 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
     }
 
     @Override
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
+            throws CAPException {
 
         try {
             asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
@@ -202,7 +228,8 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
             this.encodeData(asnOs);
             asnOs.FinalizeContent(pos);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -210,10 +237,14 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
     public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
         if (this.isCAPVersion4orLater) {
-            if (this.isAllAnnouncementsComplete && this.isFirstAnnouncementStarted || !this.isAllAnnouncementsComplete
+            if (this.isAllAnnouncementsComplete
+                    && this.isFirstAnnouncementStarted
+                    || !this.isAllAnnouncementsComplete
                     && !this.isFirstAnnouncementStarted)
-                throw new CAPException("Error while encoding " + _PrimitiveName
-                        + ": only one of choice must be selected when CAP V4 or later");
+                throw new CAPException(
+                        "Error while encoding "
+                                + _PrimitiveName
+                                + ": only one of choice must be selected when CAP V4 or later");
         }
 
         asnOs.writeNullData();
@@ -242,5 +273,94 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
 
         return sb.toString();
     }
+
+    protected static final XMLFormat<SpecializedResourceReportRequestImpl> SPECIALIZED_RESOURCE_REPORT_XML = new XMLFormat<SpecializedResourceReportRequestImpl>(
+            SpecializedResourceReportRequestImpl.class) {
+
+        @Override
+        public void read(
+                javolution.xml.XMLFormat.InputElement xml,
+                SpecializedResourceReportRequestImpl specializedResourceReportRequest)
+                throws XMLStreamException {
+
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml,
+                    specializedResourceReportRequest);
+            Boolean annComp = xml
+                    .get(ALL_ANNOUNCEMENTS_COMPLETE, Boolean.class);
+
+            if (annComp != null && annComp) {
+                specializedResourceReportRequest.isAllAnnouncementsComplete = annComp;
+            } else {
+                // one of them is true...
+                specializedResourceReportRequest.isFirstAnnouncementStarted = xml
+                        .get(FIRST_ANNOUNCEMENT_STARTED, Boolean.class);
+            }
+        }
+
+        @Override
+        public void write(SpecializedResourceReportRequestImpl obj,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(obj, xml);
+            if (obj.getAllAnnouncementsComplete()) {
+                xml.add(obj.getAllAnnouncementsComplete(),
+                        ALL_ANNOUNCEMENTS_COMPLETE, Boolean.class);
+                return;
+            } else {
+                xml.add(true, FIRST_ANNOUNCEMENT_STARTED, Boolean.class);
+            }
+        }
+
+    };
+
+    /*
+     * TODO: move this code into the appropriate test class
+    public static void main(String[] args) throws UnsupportedEncodingException,
+            XMLStreamException {
+        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
+                .setOutput(System.out).setIndentation(" ");
+
+        x.write(new SpecializedResourceReportRequestImpl(true, false, true),
+                "specializedResourceReport");
+        x.flush();
+
+        String xml_1 = "<specializedResourceReport invokeId=\"0\">"
+                + "<allAnnouncementsComplete value=\"true\"/>"
+                + "</specializedResourceReport>";
+
+        System.out.println("");
+        XMLObjectReader r_1 = new XMLObjectReader().setInput(
+                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
+                        .name()))).setBinding(new XMLBinding());
+        SpecializedResourceReportRequestImpl readHere_1 = null;
+        if (r_1.hasNext()) {
+            readHere_1 = r_1.read("specializedResourceReport",
+                    SpecializedResourceReportRequestImpl.class);
+        }
+        System.out.println("");
+        System.out.println(readHere_1.toString());
+
+        x.write(new SpecializedResourceReportRequestImpl(false, true, true),
+                "specializedResourceReport");
+        x.flush();
+
+        String xml_2 = "<specializedResourceReport invokeId=\"0\">"
+                + "<firstAnnouncementStarted value=\"true\"/>"
+                + "</specializedResourceReport>";
+
+        System.out.println("");
+        XMLObjectReader r_2 = new XMLObjectReader().setInput(
+                new ByteArrayInputStream(xml_2.getBytes(StandardCharsets.UTF_8
+                        .name()))).setBinding(new XMLBinding());
+        SpecializedResourceReportRequestImpl readHere_2 = null;
+        if (r_2.hasNext()) {
+            readHere_2 = r_2.read("specializedResourceReport",
+                    SpecializedResourceReportRequestImpl.class);
+        }
+        System.out.println("");
+        System.out.println(readHere_2.toString());
+    }
+    */
 
 }

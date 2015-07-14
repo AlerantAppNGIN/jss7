@@ -21,6 +21,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -39,9 +42,16 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class VariablePartImpl implements VariablePart, CAPAsnPrimitive {
+
+    private static final String INTEGER = "integer";
+    private static final String NUMBER = "number";
+    private static final String TIME = "time";
+    private static final String DATE = "date";
+    private static final String PRICE = "price";
 
     public static final int _ID_integer = 0;
     public static final int _ID_number = 1;
@@ -119,7 +129,8 @@ public class VariablePartImpl implements VariablePart, CAPAsnPrimitive {
         } else if (this.price != null) {
             return _ID_price;
         } else {
-            throw new CAPException("Error while encoding " + _PrimitiveName + ": no of choices has been definite");
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": no of choices has been definite");
         }
     }
 
@@ -134,35 +145,44 @@ public class VariablePartImpl implements VariablePart, CAPAsnPrimitive {
     }
 
     @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    public void decodeAll(AsnInputStream ansIS)
+            throws CAPParsingComponentException {
 
         try {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
     @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    public void decodeData(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException {
 
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ais, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.integer = null;
         this.number = null;
@@ -170,34 +190,37 @@ public class VariablePartImpl implements VariablePart, CAPAsnPrimitive {
         this.date = null;
         this.price = null;
 
-        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": bad tagClass or is not primitive", CAPParsingComponentExceptionReason.MistypedParameter);
+        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC
+                || !ais.isTagPrimitive())
+            throw new CAPParsingComponentException("Error while decoding "
+                    + _PrimitiveName + ": bad tagClass or is not primitive",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
         switch (ais.getTag()) {
-            case _ID_integer:
-                this.integer = (int) ais.readIntegerData(length);
-                break;
-            case _ID_number:
-                this.number = new DigitsImpl();
-                ((DigitsImpl) this.number).decodeData(ais, length);
-                this.number.setIsGenericDigits();
-                break;
-            case _ID_time:
-                this.time = new VariablePartTimeImpl();
-                ((VariablePartTimeImpl) this.time).decodeData(ais, length);
-                break;
-            case _ID_date:
-                this.date = new VariablePartDateImpl();
-                ((VariablePartDateImpl) this.date).decodeData(ais, length);
-                break;
-            case _ID_price:
-                this.price = new VariablePartPriceImpl();
-                ((VariablePartPriceImpl) this.price).decodeData(ais, length);
-                break;
-            default:
-                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
-                        CAPParsingComponentExceptionReason.MistypedParameter);
+        case _ID_integer:
+            this.integer = (int) ais.readIntegerData(length);
+            break;
+        case _ID_number:
+            this.number = new DigitsImpl();
+            ((DigitsImpl) this.number).decodeData(ais, length);
+            this.number.setIsGenericDigits();
+            break;
+        case _ID_time:
+            this.time = new VariablePartTimeImpl();
+            ((VariablePartTimeImpl) this.time).decodeData(ais, length);
+            break;
+        case _ID_date:
+            this.date = new VariablePartDateImpl();
+            ((VariablePartDateImpl) this.date).decodeData(ais, length);
+            break;
+        case _ID_price:
+            this.price = new VariablePartPriceImpl();
+            ((VariablePartPriceImpl) this.price).decodeData(ais, length);
+            break;
+        default:
+            throw new CAPParsingComponentException("Error while decoding "
+                    + _PrimitiveName + ": bad tag: " + ais.getTag(),
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
@@ -207,7 +230,8 @@ public class VariablePartImpl implements VariablePart, CAPAsnPrimitive {
     }
 
     @Override
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
+            throws CAPException {
 
         try {
             asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
@@ -215,7 +239,8 @@ public class VariablePartImpl implements VariablePart, CAPAsnPrimitive {
             this.encodeData(asnOs);
             asnOs.FinalizeContent(pos);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -235,8 +260,8 @@ public class VariablePartImpl implements VariablePart, CAPAsnPrimitive {
             choiceCnt++;
 
         if (choiceCnt != 1)
-            throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: "
-                    + choiceCnt);
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": only one choice must be definite, found: " + choiceCnt);
 
         try {
             if (this.integer != null)
@@ -250,7 +275,8 @@ public class VariablePartImpl implements VariablePart, CAPAsnPrimitive {
             if (this.price != null)
                 ((VariablePartPriceImpl) this.price).encodeData(asnOs);
         } catch (IOException e) {
-            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("IOException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -286,4 +312,80 @@ public class VariablePartImpl implements VariablePart, CAPAsnPrimitive {
 
         return sb.toString();
     }
+
+    protected static final XMLFormat<VariablePartImpl> VARIABLE_PART_XML = new XMLFormat<VariablePartImpl>(
+            VariablePartImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                VariablePartImpl variablePart) throws XMLStreamException {
+
+            variablePart.integer = xml.get(INTEGER, Integer.class);
+            if (variablePart.integer != null) {
+                return;
+            }
+
+            variablePart.number = xml.get(NUMBER, DigitsImpl.class);
+            if (variablePart.number != null) {
+                return;
+            }
+
+            variablePart.time = xml.get(TIME, VariablePartTimeImpl.class);
+            if (variablePart.time != null) {
+                return;
+            }
+
+            variablePart.date = xml.get(DATE, VariablePartDateImpl.class);
+            if (variablePart.date != null) {
+                return;
+            }
+
+            variablePart.price = xml.get(PRICE, VariablePartPriceImpl.class);
+            if (variablePart.price != null) {
+                return;
+            }
+
+        }
+
+        @Override
+        public void write(VariablePartImpl obj,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            if (obj.getDate() != null) {
+                xml.add((VariablePartDateImpl) obj.getDate(), DATE,
+                        VariablePartDateImpl.class);
+            }
+            if (obj.getNumber() != null) {
+                xml.add((DigitsImpl) obj.getNumber(), NUMBER, DigitsImpl.class);
+            }
+            if (obj.getInteger() != null) {
+                xml.add((Integer) obj.getInteger(), INTEGER, Integer.class);
+            }
+            if (obj.getPrice() != null) {
+                xml.add((VariablePartPriceImpl) obj.getPrice(), PRICE,
+                        VariablePartPriceImpl.class);
+            }
+            if (obj.getTime() != null) {
+                xml.add((VariablePartTimeImpl) obj.getTime(), TIME,
+                        VariablePartTimeImpl.class);
+            }
+
+        }
+
+    };
+
+    /*
+     * TODO: move this code into the appropriate test class
+    public static void main(String[] args) throws UnsupportedEncodingException,
+            XMLStreamException {
+        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
+                .setOutput(System.out).setIndentation(" ");
+        x.write(new VariablePartImpl(new Integer(150)), "VariablePartImpl");
+        // x.write(new VariablePartImpl(new VariablePartDateImpl(2015,6,27)),
+        // "VariablePartImpl");
+        x.flush();
+    }
+    */
+
 }

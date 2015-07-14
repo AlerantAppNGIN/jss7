@@ -21,6 +21,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -34,9 +37,13 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class ToneImpl implements Tone, CAPAsnPrimitive {
+
+    private static final String TONE_ID = "toneID";
+    private static final String DURATION = "duration";
 
     public static final int _ID_toneID = 0;
     public static final int _ID_duration = 1;
@@ -80,35 +87,44 @@ public class ToneImpl implements Tone, CAPAsnPrimitive {
     }
 
     @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    public void decodeAll(AsnInputStream ansIS)
+            throws CAPParsingComponentException {
 
         try {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
     @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    public void decodeData(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException {
 
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.toneID = 0;
         this.duration = null;
@@ -123,17 +139,17 @@ public class ToneImpl implements Tone, CAPAsnPrimitive {
 
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
                 switch (tag) {
-                    case _ID_toneID:
-                        this.toneID = (int) ais.readInteger();
-                        toneIDRecieved = true;
-                        break;
-                    case _ID_duration:
-                        this.duration = (int) ais.readInteger();
-                        break;
+                case _ID_toneID:
+                    this.toneID = (int) ais.readInteger();
+                    toneIDRecieved = true;
+                    break;
+                case _ID_duration:
+                    this.duration = (int) ais.readInteger();
+                    break;
 
-                    default:
-                        ais.advanceElement();
-                        break;
+                default:
+                    ais.advanceElement();
+                    break;
                 }
             } else {
                 ais.advanceElement();
@@ -141,8 +157,9 @@ public class ToneImpl implements Tone, CAPAsnPrimitive {
         }
 
         if (toneIDRecieved == false)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": toneID is mandatory but not found", CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException("Error while decoding "
+                    + _PrimitiveName + ": toneID is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
     }
 
     @Override
@@ -152,7 +169,8 @@ public class ToneImpl implements Tone, CAPAsnPrimitive {
     }
 
     @Override
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
+            throws CAPException {
 
         try {
             asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
@@ -160,7 +178,8 @@ public class ToneImpl implements Tone, CAPAsnPrimitive {
             this.encodeData(asnOs);
             asnOs.FinalizeContent(pos);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -168,14 +187,18 @@ public class ToneImpl implements Tone, CAPAsnPrimitive {
     public void encodeData(AsnOutputStream aos) throws CAPException {
 
         try {
-            aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_toneID, this.toneID);
+            aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_toneID,
+                    this.toneID);
             if (this.duration != null)
-                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_duration, this.duration);
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_duration,
+                        this.duration);
 
         } catch (IOException e) {
-            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("IOException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -197,4 +220,72 @@ public class ToneImpl implements Tone, CAPAsnPrimitive {
 
         return sb.toString();
     }
+
+    protected static final XMLFormat<ToneImpl> TONE_XML = new XMLFormat<ToneImpl>(
+            ToneImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                ToneImpl tone) throws XMLStreamException {
+
+            tone.toneID = xml.get(TONE_ID, Integer.class);
+            tone.duration = xml.get(DURATION, Integer.class);
+
+        }
+
+        @Override
+        public void write(ToneImpl obj,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            xml.add(obj.getToneID(), TONE_ID, Integer.class);
+
+            if (obj.getDuration() != null) {
+                xml.add(obj.getDuration(), DURATION, Integer.class);
+            }
+        }
+
+    };
+
+    /*
+     * TODO: move this code into the appropriate test class
+    public static void main(String[] args) throws UnsupportedEncodingException,
+            XMLStreamException {
+        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
+                .setOutput(System.out).setIndentation(" ");
+
+        x.write(new ToneImpl(25, new Integer(13)), "tone");
+        x.flush();
+
+        String xml_1 = "<tone>" + "<toneID value=\"25\"/>"
+                + "<duration value=\"13\"/>" + "</tone>";
+
+        System.out.println("");
+        XMLObjectReader r_1 = new XMLObjectReader().setInput(
+                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
+                        .name()))).setBinding(new XMLBinding());
+        ToneImpl readHere_1 = null;
+        if (r_1.hasNext()) {
+            readHere_1 = r_1.read("tone", ToneImpl.class);
+        }
+        System.out.println("");
+        System.out.println(readHere_1.toString());
+
+        x.write(new ToneImpl(25, null), "tone");
+        x.flush();
+
+        String xml_2 = "<tone>" + "<toneID value=\"25\"/>" + "</tone>";
+
+        System.out.println("");
+        XMLObjectReader r_2 = new XMLObjectReader().setInput(
+                new ByteArrayInputStream(xml_2.getBytes(StandardCharsets.UTF_8
+                        .name()))).setBinding(new XMLBinding());
+        ToneImpl readHere_2 = null;
+        if (r_2.hasNext()) {
+            readHere_2 = r_2.read("tone", ToneImpl.class);
+        }
+        System.out.println("");
+        System.out.println(readHere_2.toString());
+    }
+    */
 }
