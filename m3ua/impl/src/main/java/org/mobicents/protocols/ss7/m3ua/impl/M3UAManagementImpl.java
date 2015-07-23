@@ -1008,8 +1008,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
             }
 
         } catch (XMLStreamException ex) {
-            // this.logger.info(
-            // "Error while re-creating Linksets from persisted file", ex);
+            logger.error("Error while re-creating Linksets from persisted file", ex);
         }
     }
 
