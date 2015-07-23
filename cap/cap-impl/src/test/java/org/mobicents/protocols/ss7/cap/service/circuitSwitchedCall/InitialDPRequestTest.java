@@ -312,7 +312,7 @@ public class InitialDPRequestTest {
         CallingPartysCategoryInapImpl callingPartysCategory = new CallingPartysCategoryInapImpl(getCallingPartysCategory());
         OriginalCalledNumberCapImpl originalCalledPartyID = new OriginalCalledNumberCapImpl(getOriginalCalledPartyID());
         UserServiceInformationImpl original0 = new UserServiceInformationImpl();
-        original0.setCodingStandart(UserServiceInformation._CS_INTERNATIONAL);
+        original0.setCodingStandard(UserServiceInformation._CS_INTERNATIONAL);
         original0.setInformationTransferCapability(UserServiceInformation._ITS_VIDEO);
         original0.setTransferMode(UserServiceInformation._TM_PACKET);
         original0.setInformationTransferRate(UserServiceInformation._ITR_64x2);

@@ -76,7 +76,7 @@ public class BearerCapabilityTest {
     public void testXMLSerialize() throws Exception {
 
         UserServiceInformationImpl original0 = new UserServiceInformationImpl();
-        original0.setCodingStandart(UserServiceInformation._CS_INTERNATIONAL);
+        original0.setCodingStandard(UserServiceInformation._CS_INTERNATIONAL);
         original0.setInformationTransferCapability(UserServiceInformation._ITS_VIDEO);
         original0.setTransferMode(UserServiceInformation._TM_PACKET);
         original0.setInformationTransferRate(UserServiceInformation._ITR_64x2);
@@ -101,8 +101,8 @@ public class BearerCapabilityTest {
         XMLObjectReader reader = XMLObjectReader.newInstance(bais);
         BearerCapabilityImpl copy = reader.read("bearerCapability", BearerCapabilityImpl.class);
 
-        assertEquals(copy.getBearerCap().getUserServiceInformation().getCodingStandart(), original.getBearerCap()
-                .getUserServiceInformation().getCodingStandart());
+        assertEquals(copy.getBearerCap().getUserServiceInformation().getCodingStandard(), original.getBearerCap()
+                .getUserServiceInformation().getCodingStandard());
         assertEquals(copy.getBearerCap().getUserServiceInformation().getInformationTransferCapability(), original
                 .getBearerCap().getUserServiceInformation().getInformationTransferCapability());
 

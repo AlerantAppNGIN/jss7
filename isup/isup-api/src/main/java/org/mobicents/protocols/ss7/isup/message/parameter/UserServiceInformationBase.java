@@ -41,7 +41,7 @@ public interface UserServiceInformationBase extends ISUPParameter {
 
     int _LAYER3_IDENTIFIER = 0x3;
 
-    // CODING STANDART OPTIONS
+    // CODING STANDARD OPTIONS
     int _CS_CCITT = 0;
 
     int _CS_INTERNATIONAL = 1;
@@ -344,9 +344,9 @@ public interface UserServiceInformationBase extends ISUPParameter {
 
     int _L3_PROT_P2P = 207;
 
-    int getCodingStandart();
+    int getCodingStandard();
 
-    void setCodingStandart(int codingStandart);
+    void setCodingStandard(int codingStandard);
 
     int getInformationTransferCapability();
 
@@ -361,9 +361,9 @@ public interface UserServiceInformationBase extends ISUPParameter {
     void setInformationTransferRate(int informationTransferRate);
 
     // custom rate in 64Kbps units
-    int getCustomInformationTransferRate();
+    int getRateMultiplier();
 
-    void setCustomInformationTransferRate(int informationTransferRate);
+    void setRateMultiplier(int informationTransferRate);
 
     // TO CLEAR USER INFORMATION ON EACH LAYER SET IT TO 0
     int getL1UserInformation();
