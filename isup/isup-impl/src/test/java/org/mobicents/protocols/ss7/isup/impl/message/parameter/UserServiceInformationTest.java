@@ -26,9 +26,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
+import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
+import javolution.xml.stream.XMLStreamException;
 
+import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
@@ -76,12 +79,12 @@ public class UserServiceInformationTest {
         UserServiceInformationImpl prim = new UserServiceInformationImpl();
         prim.decode(getData());
 
-        assertEquals(prim.getCodingStandart(), UserServiceInformation._CS_INTERNATIONAL);
+        assertEquals(prim.getCodingStandard(), UserServiceInformation._CS_INTERNATIONAL);
         assertEquals(prim.getInformationTransferCapability(), UserServiceInformation._ITS_VIDEO);
         assertEquals(prim.getTransferMode(), UserServiceInformation._TM_PACKET);
         assertEquals(prim.getInformationTransferRate(), UserServiceInformation._ITR_64x2);
 
-        assertEquals(prim.getCustomInformationTransferRate(), 0);
+        assertEquals(prim.getRateMultiplier(), 0);
         assertEquals(prim.getL1UserInformation(), 0);
         assertEquals(prim.getL2UserInformation(), 0);
         assertEquals(prim.getL3UserInformation(), 0);
@@ -109,12 +112,12 @@ public class UserServiceInformationTest {
         prim = new UserServiceInformationImpl();
         prim.decode(getData2());
 
-        assertEquals(prim.getCodingStandart(), UserServiceInformation._CS_INTERNATIONAL);
+        assertEquals(prim.getCodingStandard(), UserServiceInformation._CS_INTERNATIONAL);
         assertEquals(prim.getInformationTransferCapability(), UserServiceInformation._ITS_VIDEO);
         assertEquals(prim.getTransferMode(), UserServiceInformation._TM_PACKET);
         assertEquals(prim.getInformationTransferRate(), UserServiceInformation._ITR_MULTIRATE);
 
-        assertEquals(prim.getCustomInformationTransferRate(), 19);
+        assertEquals(prim.getRateMultiplier(), 19);
         assertEquals(prim.getL1UserInformation(), 0);
         assertEquals(prim.getL2UserInformation(), 0);
         assertEquals(prim.getL3UserInformation(), 0);
@@ -142,12 +145,12 @@ public class UserServiceInformationTest {
         prim = new UserServiceInformationImpl();
         prim.decode(getData3());
 
-        assertEquals(prim.getCodingStandart(), UserServiceInformation._CS_CCITT);
+        assertEquals(prim.getCodingStandard(), UserServiceInformation._CS_CCITT);
         assertEquals(prim.getInformationTransferCapability(), UserServiceInformation._ITS_SPEECH);
         assertEquals(prim.getTransferMode(), UserServiceInformation._TM_CIRCUIT);
         assertEquals(prim.getInformationTransferRate(), UserServiceInformation._ITR_64);
 
-        assertEquals(prim.getCustomInformationTransferRate(), 0);
+        assertEquals(prim.getRateMultiplier(), 0);
         assertEquals(prim.getL1UserInformation(), UserServiceInformation._L1_ITUT_110);
         assertEquals(prim.getL2UserInformation(), UserServiceInformation._L2_Q921);
         assertEquals(prim.getL3UserInformation(), UserServiceInformation._L3_Q931);
@@ -180,7 +183,7 @@ public class UserServiceInformationTest {
     public void testEncode() throws Exception {
 
         UserServiceInformationImpl prim = new UserServiceInformationImpl();
-        prim.setCodingStandart(UserServiceInformation._CS_INTERNATIONAL);
+        prim.setCodingStandard(UserServiceInformation._CS_INTERNATIONAL);
         prim.setInformationTransferCapability(UserServiceInformation._ITS_VIDEO);
         prim.setTransferMode(UserServiceInformation._TM_PACKET);
         prim.setInformationTransferRate(UserServiceInformation._ITR_64x2);
@@ -191,11 +194,11 @@ public class UserServiceInformationTest {
         assertTrue(Arrays.equals(data, encodedData));
 
         prim = new UserServiceInformationImpl();
-        prim.setCodingStandart(UserServiceInformation._CS_INTERNATIONAL);
+        prim.setCodingStandard(UserServiceInformation._CS_INTERNATIONAL);
         prim.setInformationTransferCapability(UserServiceInformation._ITS_VIDEO);
         prim.setTransferMode(UserServiceInformation._TM_PACKET);
         prim.setInformationTransferRate(UserServiceInformation._ITR_MULTIRATE);
-        prim.setCustomInformationTransferRate(19);
+        prim.setRateMultiplier(19);
 
         data = getData2();
         encodedData = prim.encode();
@@ -203,7 +206,7 @@ public class UserServiceInformationTest {
         assertTrue(Arrays.equals(data, encodedData));
 
         prim = new UserServiceInformationImpl();
-        prim.setCodingStandart(UserServiceInformation._CS_CCITT);
+        prim.setCodingStandard(UserServiceInformation._CS_CCITT);
         prim.setInformationTransferCapability(UserServiceInformation._ITS_SPEECH);
         prim.setTransferMode(UserServiceInformation._TM_CIRCUIT);
         prim.setInformationTransferRate(UserServiceInformation._ITR_64);
@@ -224,7 +227,7 @@ public class UserServiceInformationTest {
     public void testXMLSerialize() throws Exception {
 
         UserServiceInformationImpl original = new UserServiceInformationImpl();
-        original.setCodingStandart(UserServiceInformation._CS_INTERNATIONAL);
+        original.setCodingStandard(UserServiceInformation._CS_INTERNATIONAL);
         original.setInformationTransferCapability(UserServiceInformation._ITS_VIDEO);
         original.setTransferMode(UserServiceInformation._TM_PACKET);
         original.setInformationTransferRate(UserServiceInformation._ITR_64x2);
@@ -246,11 +249,11 @@ public class UserServiceInformationTest {
         XMLObjectReader reader = XMLObjectReader.newInstance(bais);
         UserServiceInformationImpl copy = reader.read("userServiceInformation", UserServiceInformationImpl.class);
 
-        assertEquals(copy.getCodingStandart(), original.getCodingStandart());
+        assertEquals(copy.getCodingStandard(), original.getCodingStandard());
         assertEquals(copy.getInformationTransferCapability(), original.getInformationTransferCapability());
         assertEquals(copy.getTransferMode(), original.getTransferMode());
         assertEquals(copy.getInformationTransferRate(), original.getInformationTransferRate());
-        assertEquals(copy.getCustomInformationTransferRate(), original.getCustomInformationTransferRate());
+        assertEquals(copy.getRateMultiplier(), original.getRateMultiplier());
         assertEquals(copy.getL1UserInformation(), original.getL1UserInformation());
         assertEquals(copy.getL2UserInformation(), original.getL2UserInformation());
         assertEquals(copy.getL3UserInformation(), original.getL3UserInformation());
@@ -276,11 +279,11 @@ public class UserServiceInformationTest {
         assertEquals(copy.getL3Protocol(), original.getL3Protocol());
 
         original = new UserServiceInformationImpl();
-        original.setCodingStandart(UserServiceInformation._CS_INTERNATIONAL);
+        original.setCodingStandard(UserServiceInformation._CS_INTERNATIONAL);
         original.setInformationTransferCapability(UserServiceInformation._ITS_VIDEO);
         original.setTransferMode(UserServiceInformation._TM_PACKET);
         original.setInformationTransferRate(UserServiceInformation._ITR_MULTIRATE);
-        original.setCustomInformationTransferRate(60);
+        original.setRateMultiplier(60);
 
         original.setL1UserInformation(UserServiceInformation._L1_ITUT_X31);
         original.setL2UserInformation(UserServiceInformation._L2_LAN_LLC);
@@ -323,11 +326,11 @@ public class UserServiceInformationTest {
         reader = XMLObjectReader.newInstance(bais);
         copy = reader.read("userServiceInformation", UserServiceInformationImpl.class);
 
-        assertEquals(copy.getCodingStandart(), original.getCodingStandart());
+        assertEquals(copy.getCodingStandard(), original.getCodingStandard());
         assertEquals(copy.getInformationTransferCapability(), original.getInformationTransferCapability());
         assertEquals(copy.getTransferMode(), original.getTransferMode());
         assertEquals(copy.getInformationTransferRate(), original.getInformationTransferRate());
-        assertEquals(copy.getCustomInformationTransferRate(), original.getCustomInformationTransferRate());
+        assertEquals(copy.getRateMultiplier(), original.getRateMultiplier());
         assertEquals(copy.getL1UserInformation(), original.getL1UserInformation());
         assertEquals(copy.getL2UserInformation(), original.getL2UserInformation());
         assertEquals(copy.getL3UserInformation(), original.getL3UserInformation());
@@ -352,6 +355,66 @@ public class UserServiceInformationTest {
         assertEquals(copy.getModemType(), original.getModemType());
         assertEquals(copy.getL3Protocol(), original.getL3Protocol());
 
+    }
+
+    // TODO convert this to a real test
+    public static void main(String[] args) throws ParameterException, XMLStreamException {
+
+        byte[][] tests = new byte[][] {
+                new byte[] { (byte) 0x80, (byte) 0x80 },
+                new byte[] { (byte) 0x80, (byte) 0x90 },
+                new byte[] { (byte) 0x80, (byte) 0x90, (byte) 0xA3 },
+                new byte[] { (byte) 0x88, (byte) 0x90, (byte) 0xA6 },
+                new byte[] { (byte) 0x90, (byte) 0x90, (byte) 0x23, (byte) 0x48, (byte) 0x46, (byte) 0x3B, (byte) 0xDC },
+                new byte[] { (byte) 0x90, (byte) 0x90, (byte) 0x23, (byte) 0x60, (byte) 0x06, (byte) 0xBB },
+                new byte[] { (byte) 0x90, (byte) 0x90, (byte) 0xA3 }
+            };
+        
+        for (byte[] test : tests) {
+
+            System.out.println("---------------------------------");
+            System.out.println();
+            for (byte b : test) {
+                System.out.print((b >= 0 && b < 16 ? '0' : "") + Integer.toHexString(b & 0xFF));
+            }
+            System.out.println();
+
+            UserServiceInformationImpl us = new UserServiceInformationImpl();
+            us.decode(test);
+            System.out.println(us);
+            System.out.println();
+
+            byte[] res = us.encode();
+            for (byte b : res) {
+                System.out.print((b >= 0 && b < 16 ? '0' : "") + Integer.toHexString(b & 0xFF));
+            }
+            System.out.println();
+            System.out.println("Equals: " + Arrays.equals(res, test));
+            
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            XMLObjectWriter w = new XMLObjectWriter().setBinding(new XMLBinding()).setIndentation(" ").setOutput(baos);
+            w.write(us,"userServiceInformation", UserServiceInformationBaseImpl.class);
+            w.flush();
+            System.out.println(baos.toString());
+            System.out.println("\n");
+            
+            XMLObjectReader r = new XMLObjectReader().setBinding(new XMLBinding()).setInput(new ByteArrayInputStream(baos.toByteArray()));
+            UserServiceInformationBaseImpl read = r.read("userServiceInformation",UserServiceInformationImpl.class);
+            System.out.println(read);
+            System.out.println();
+            res = read.encode();
+            for(byte b: res) {
+                System.out.print((b>=0&&b<16?'0':"") + Integer.toHexString(b & 0xFF));
+            } 
+            System.out.println();
+            for(int i=0;i<res.length;i++) {
+                if(res[i] == test[i])System.out.print("  ");
+                else System.out.print("^^");
+            }
+            System.out.println();
+        }
+        System.out.println();
+        System.out.println("---------------------------------");
     }
 
 }
