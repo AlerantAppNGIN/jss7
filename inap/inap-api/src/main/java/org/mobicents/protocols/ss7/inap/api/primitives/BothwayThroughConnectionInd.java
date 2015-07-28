@@ -19,18 +19,23 @@
 
 package org.mobicents.protocols.ss7.inap.api.primitives;
 
+import javolution.xml.XMLFormat;
+
+import org.mobicents.protocols.ss7.inap.api.xml.EnumXMLFormat;
+
+
 /**
  *
  BothwayThroughConnectionInd ::= ENUMERATED { bothwayPathRequired(0), bothwayPathNotRequired(1)}
  *
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
 public enum BothwayThroughConnectionInd {
     bothwayPathRequired(0), bothwayPathNotRequired(1);
 
-    private int code;
+    private final int code;
 
     private BothwayThroughConnectionInd(int code) {
         this.code = code;
@@ -50,4 +55,7 @@ public enum BothwayThroughConnectionInd {
     public int getCode() {
         return code;
     }
+
+    protected static final XMLFormat<BothwayThroughConnectionInd> XML = new EnumXMLFormat<BothwayThroughConnectionInd>(
+            BothwayThroughConnectionInd.class);
 }

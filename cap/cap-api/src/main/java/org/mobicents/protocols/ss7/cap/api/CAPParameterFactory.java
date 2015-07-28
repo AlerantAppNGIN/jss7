@@ -82,9 +82,13 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAI_GSM0224;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELSCIBillingChargingCharacteristicsAlt;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CallCompletionTreatmentIndicator;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CallDiversionTreatmentIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CallSegmentToCancel;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CallingPartyRestrictionIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedDigits;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedInfo;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ConferenceTreatmentIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ConnectedNumberTreatmentInd;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CwTreatmentIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
@@ -663,5 +667,14 @@ public interface CAPParameterFactory {
     LegOrCallSegment createLegOrCallSegment(Integer callSegmentID);
 
     LegOrCallSegment createLegOrCallSegment(LegID legID);
+
+    ForwardServiceInteractionInd createForwardServiceInteractionInd(
+            ConferenceTreatmentIndicator conferenceTreatmentIndicator,
+            CallDiversionTreatmentIndicator callDiversionTreatmentIndicator,
+            CallingPartyRestrictionIndicator callingPartyRestrictionIndicator);
+
+    BackwardServiceInteractionInd createBackwardServiceInteractionInd(
+            ConferenceTreatmentIndicator conferenceTreatmentIndicator,
+            CallCompletionTreatmentIndicator callCompletionTreatmentIndicator);
 
 }

@@ -19,6 +19,10 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import javolution.xml.XMLFormat;
+
+import org.mobicents.protocols.ss7.cap.api.xml.EnumXMLFormat;
+
 /**
  *
  ectTreatmentIndicator [52] OCTET STRING (SIZE(1)) OPTIONAL, -- applicable to InitialDP, Connect and ContinueWithArgument --
@@ -31,7 +35,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
 public enum EctTreatmentIndicator {
     acceptEctRequest(1), rejectEctRequest(2);
 
-    private int code;
+    private final int code;
 
     private EctTreatmentIndicator(int code) {
         this.code = code;
@@ -51,4 +55,7 @@ public enum EctTreatmentIndicator {
     public int getCode() {
         return this.code;
     }
+
+    protected static final XMLFormat<EctTreatmentIndicator> XML = new EnumXMLFormat<EctTreatmentIndicator>(
+            EctTreatmentIndicator.class);
 }

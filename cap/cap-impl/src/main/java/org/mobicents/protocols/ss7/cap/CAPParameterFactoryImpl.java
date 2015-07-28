@@ -107,9 +107,13 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAI_GSM0224;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELSCIBillingChargingCharacteristicsAlt;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CallCompletionTreatmentIndicator;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CallDiversionTreatmentIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CallSegmentToCancel;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CallingPartyRestrictionIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedDigits;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedInfo;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ConferenceTreatmentIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ConnectedNumberTreatmentInd;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CwTreatmentIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
@@ -211,6 +215,7 @@ import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AOCBeforeAnswerImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AOCSubsequentImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AlertingPatternCapImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.BackwardServiceInteractionIndImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.BearerCapabilityImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAI_GSM0224Impl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristicsImpl;
@@ -222,6 +227,7 @@ import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.Des
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.DpSpecificCriteriaImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSMImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1Impl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.ForwardServiceInteractionIndImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.IPSSPCapabilitiesImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InbandInfoImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InformationToSendImpl;
@@ -802,6 +808,22 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
     @Override
     public ScfID createScfID(byte[] data) {
         return new ScfIDImpl(data);
+    }
+
+    @Override
+    public ForwardServiceInteractionInd createForwardServiceInteractionInd(
+            ConferenceTreatmentIndicator conferenceTreatmentIndicator,
+            CallDiversionTreatmentIndicator callDiversionTreatmentIndicator,
+            CallingPartyRestrictionIndicator callingPartyRestrictionIndicator) {
+        return new ForwardServiceInteractionIndImpl(conferenceTreatmentIndicator, callDiversionTreatmentIndicator,
+                callingPartyRestrictionIndicator);
+    }
+
+    @Override
+    public BackwardServiceInteractionInd createBackwardServiceInteractionInd(
+            ConferenceTreatmentIndicator conferenceTreatmentIndicator,
+            CallCompletionTreatmentIndicator callCompletionTreatmentIndicator) {
+        return new BackwardServiceInteractionIndImpl(conferenceTreatmentIndicator, callCompletionTreatmentIndicator);
     }
 
     @Override

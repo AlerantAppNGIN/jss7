@@ -19,6 +19,10 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import javolution.xml.XMLFormat;
+
+import org.mobicents.protocols.ss7.cap.api.xml.EnumXMLFormat;
+
 /**
  *
  callDiversionTreatmentIndicator [2] OCTET STRING (SIZE(1)) OPTIONAL, -- callDiversionAllowed 'xxxx xx01'B --
@@ -26,12 +30,12 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * call diversion treatment
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
 public enum CallDiversionTreatmentIndicator {
     callDiversionAllowed(1), callDiversionNotAllowed(2);
 
-    private int code;
+    private final int code;
 
     private CallDiversionTreatmentIndicator(int code) {
         this.code = code;
@@ -51,4 +55,7 @@ public enum CallDiversionTreatmentIndicator {
     public int getCode() {
         return this.code;
     }
+
+    protected static final XMLFormat<CallDiversionTreatmentIndicator> XML = new EnumXMLFormat<CallDiversionTreatmentIndicator>(
+            CallDiversionTreatmentIndicator.class);
 }

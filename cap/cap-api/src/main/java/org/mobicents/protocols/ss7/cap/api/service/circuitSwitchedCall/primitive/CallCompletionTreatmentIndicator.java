@@ -19,6 +19,10 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import javolution.xml.XMLFormat;
+
+import org.mobicents.protocols.ss7.cap.api.xml.EnumXMLFormat;
+
 /**
  *
  callCompletionTreatmentIndicator [2] OCTET STRING (SIZE(1)) OPTIONAL, -- acceptCallCompletionServiceRequest 'xxxx xx01'B, --
@@ -26,13 +30,13 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * not affect call completion treatment
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
 public enum CallCompletionTreatmentIndicator {
 
     acceptCallCompletionServiceRequest(1), rejectCallCompletionServiceRequest(2);
 
-    private int code;
+    private final int code;
 
     private CallCompletionTreatmentIndicator(int code) {
         this.code = code;
@@ -53,4 +57,6 @@ public enum CallCompletionTreatmentIndicator {
         return this.code;
     }
 
+    protected static final XMLFormat<CallCompletionTreatmentIndicator> XML = new EnumXMLFormat<CallCompletionTreatmentIndicator>(
+            CallCompletionTreatmentIndicator.class);
 }

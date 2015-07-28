@@ -19,6 +19,10 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import javolution.xml.XMLFormat;
+
+import org.mobicents.protocols.ss7.cap.api.xml.EnumXMLFormat;
+
 /**
  *
  holdTreatmentIndicator [50] OCTET STRING (SIZE(1)) OPTIONAL, -- applicable to InitialDP, Connect and ContinueWithArgument --
@@ -26,12 +30,12 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * CAMEL service does not affect call hold treatment
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
 public enum HoldTreatmentIndicator {
     acceptHoldRequest(1), rejectHoldRequest(2);
 
-    private int code;
+    private final int code;
 
     private HoldTreatmentIndicator(int code) {
         this.code = code;
@@ -51,4 +55,7 @@ public enum HoldTreatmentIndicator {
     public int getCode() {
         return this.code;
     }
+
+    protected static final XMLFormat<HoldTreatmentIndicator> XML = new EnumXMLFormat<HoldTreatmentIndicator>(
+            HoldTreatmentIndicator.class);
 }

@@ -30,7 +30,6 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
-import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BackwardServiceInteractionInd;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ConnectedNumberTreatmentInd;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CwTreatmentIndicator;
@@ -39,14 +38,18 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.HoldTreatmentIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
+import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.inap.api.primitives.BothwayThroughConnectionInd;
 
 /**
+ * Implementation class for {@link ServiceInteractionIndicatorsTwo}.
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
-public class ServiceInteractionIndicatorsTwoImpl implements ServiceInteractionIndicatorsTwo, CAPAsnPrimitive {
+@SuppressWarnings("serial")
+public class ServiceInteractionIndicatorsTwoImpl extends SequenceBase implements ServiceInteractionIndicatorsTwo,
+        CAPAsnPrimitive {
 
     public static final int _ID_forwardServiceInteractionInd = 0;
     public static final int _ID_backwardServiceInteractionInd = 1;
@@ -60,6 +63,11 @@ public class ServiceInteractionIndicatorsTwoImpl implements ServiceInteractionIn
     private static final String FORWARD_SERVICE_INTERACTION_IND = "forwardServiceInteractionInd";
     private static final String BACKWARD_SERVICE_INTERACTION_IND = "backwardServiceInteractionInd";
     private static final String BOTHWAY_THROUGH_CONNECTION_IND = "bothwayThroughConnectionInd";
+    private static final String CONNECTED_NUMBER_TREATMENT_IND = "connectedNumberTreatmentInd";
+    private static final String NON_CUG_CALL = "nonCUGCall";
+    private static final String HOLD_TREATMENT_INDICATOR = "holdTreatmentIndicator";
+    private static final String CW_TREATMENT_INDICATOR = "cwTreatmentIndicator";
+    private static final String ECT_TREATMENT_INDICATOR = "ectTreatmentIndicator";
 
     public static final String _PrimitiveName = "ServiceInteractionIndicatorsTwo";
 
@@ -73,13 +81,16 @@ public class ServiceInteractionIndicatorsTwoImpl implements ServiceInteractionIn
     private EctTreatmentIndicator ectTreatmentIndicator;
 
     public ServiceInteractionIndicatorsTwoImpl() {
+        super(_PrimitiveName);
     }
 
     public ServiceInteractionIndicatorsTwoImpl(ForwardServiceInteractionInd forwardServiceInteractionInd,
             BackwardServiceInteractionInd backwardServiceInteractionInd,
-            BothwayThroughConnectionInd bothwayThroughConnectionInd, ConnectedNumberTreatmentInd connectedNumberTreatmentInd,
-            boolean nonCUGCall, HoldTreatmentIndicator holdTreatmentIndicator, CwTreatmentIndicator cwTreatmentIndicator,
+            BothwayThroughConnectionInd bothwayThroughConnectionInd,
+            ConnectedNumberTreatmentInd connectedNumberTreatmentInd, boolean nonCUGCall,
+            HoldTreatmentIndicator holdTreatmentIndicator, CwTreatmentIndicator cwTreatmentIndicator,
             EctTreatmentIndicator ectTreatmentIndicator) {
+        super(_PrimitiveName);
         this.forwardServiceInteractionInd = forwardServiceInteractionInd;
         this.backwardServiceInteractionInd = backwardServiceInteractionInd;
         this.bothwayThroughConnectionInd = bothwayThroughConnectionInd;
@@ -130,51 +141,8 @@ public class ServiceInteractionIndicatorsTwoImpl implements ServiceInteractionIn
         return ectTreatmentIndicator;
     }
 
-    @Override
-    public int getTag() throws CAPException {
-        return Tag.SEQUENCE;
-    }
-
-    @Override
-    public int getTagClass() {
-        return Tag.CLASS_UNIVERSAL;
-    }
-
-    @Override
-    public boolean getIsPrimitive() {
-        return false;
-    }
-
-    @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-
-        try {
-            int length = ansIS.readLength();
-            this._decode(ansIS, length);
-        } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-
-        try {
-            this._decode(ansIS, length);
-        } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException,
+            AsnException {
 
         this.forwardServiceInteractionInd = null;
         this.backwardServiceInteractionInd = null;
@@ -195,29 +163,40 @@ public class ServiceInteractionIndicatorsTwoImpl implements ServiceInteractionIn
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
                 switch (tag) {
                     case _ID_forwardServiceInteractionInd:
-                        ais.advanceElement(); // TODO: implement it
+                        ForwardServiceInteractionIndImpl fsii = new ForwardServiceInteractionIndImpl();
+                        fsii.decodeAll(ais);
+                        this.forwardServiceInteractionInd = fsii;
                         break;
                     case _ID_backwardServiceInteractionInd:
-                        ais.advanceElement(); // TODO: implement it
+                        BackwardServiceInteractionIndImpl bsii = new BackwardServiceInteractionIndImpl();
+                        bsii.decodeAll(ais);
+                        this.backwardServiceInteractionInd = bsii;
                         break;
                     case _ID_bothwayThroughConnectionInd:
-                        int i1 = (int) ais.readInteger();
-                        this.bothwayThroughConnectionInd = BothwayThroughConnectionInd.getInstance(i1);
+                        this.bothwayThroughConnectionInd = BothwayThroughConnectionInd.getInstance((int) ais
+                                .readInteger());
                         break;
                     case _ID_connectedNumberTreatmentInd:
-                        ais.advanceElement(); // TODO: implement it
+                        this.connectedNumberTreatmentInd = ConnectedNumberTreatmentInd.getInstance((int) ais
+                                .readInteger());
                         break;
                     case _ID_nonCUGCall:
-                        ais.advanceElement(); // TODO: implement it
+                        ais.readNull();
+                        this.nonCUGCall = true;
                         break;
+
+                    // these members are defined as OCTET STRING(SIZE(1)) and all values are contained in the 2 least
+                    // significant bits of the single octet. The resulting encoding is equivalent to a one octet
+                    // integer, where the getInstance() methods take care of discarding the higher bits (if present).
+
                     case _ID_holdTreatmentIndicator:
-                        ais.advanceElement(); // TODO: implement it
+                        this.holdTreatmentIndicator = HoldTreatmentIndicator.getInstance((int) ais.readInteger());
                         break;
                     case _ID_cwTreatmentIndicator:
-                        ais.advanceElement(); // TODO: implement it
+                        this.cwTreatmentIndicator = CwTreatmentIndicator.getInstance((int) ais.readInteger());
                         break;
                     case _ID_ectTreatmentIndicator:
-                        ais.advanceElement(); // TODO: implement it
+                        this.ectTreatmentIndicator = EctTreatmentIndicator.getInstance((int) ais.readInteger());
                         break;
 
                     default:
@@ -231,52 +210,40 @@ public class ServiceInteractionIndicatorsTwoImpl implements ServiceInteractionIn
     }
 
     @Override
-    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-    }
-
-    @Override
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-
-        try {
-            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-            int pos = asnOs.StartContentDefiniteLength();
-            this.encodeData(asnOs);
-            asnOs.FinalizeContent(pos);
-        } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-        }
-    }
-
-    @Override
     public void encodeData(AsnOutputStream aos) throws CAPException {
 
         try {
 
             if (this.forwardServiceInteractionInd != null) {
-                // TODO: implement it
+                ((ForwardServiceInteractionIndImpl) this.forwardServiceInteractionInd).encodeAll(aos,
+                        Tag.CLASS_CONTEXT_SPECIFIC, _ID_forwardServiceInteractionInd);
             }
             if (this.backwardServiceInteractionInd != null) {
-                // TODO: implement it
+                ((BackwardServiceInteractionIndImpl) this.backwardServiceInteractionInd).encodeAll(aos,
+                        Tag.CLASS_CONTEXT_SPECIFIC, _ID_backwardServiceInteractionInd);
             }
             if (this.bothwayThroughConnectionInd != null) {
                 aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_bothwayThroughConnectionInd,
                         this.bothwayThroughConnectionInd.getCode());
             }
             if (this.connectedNumberTreatmentInd != null) {
-                // TODO: implement it
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_connectedNumberTreatmentInd,
+                        this.connectedNumberTreatmentInd.getCode());
             }
             if (this.nonCUGCall) {
-                // TODO: implement it
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_nonCUGCall);
             }
             if (this.holdTreatmentIndicator != null) {
-                // TODO: implement it
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_holdTreatmentIndicator,
+                        this.holdTreatmentIndicator.getCode());
             }
             if (this.cwTreatmentIndicator != null) {
-                // TODO: implement it
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_cwTreatmentIndicator,
+                        this.cwTreatmentIndicator.getCode());
             }
             if (this.ectTreatmentIndicator != null) {
-                // TODO: implement it
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_ectTreatmentIndicator,
+                        this.ectTreatmentIndicator.getCode());
             }
         } catch (IOException e) {
             throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
@@ -294,24 +261,43 @@ public class ServiceInteractionIndicatorsTwoImpl implements ServiceInteractionIn
         public void read(javolution.xml.XMLFormat.InputElement xml,
                 ServiceInteractionIndicatorsTwoImpl serviceInteractionIndicatorsTwo) throws XMLStreamException {
 
-            String vals = xml.get(BOTHWAY_THROUGH_CONNECTION_IND, String.class);
-            if (vals != null) {
-                try {
-                    serviceInteractionIndicatorsTwo.bothwayThroughConnectionInd = Enum.valueOf(BothwayThroughConnectionInd.class, vals);
-                } catch (Exception e) {
-                }
-            }
-
-            // TODO: implement all methods
+            serviceInteractionIndicatorsTwo.forwardServiceInteractionInd = xml.get(FORWARD_SERVICE_INTERACTION_IND,
+                    ForwardServiceInteractionIndImpl.class);
+            serviceInteractionIndicatorsTwo.backwardServiceInteractionInd = xml.get(BACKWARD_SERVICE_INTERACTION_IND,
+                    BackwardServiceInteractionIndImpl.class);
+            serviceInteractionIndicatorsTwo.bothwayThroughConnectionInd = xml.get(BOTHWAY_THROUGH_CONNECTION_IND,
+                    BothwayThroughConnectionInd.class);
+            serviceInteractionIndicatorsTwo.connectedNumberTreatmentInd = xml.get(CONNECTED_NUMBER_TREATMENT_IND,
+                    ConnectedNumberTreatmentInd.class);
+            serviceInteractionIndicatorsTwo.nonCUGCall = Boolean.TRUE.equals(xml.get(NON_CUG_CALL, Boolean.class));
+            serviceInteractionIndicatorsTwo.holdTreatmentIndicator = xml.get(HOLD_TREATMENT_INDICATOR,
+                    HoldTreatmentIndicator.class);
+            serviceInteractionIndicatorsTwo.cwTreatmentIndicator = xml.get(CW_TREATMENT_INDICATOR,
+                    CwTreatmentIndicator.class);
+            serviceInteractionIndicatorsTwo.ectTreatmentIndicator = xml.get(ECT_TREATMENT_INDICATOR,
+                    EctTreatmentIndicator.class);
         }
 
         public void write(ServiceInteractionIndicatorsTwoImpl serviceInteractionIndicatorsTwo,
                 javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 
-            if (serviceInteractionIndicatorsTwo.bothwayThroughConnectionInd != null)
-                xml.add(serviceInteractionIndicatorsTwo.bothwayThroughConnectionInd.toString(), BOTHWAY_THROUGH_CONNECTION_IND, String.class);
-
-            // TODO: implement all methods
+            xml.add((ForwardServiceInteractionIndImpl) serviceInteractionIndicatorsTwo.forwardServiceInteractionInd,
+                    FORWARD_SERVICE_INTERACTION_IND, ForwardServiceInteractionIndImpl.class);
+            xml.add((BackwardServiceInteractionIndImpl) serviceInteractionIndicatorsTwo.backwardServiceInteractionInd,
+                    BACKWARD_SERVICE_INTERACTION_IND, BackwardServiceInteractionIndImpl.class);
+            xml.add(serviceInteractionIndicatorsTwo.bothwayThroughConnectionInd, BOTHWAY_THROUGH_CONNECTION_IND,
+                    BothwayThroughConnectionInd.class);
+            xml.add(serviceInteractionIndicatorsTwo.connectedNumberTreatmentInd, CONNECTED_NUMBER_TREATMENT_IND,
+                    ConnectedNumberTreatmentInd.class);
+            if (serviceInteractionIndicatorsTwo.nonCUGCall) { // only add if true
+                xml.add(serviceInteractionIndicatorsTwo.nonCUGCall, NON_CUG_CALL, Boolean.class);
+            }
+            xml.add(serviceInteractionIndicatorsTwo.holdTreatmentIndicator, HOLD_TREATMENT_INDICATOR,
+                    HoldTreatmentIndicator.class);
+            xml.add(serviceInteractionIndicatorsTwo.cwTreatmentIndicator, CW_TREATMENT_INDICATOR,
+                    CwTreatmentIndicator.class);
+            xml.add(serviceInteractionIndicatorsTwo.ectTreatmentIndicator, ECT_TREATMENT_INDICATOR,
+                    EctTreatmentIndicator.class);
         }
     };
 
@@ -358,4 +344,56 @@ public class ServiceInteractionIndicatorsTwoImpl implements ServiceInteractionIn
 
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((backwardServiceInteractionInd == null) ? 0 : backwardServiceInteractionInd.hashCode());
+        result = prime * result + ((bothwayThroughConnectionInd == null) ? 0 : bothwayThroughConnectionInd.hashCode());
+        result = prime * result + ((connectedNumberTreatmentInd == null) ? 0 : connectedNumberTreatmentInd.hashCode());
+        result = prime * result + ((cwTreatmentIndicator == null) ? 0 : cwTreatmentIndicator.hashCode());
+        result = prime * result + ((ectTreatmentIndicator == null) ? 0 : ectTreatmentIndicator.hashCode());
+        result = prime * result
+                + ((forwardServiceInteractionInd == null) ? 0 : forwardServiceInteractionInd.hashCode());
+        result = prime * result + ((holdTreatmentIndicator == null) ? 0 : holdTreatmentIndicator.hashCode());
+        result = prime * result + (nonCUGCall ? 1231 : 1237);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ServiceInteractionIndicatorsTwoImpl other = (ServiceInteractionIndicatorsTwoImpl) obj;
+        if (backwardServiceInteractionInd == null) {
+            if (other.backwardServiceInteractionInd != null)
+                return false;
+        } else if (!backwardServiceInteractionInd.equals(other.backwardServiceInteractionInd))
+            return false;
+        if (bothwayThroughConnectionInd != other.bothwayThroughConnectionInd)
+            return false;
+        if (connectedNumberTreatmentInd != other.connectedNumberTreatmentInd)
+            return false;
+        if (cwTreatmentIndicator != other.cwTreatmentIndicator)
+            return false;
+        if (ectTreatmentIndicator != other.ectTreatmentIndicator)
+            return false;
+        if (forwardServiceInteractionInd == null) {
+            if (other.forwardServiceInteractionInd != null)
+                return false;
+        } else if (!forwardServiceInteractionInd.equals(other.forwardServiceInteractionInd))
+            return false;
+        if (holdTreatmentIndicator != other.holdTreatmentIndicator)
+            return false;
+        if (nonCUGCall != other.nonCUGCall)
+            return false;
+        return true;
+    }
+
 }

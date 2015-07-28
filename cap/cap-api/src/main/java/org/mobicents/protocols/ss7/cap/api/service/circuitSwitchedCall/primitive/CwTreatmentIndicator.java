@@ -19,6 +19,10 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import javolution.xml.XMLFormat;
+
+import org.mobicents.protocols.ss7.cap.api.xml.EnumXMLFormat;
+
 /**
  *
  cwTreatmentIndicator [51] OCTET STRING (SIZE(1)) OPTIONAL, -- applicable to InitialDP, Connect and ContinueWithArgument --
@@ -26,12 +30,12 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * not affect call waiting treatment
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
 public enum CwTreatmentIndicator {
     acceptCw(1), rejectCw(2);
 
-    private int code;
+    private final int code;
 
     private CwTreatmentIndicator(int code) {
         this.code = code;
@@ -51,4 +55,7 @@ public enum CwTreatmentIndicator {
     public int getCode() {
         return this.code;
     }
+
+    protected static final XMLFormat<CwTreatmentIndicator> XML = new EnumXMLFormat<CwTreatmentIndicator>(
+            CwTreatmentIndicator.class);
 }

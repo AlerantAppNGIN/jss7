@@ -19,18 +19,22 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import org.mobicents.protocols.ss7.cap.api.xml.EnumXMLFormat;
+
+import javolution.xml.XMLFormat;
+
 /**
  *
  ConnectedNumberTreatmentInd ::= ENUMERATED { noINImpact (0), presentationRestricted (1), presentCalledINNumber (2),
  * presentCallINNumberRestricted (3) } -- This parameter is used to suppress or to display the connected number.
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
 public enum ConnectedNumberTreatmentInd {
     noINImpact(0), presentationRestricted(1), presentCalledINNumber(2), presentCallINNumberRestricted(3);
 
-    private int code;
+    private final int code;
 
     private ConnectedNumberTreatmentInd(int code) {
         this.code = code;
@@ -54,4 +58,7 @@ public enum ConnectedNumberTreatmentInd {
     public int getCode() {
         return this.code;
     }
+
+    protected static final XMLFormat<ConnectedNumberTreatmentInd> XML = new EnumXMLFormat<ConnectedNumberTreatmentInd>(
+            ConnectedNumberTreatmentInd.class);
 }

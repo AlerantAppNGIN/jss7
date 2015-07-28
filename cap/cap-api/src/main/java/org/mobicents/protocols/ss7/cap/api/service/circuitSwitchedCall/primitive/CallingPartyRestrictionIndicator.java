@@ -19,6 +19,10 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import org.mobicents.protocols.ss7.cap.api.xml.EnumXMLFormat;
+
+import javolution.xml.XMLFormat;
+
 /**
  *
  callingPartyRestrictionIndicator [4] OCTET STRING (SIZE(1)) OPTIONAL, -- noINImpact 'xxxx xx01'B -- presentationRestricted
@@ -26,12 +30,12 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * restriction treatment
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
 public enum CallingPartyRestrictionIndicator {
     noINImpact(1), presentationRestricted(2);
 
-    private int code;
+    private final int code;
 
     private CallingPartyRestrictionIndicator(int code) {
         this.code = code;
@@ -51,4 +55,7 @@ public enum CallingPartyRestrictionIndicator {
     public int getCode() {
         return this.code;
     }
+
+    protected static final XMLFormat<CallingPartyRestrictionIndicator> XML = new EnumXMLFormat<CallingPartyRestrictionIndicator>(
+            CallingPartyRestrictionIndicator.class);
 }

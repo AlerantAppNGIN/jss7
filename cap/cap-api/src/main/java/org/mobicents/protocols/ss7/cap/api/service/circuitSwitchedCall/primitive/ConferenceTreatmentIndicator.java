@@ -19,6 +19,10 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import javolution.xml.XMLFormat;
+
+import org.mobicents.protocols.ss7.cap.api.xml.EnumXMLFormat;
+
 /**
  *
  conferenceTreatmentIndicator [1] OCTET STRING (SIZE(1)) OPTIONAL, -- acceptConferenceRequest 'xxxx xx01'B --
@@ -26,13 +30,13 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * conference treatment
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
 public enum ConferenceTreatmentIndicator {
 
     acceptConferenceRequest(1), rejectConferenceRequest(2);
 
-    private int code;
+    private final int code;
 
     private ConferenceTreatmentIndicator(int code) {
         this.code = code;
@@ -52,4 +56,7 @@ public enum ConferenceTreatmentIndicator {
     public int getCode() {
         return this.code;
     }
+
+    protected static final XMLFormat<ConferenceTreatmentIndicator> XML = new EnumXMLFormat<ConferenceTreatmentIndicator>(
+            ConferenceTreatmentIndicator.class);
 }
