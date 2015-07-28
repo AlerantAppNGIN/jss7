@@ -18,6 +18,7 @@ import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 
 /**
  * Implementation class for {@link BackwardServiceInteractionInd}.
+ *
  * @author tamas gyorgyey
  */
 @SuppressWarnings("serial")
@@ -130,6 +131,23 @@ public class BackwardServiceInteractionIndImpl extends SequenceBase implements B
                     CallCompletionTreatmentIndicator.class);
         }
     };
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(_PrimitiveName).append(" [");
+        if (conferenceTreatmentIndicator != null) {
+            builder.append("conferenceTreatmentIndicator=");
+            builder.append(conferenceTreatmentIndicator);
+            builder.append(", ");
+        }
+        if (callCompletionTreatmentIndicator != null) {
+            builder.append("callCompletionTreatmentIndicator=");
+            builder.append(callCompletionTreatmentIndicator);
+        }
+        builder.append("]");
+        return builder.toString();
+    }
 
     @Override
     public int hashCode() {

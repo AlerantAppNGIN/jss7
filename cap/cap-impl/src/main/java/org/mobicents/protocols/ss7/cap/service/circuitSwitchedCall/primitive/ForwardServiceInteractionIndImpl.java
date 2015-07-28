@@ -19,6 +19,7 @@ import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 
 /**
  * Implementation class for {@link ForwardServiceInteractionInd}.
+ *
  * @author tamas gyorgyey
  */
 @SuppressWarnings("serial")
@@ -155,6 +156,28 @@ public class ForwardServiceInteractionIndImpl extends SequenceBase implements Fo
                     CallingPartyRestrictionIndicator.class);
         }
     };
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(_PrimitiveName).append(" [");
+        if (conferenceTreatmentIndicator != null) {
+            builder.append("conferenceTreatmentIndicator=");
+            builder.append(conferenceTreatmentIndicator);
+            builder.append(", ");
+        }
+        if (callDiversionTreatmentIndicator != null) {
+            builder.append("callDiversionTreatmentIndicator=");
+            builder.append(callDiversionTreatmentIndicator);
+            builder.append(", ");
+        }
+        if (callingPartyRestrictionIndicator != null) {
+            builder.append("callingPartyRestrictionIndicator=");
+            builder.append(callingPartyRestrictionIndicator);
+        }
+        builder.append("]");
+        return builder.toString();
+    }
 
     @Override
     public int hashCode() {
