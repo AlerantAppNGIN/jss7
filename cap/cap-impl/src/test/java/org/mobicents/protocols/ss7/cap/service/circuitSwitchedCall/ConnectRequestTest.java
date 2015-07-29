@@ -163,7 +163,7 @@ public class ConnectRequestTest {
         DestinationRoutingAddressImpl destinationRoutingAddress = new DestinationRoutingAddressImpl(calledPartyNumbers);
 
         ConnectRequestImpl elem = new ConnectRequestImpl(destinationRoutingAddress, null, null, null, null, null, null, null,
-                null, null, null, null, null, false, false, false, null, false);
+                null, null, null, null, null, false, false, false, null, false, false);
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
@@ -172,7 +172,7 @@ public class ConnectRequestTest {
         GenericNumberCapImpl genericNumberCap = new GenericNumberCapImpl(getDataGenericNumber());
         genericNumbers.add(genericNumberCap);
         elem = new ConnectRequestImpl(destinationRoutingAddress, null, null, null, null, null, null, null, genericNumbers,
-                null, null, null, null, false, false, false, null, false);
+                null, null, null, null, false, false, false, null, false, false);
         aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
@@ -187,7 +187,7 @@ public class ConnectRequestTest {
 
         elem = new ConnectRequestImpl(destinationRoutingAddress, alertingPatternCap, originalCalledPartyID,
                 CAPExtensionsTest.createTestCAPExtensions(), null, callingPartysCategory, redirectingPartyID,
-                redirectionInformation, genericNumbers, null, null, null, null, false, true, true, naoliInfo, false);
+                redirectionInformation, genericNumbers, null, null, null, null, false, true, true, naoliInfo, false, false);
         aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
@@ -227,7 +227,7 @@ public class ConnectRequestTest {
         ConnectRequestImpl original = new ConnectRequestImpl(destinationRoutingAddress, alertingPatternCap,
                 originalCalledPartyID, CAPExtensionsTest.createTestCAPExtensions(), null, callingPartysCategory,
                 redirectingPartyID, redirectionInformation, genericNumbers, null, null, null, null, false, true, true,
-                naoliInfo, false);
+                naoliInfo, false, false);
         original.setInvokeId(24);
 
         // Writes the area to a file.

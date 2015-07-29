@@ -51,7 +51,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * ServiceInteractionIndicatorsTwo OPTIONAL, chargeNumber [19] ChargeNumber {bound} OPTIONAL, legToBeConnected [21] LegID
  * OPTIONAL, cug-Interlock [31] CUG-Interlock OPTIONAL, cug-OutgoingAccess [32] NULL OPTIONAL, suppressionOfAnnouncement [55]
  * SuppressionOfAnnouncement OPTIONAL, oCSIApplicable [56] OCSIApplicable OPTIONAL, naOliInfo [57] NAOliInfo OPTIONAL,
- * bor-InterrogationRequested [58] NULL OPTIONAL, ... } -- na-Info is included at the discretion of the gsmSCF operator.
+ * bor-InterrogationRequested [58] NULL OPTIONAL, ..., suppress-N-CSI [59] NULL OPTIONAL } -- na-Info is included at the discretion of the gsmSCF operator.
  *
  * SuppressionOfAnnouncement ::= NULL
  *
@@ -60,7 +60,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  *
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
 public interface ConnectRequest extends CircuitSwitchedCallMessage {
 
@@ -99,5 +99,7 @@ public interface ConnectRequest extends CircuitSwitchedCallMessage {
     NAOliInfo getNAOliInfo();
 
     boolean getBorInterrogationRequested();
+
+    boolean getSuppressNCSI();
 
 }

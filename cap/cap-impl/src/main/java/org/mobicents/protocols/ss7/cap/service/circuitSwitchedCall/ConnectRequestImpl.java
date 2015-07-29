@@ -46,12 +46,15 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.NAOliInfo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
 import org.mobicents.protocols.ss7.cap.isup.GenericNumberCapImpl;
+import org.mobicents.protocols.ss7.cap.isup.LocationNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.OriginalCalledNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.isup.RedirectingPartyIDCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AlertingPatternCapImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CarrierImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.DestinationRoutingAddressImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.NAOliInfoImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwoImpl;
 import org.mobicents.protocols.ss7.inap.api.INAPException;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.inap.api.isup.CallingPartysCategoryInap;
@@ -59,14 +62,17 @@ import org.mobicents.protocols.ss7.inap.api.isup.RedirectionInformationInap;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.isup.CallingPartysCategoryInapImpl;
 import org.mobicents.protocols.ss7.inap.isup.RedirectionInformationInapImpl;
+import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
+import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 import org.mobicents.protocols.ss7.map.primitives.ArrayListSerializingBase;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUGInterlockImpl;
 
 /**
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
 public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implements ConnectRequest {
 
@@ -88,19 +94,28 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
     public static final int _ID_oCSIApplicable = 56;
     public static final int _ID_naOliInfo = 57;
     public static final int _ID_bor_InterrogationRequested = 58;
+    public static final int _ID_suppressNCSI = 59;
 
     private static final String DESTINATION_ROUTING_ADDRESS = "destinationRoutingAddress";
     private static final String ALERTING_PATTERN = "alertingPattern";
     private static final String ORIGINAL_CALLED_PARTY_ID = "originalCalledPartyID";
     private static final String EXTENSIONS = "extensions";
+    private static final String CARRIER = "carrier";
     private static final String CALLING_PARTYS_CATEGORY = "callingPartysCategory";
     private static final String REDIRECTING_PARTY_ID = "redirectingPartyID";
     private static final String REDIRECTION_INFORMATION = "redirectionInformation";
     private static final String GENERIC_NUMBER = "genericNumber";
     private static final String GENERIC_NUMBER_LIST = "genericNumbersList";
+    private static final String SERVICE_INTERACTION_INDICATORS_TWO = "serviceInteractionIndicatorsTwo";
+    private static final String CHARGE_NUMBER = "chargeNumber";
+    private static final String LEG_TO_BE_CONNECTED = "legToBeConnected";
+    private static final String CUG_INTERLOCK = "cugInterlock";
+    private static final String CUG_OUTGOING_ACCESS = "cugOutgoingAccess";
     private static final String SUPPRESSION_OF_ANNOUNCEMENT = "suppressionOfAnnouncement";
     private static final String OCSI_APPLICABLE = "OCSIApplicable";
     private static final String NA_OLI_INFO = "NAOliInfo";
+    private static final String BOR_INTERROGATION_REQUESTED = "borInterrogationRequested";
+    private static final String SUPPRESS_N_CSI = "suppressNCSI";
 
     public static final String _PrimitiveName = "ConnectRequestIndication";
 
@@ -122,6 +137,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
     private boolean ocsIApplicable;
     private NAOliInfo naoliInfo;
     private boolean borInterrogationRequested;
+    private boolean suppressNCSI;
 
     public ConnectRequestImpl() {
     }
@@ -132,7 +148,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
             RedirectionInformationInap redirectionInformation, ArrayList<GenericNumberCap> genericNumbers,
             ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, LocationNumberCap chargeNumber,
             LegID legToBeConnected, CUGInterlock cugInterlock, boolean cugOutgoingAccess, boolean suppressionOfAnnouncement,
-            boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested) {
+            boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested, boolean suppressNCSI) {
         this.destinationRoutingAddress = destinationRoutingAddress;
         this.alertingPattern = alertingPattern;
         this.originalCalledPartyID = originalCalledPartyID;
@@ -151,6 +167,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
         this.ocsIApplicable = ocsIApplicable;
         this.naoliInfo = naoliInfo;
         this.borInterrogationRequested = borInterrogationRequested;
+        this.suppressNCSI = suppressNCSI;
     }
 
     @Override
@@ -254,6 +271,11 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
     }
 
     @Override
+    public boolean getSuppressNCSI() {
+        return suppressNCSI;
+    }
+
+    @Override
     public int getTag() throws CAPException {
         return Tag.SEQUENCE;
     }
@@ -330,6 +352,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
         this.ocsIApplicable = false;
         this.naoliInfo = null;
         this.borInterrogationRequested = false;
+        this.suppressNCSI = false;
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
         while (true) {
@@ -357,7 +380,8 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
                         ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
                         break;
                     case _ID_carrier:
-                        ais.advanceElement(); // TODO: implement it
+                        this.carrier = new CarrierImpl();
+                        ((CarrierImpl) this.carrier).decodeAll(ais);
                         break;
                     case _ID_callingPartysCategory:
                         this.callingPartysCategory = new CallingPartysCategoryInapImpl();
@@ -390,19 +414,24 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
                         }
                         break;
                     case _ID_serviceInteractionIndicatorsTwo:
-                        ais.advanceElement(); // TODO: implement it
+                        this.serviceInteractionIndicatorsTwo = new ServiceInteractionIndicatorsTwoImpl();
+                        ((ServiceInteractionIndicatorsTwoImpl) this.serviceInteractionIndicatorsTwo).decodeAll(ais);
                         break;
                     case _ID_chargeNumber:
-                        ais.advanceElement(); // TODO: implement it
+                        this.chargeNumber = new LocationNumberCapImpl();
+                        ((LocationNumberCapImpl) this.chargeNumber).decodeAll(ais);
                         break;
                     case _ID_legToBeConnected:
-                        ais.advanceElement(); // TODO: implement it
+                        this.legToBeConnected = new LegIDImpl();
+                        ((LegIDImpl) this.legToBeConnected).decodeAll(ais);
                         break;
                     case _ID_cug_Interlock:
-                        ais.advanceElement(); // TODO: implement it
+                        this.cugInterlock = new CUGInterlockImpl();
+                        ((CUGInterlockImpl) this.cugInterlock).decodeAll(ais);
                         break;
                     case _ID_cug_OutgoingAccess:
-                        ais.advanceElement(); // TODO: implement it
+                        ais.readNull();
+                        this.cugOutgoingAccess = true;
                         break;
                     case _ID_suppressionOfAnnouncement:
                         ais.readNull();
@@ -417,7 +446,12 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
                         ((NAOliInfoImpl) this.naoliInfo).decodeAll(ais);
                         break;
                     case _ID_bor_InterrogationRequested:
-                        ais.advanceElement(); // TODO: implement it
+                        ais.readNull();
+                        this.borInterrogationRequested = true;
+                        break;
+                    case _ID_suppressNCSI:
+                        ais.readNull();
+                        this.suppressNCSI = true;
                         break;
 
                     default:
@@ -471,7 +505,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
             if (this.extensions != null)
                 ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
             if (this.carrier != null) {
-                // TODO: implement it - _ID_carrier
+                ((CarrierImpl) this.carrier).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_carrier);
             }
             if (this.callingPartysCategory != null)
                 ((CallingPartysCategoryInapImpl) this.callingPartysCategory).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
@@ -497,19 +531,21 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
                 aos.FinalizeContent(pos);
             }
             if (this.serviceInteractionIndicatorsTwo != null) {
-                // TODO: implement it - _ID_serviceInteractionIndicatorsTwo
+                ((ServiceInteractionIndicatorsTwoImpl) this.serviceInteractionIndicatorsTwo).encodeAll(aos,
+                        Tag.CLASS_CONTEXT_SPECIFIC, _ID_serviceInteractionIndicatorsTwo);
             }
             if (this.chargeNumber != null) {
-                // TODO: implement it - _ID_chargeNumber
+                ((LocationNumberCapImpl) this.chargeNumber)
+                        .encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_chargeNumber);
             }
             if (this.legToBeConnected != null) {
-                // TODO: implement it - _ID_legToBeConnected
+                ((LegIDImpl) this.legToBeConnected).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_legToBeConnected);
             }
             if (this.cugInterlock != null) {
-                // TODO: implement it - _ID_cug_Interlock
+                ((CUGInterlockImpl) this.cugInterlock).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_cug_Interlock);
             }
             if (this.cugOutgoingAccess) {
-                // TODO: implement it - _ID_cug_OutgoingAccess
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_cug_OutgoingAccess);
             }
             if (this.suppressionOfAnnouncement)
                 aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_suppressionOfAnnouncement);
@@ -518,7 +554,10 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
             if (this.naoliInfo != null)
                 ((NAOliInfoImpl) this.naoliInfo).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_naOliInfo);
             if (this.borInterrogationRequested) {
-                // TODO: implement it - _ID_bor_InterrogationRequested
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_bor_InterrogationRequested);
+            }
+            if (this.suppressNCSI) {
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_suppressNCSI);
             }
 
         } catch (IOException e) {
@@ -527,6 +566,8 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
             throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         } catch (INAPException e) {
             throw new CAPException("INAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (MAPException e) {
+            throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -613,6 +654,9 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
         if (this.borInterrogationRequested) {
             sb.append(", borInterrogationRequested");
         }
+        if (this.suppressNCSI) {
+            sb.append(", suppressNCSI");
+        }
 
         sb.append("]");
 
@@ -635,6 +679,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
             connectRequest.alertingPattern = xml.get(ALERTING_PATTERN, AlertingPatternCapImpl.class);
             connectRequest.originalCalledPartyID = xml.get(ORIGINAL_CALLED_PARTY_ID, OriginalCalledNumberCapImpl.class);
             connectRequest.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
+            connectRequest.carrier = xml.get(CARRIER, CarrierImpl.class);
             connectRequest.callingPartysCategory = xml.get(CALLING_PARTYS_CATEGORY, CallingPartysCategoryInapImpl.class);
 
             connectRequest.redirectingPartyID = xml.get(REDIRECTING_PARTY_ID, RedirectingPartyIDCapImpl.class);
@@ -645,13 +690,19 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
                 connectRequest.genericNumbers = al.getData();
             }
 
-            Boolean bval = xml.get(SUPPRESSION_OF_ANNOUNCEMENT, Boolean.class);
-            if (bval != null)
-                connectRequest.suppressionOfAnnouncement = bval;
-            bval = xml.get(OCSI_APPLICABLE, Boolean.class);
-            if (bval != null)
-                connectRequest.ocsIApplicable = bval;
+            connectRequest.serviceInteractionIndicatorsTwo = xml.get(SERVICE_INTERACTION_INDICATORS_TWO,
+                    ServiceInteractionIndicatorsTwoImpl.class);
+            connectRequest.chargeNumber = xml.get(CHARGE_NUMBER, LocationNumberCapImpl.class);
+            connectRequest.legToBeConnected = xml.get(LEG_TO_BE_CONNECTED, LegIDImpl.class);
+            connectRequest.cugInterlock = xml.get(CUG_INTERLOCK, CUGInterlockImpl.class);
+            connectRequest.cugOutgoingAccess = Boolean.TRUE.equals(xml.get(CUG_OUTGOING_ACCESS, Boolean.class));
+            connectRequest.suppressionOfAnnouncement = Boolean.TRUE.equals(xml.get(SUPPRESSION_OF_ANNOUNCEMENT,
+                    Boolean.class));
+            connectRequest.ocsIApplicable = Boolean.TRUE.equals(xml.get(OCSI_APPLICABLE, Boolean.class));
             connectRequest.naoliInfo = xml.get(NA_OLI_INFO, NAOliInfoImpl.class);
+            connectRequest.borInterrogationRequested = Boolean.TRUE.equals(xml.get(BOR_INTERROGATION_REQUESTED,
+                    Boolean.class));
+            connectRequest.suppressNCSI = Boolean.TRUE.equals(xml.get(SUPPRESS_N_CSI, Boolean.class));
         }
 
         @Override
@@ -670,6 +721,9 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
                         OriginalCalledNumberCapImpl.class);
             if (connectRequest.getExtensions() != null)
                 xml.add((CAPExtensionsImpl) connectRequest.getExtensions(), EXTENSIONS, CAPExtensionsImpl.class);
+
+            xml.add((CarrierImpl) connectRequest.carrier, CARRIER, CarrierImpl.class);
+
             if (connectRequest.getCallingPartysCategory() != null)
                 xml.add((CallingPartysCategoryInapImpl) connectRequest.getCallingPartysCategory(), CALLING_PARTYS_CATEGORY,
                         CallingPartysCategoryInapImpl.class);
@@ -686,12 +740,23 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
                 xml.add(al, GENERIC_NUMBER_LIST, ConnectRequest_GenericNumbers.class);
             }
 
+            xml.add((ServiceInteractionIndicatorsTwoImpl) connectRequest.serviceInteractionIndicatorsTwo,
+                    SERVICE_INTERACTION_INDICATORS_TWO, ServiceInteractionIndicatorsTwoImpl.class);
+            xml.add((LocationNumberCapImpl) connectRequest.chargeNumber, CHARGE_NUMBER, LocationNumberCapImpl.class);
+            xml.add((LegIDImpl) connectRequest.legToBeConnected, LEG_TO_BE_CONNECTED, LegIDImpl.class);
+            xml.add((CUGInterlockImpl) connectRequest.cugInterlock, CUG_INTERLOCK, CUGInterlockImpl.class);
+            if (connectRequest.cugOutgoingAccess)
+                xml.add(true, CUG_OUTGOING_ACCESS, Boolean.class);
             if (connectRequest.getSuppressionOfAnnouncement())
                 xml.add(true, SUPPRESSION_OF_ANNOUNCEMENT, Boolean.class);
             if (connectRequest.getOCSIApplicable())
                 xml.add(true, OCSI_APPLICABLE, Boolean.class);
             if (connectRequest.getNAOliInfo() != null)
                 xml.add((NAOliInfoImpl) connectRequest.getNAOliInfo(), NA_OLI_INFO, NAOliInfoImpl.class);
+            if (connectRequest.borInterrogationRequested)
+                xml.add(true, BOR_INTERROGATION_REQUESTED, Boolean.class);
+            if (connectRequest.suppressNCSI)
+                xml.add(true, SUPPRESS_N_CSI, Boolean.class);
         }
     };
 
