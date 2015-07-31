@@ -22,7 +22,12 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -32,6 +37,7 @@ import org.testng.annotations.Test;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class VariablePartTimeTest {
@@ -60,5 +66,31 @@ public class VariablePartTimeTest {
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 2);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
+
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+    public void testXMLSerialize() throws Exception {
+
+        VariablePartTimeImpl original = new VariablePartTimeImpl(15, 47);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "variablePartTimeImpl",
+                VariablePartTimeImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        VariablePartTimeImpl copy = reader.read("variablePartTimeImpl",
+                VariablePartTimeImpl.class);
+
+        assertEquals(original, copy);
     }
 }

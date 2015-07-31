@@ -205,6 +205,32 @@ public class PromptAndCollectUserInformationResponseImpl extends
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((digitsResponse == null) ? 0 : digitsResponse.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PromptAndCollectUserInformationResponseImpl other = (PromptAndCollectUserInformationResponseImpl) obj;
+        if (digitsResponse == null) {
+            if (other.digitsResponse != null)
+                return false;
+        } else if (!digitsResponse.equals(other.digitsResponse))
+            return false;
+        return true;
+    }
+
     protected static final XMLFormat<PromptAndCollectUserInformationResponseImpl> PROMPT_AND_COLLECT_USER_INFORMATION_RESPONSE_XML = new XMLFormat<PromptAndCollectUserInformationResponseImpl>(
             PromptAndCollectUserInformationResponseImpl.class) {
 
@@ -228,34 +254,4 @@ public class PromptAndCollectUserInformationResponseImpl extends
 
     };
 
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException, ParameterException, CAPException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-
-        GenericDigitsImpl gd = new GenericDigitsImpl("123".getBytes());
-        x.write(new PromptAndCollectUserInformationResponseImpl(new DigitsImpl(
-                gd)), "promptAndCollectResult");
-        x.flush();
-
-        String xml_1 = "<promptAndCollectResult>" + "<digitsResponse>"
-                + "<genericDigits encodingScheme=\"1\" typeOfDigits=\"17\">"
-                + "<digits value=\"3233\"/>" + "</genericDigits>"
-                + "</digitsResponse>" + "</promptAndCollectResult>";
-
-        System.out.println("");
-        XMLObjectReader r_1 = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        PromptAndCollectUserInformationResponseImpl readHere_1 = null;
-        if (r_1.hasNext()) {
-            readHere_1 = r_1.read("promptAndCollectResult",
-                    PromptAndCollectUserInformationResponseImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere_1.toString());
-    }
-    */
 }

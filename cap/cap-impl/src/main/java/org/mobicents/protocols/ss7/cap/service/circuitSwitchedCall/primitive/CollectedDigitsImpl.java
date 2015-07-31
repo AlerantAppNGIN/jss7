@@ -20,6 +20,7 @@
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
@@ -467,6 +468,92 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(cancelDigit);
+        result = prime * result + Arrays.hashCode(endOfReplyDigit);
+        result = prime * result
+                + ((errorTreatment == null) ? 0 : errorTreatment.hashCode());
+        result = prime
+                * result
+                + ((firstDigitTimeOut == null) ? 0 : firstDigitTimeOut
+                        .hashCode());
+        result = prime
+                * result
+                + ((interDigitTimeOut == null) ? 0 : interDigitTimeOut
+                        .hashCode());
+        result = prime
+                * result
+                + ((interruptableAnnInd == null) ? 0 : interruptableAnnInd
+                        .hashCode());
+        result = prime * result + maximumNbOfDigits;
+        result = prime
+                * result
+                + ((minimumNbOfDigits == null) ? 0 : minimumNbOfDigits
+                        .hashCode());
+        result = prime * result + Arrays.hashCode(startDigit);
+        result = prime * result
+                + ((voiceBack == null) ? 0 : voiceBack.hashCode());
+        result = prime
+                * result
+                + ((voiceInformation == null) ? 0 : voiceInformation.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CollectedDigitsImpl other = (CollectedDigitsImpl) obj;
+        if (!Arrays.equals(cancelDigit, other.cancelDigit))
+            return false;
+        if (!Arrays.equals(endOfReplyDigit, other.endOfReplyDigit))
+            return false;
+        if (errorTreatment != other.errorTreatment)
+            return false;
+        if (firstDigitTimeOut == null) {
+            if (other.firstDigitTimeOut != null)
+                return false;
+        } else if (!firstDigitTimeOut.equals(other.firstDigitTimeOut))
+            return false;
+        if (interDigitTimeOut == null) {
+            if (other.interDigitTimeOut != null)
+                return false;
+        } else if (!interDigitTimeOut.equals(other.interDigitTimeOut))
+            return false;
+        if (interruptableAnnInd == null) {
+            if (other.interruptableAnnInd != null)
+                return false;
+        } else if (!interruptableAnnInd.equals(other.interruptableAnnInd))
+            return false;
+        if (maximumNbOfDigits != other.maximumNbOfDigits)
+            return false;
+        if (minimumNbOfDigits == null) {
+            if (other.minimumNbOfDigits != null)
+                return false;
+        } else if (!minimumNbOfDigits.equals(other.minimumNbOfDigits))
+            return false;
+        if (!Arrays.equals(startDigit, other.startDigit))
+            return false;
+        if (voiceBack == null) {
+            if (other.voiceBack != null)
+                return false;
+        } else if (!voiceBack.equals(other.voiceBack))
+            return false;
+        if (voiceInformation == null) {
+            if (other.voiceInformation != null)
+                return false;
+        } else if (!voiceInformation.equals(other.voiceInformation))
+            return false;
+        return true;
+    }
+
     protected static final XMLFormat<CollectedDigitsImpl> COLLECTED_DIGITS_XML = new XMLFormat<CollectedDigitsImpl>(
             CollectedDigitsImpl.class) {
 
@@ -501,9 +588,18 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
                     .valueOf(errorTreatment) : ErrorTreatment.stdErrorAndInfo;
             collectedDigits.interruptableAnnInd = xml.get(
                     INTERRUPTABLE_ANN_IND, Boolean.class);
+            if (collectedDigits.interruptableAnnInd == null) {
+                collectedDigits.interruptableAnnInd = true;
+            }
             collectedDigits.voiceInformation = xml.get(VOICE_INFORMATION,
                     Boolean.class);
+            if (collectedDigits.voiceInformation == null) {
+                collectedDigits.voiceInformation = false;
+            }
             collectedDigits.voiceBack = xml.get(VOICE_BACK, Boolean.class);
+            if (collectedDigits.voiceBack == null) {
+                collectedDigits.voiceBack = false;
+            }
         }
 
         @Override
@@ -568,43 +664,5 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
         }
 
     };
-
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-
-        x.write(new CollectedDigitsImpl(null, 20, "#".getBytes(), "*"
-                .getBytes(), "1".getBytes(), 5, 10,
-                ErrorTreatment.stdErrorAndInfo, false, false, false),
-                "collectedDigits");
-        x.flush();
-
-        String xml_1 = "<collectedDigits>"
-                + "<minimumNbOfDigits value=\"10\"/>"
-                + "<maximumNbOfDigits value=\"20\"/>"
-                + "<endOfReplyDigit value=\"23\"/>"
-                + "<cancelDigit value=\"2A\"/>" + "<startDigit value=\"31\"/>"
-                + "<firstDigitTimeOut value=\"5\"/>"
-                + "<interDigitTimeOut value=\"10\"/>"
-                + "<errorTreatment value=\"stdErrorAndInfo\"/>"
-                + "<interruptableAnnInd value=\"false\"/>"
-                + "<voiceInformation value=\"false\"/>"
-                + "<voiceBack value=\"false\"/>" + "</collectedDigits>";
-
-        System.out.println("");
-        XMLObjectReader r_1 = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        CollectedDigitsImpl readHere_1 = null;
-        if (r_1.hasNext()) {
-            readHere_1 = r_1.read("collectedDigits", CollectedDigitsImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere_1.toString());
-    }
-    */
 
 }

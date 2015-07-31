@@ -225,6 +225,38 @@ public class InformationToSendImpl implements InformationToSend,
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((inbandInfo == null) ? 0 : inbandInfo.hashCode());
+        result = prime * result + ((tone == null) ? 0 : tone.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        InformationToSendImpl other = (InformationToSendImpl) obj;
+        if (inbandInfo == null) {
+            if (other.inbandInfo != null)
+                return false;
+        } else if (!inbandInfo.equals(other.inbandInfo))
+            return false;
+        if (tone == null) {
+            if (other.tone != null)
+                return false;
+        } else if (!tone.equals(other.tone))
+            return false;
+        return true;
+    }
+
     protected static final XMLFormat<InformationToSendImpl> INFORMATION_TO_SEND_XML = new XMLFormat<InformationToSendImpl>(
             InformationToSendImpl.class) {
 
@@ -261,66 +293,4 @@ public class InformationToSendImpl implements InformationToSend,
 
     };
 
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-
-        ArrayList<VariablePart> aL = new ArrayList<VariablePart>();
-        aL.add(new VariablePartImpl(new VariablePartDateImpl(2015, 6, 27)));
-        aL.add(new VariablePartImpl(new VariablePartTimeImpl(15, 10)));
-        aL.add(new VariablePartImpl(new Integer(145)));
-        VariableMessageImpl vm = new VariableMessageImpl(145, aL);
-        MessageIDImpl mi = new MessageIDImpl(vm);
-        InbandInfoImpl inbandInfoImpl = new InbandInfoImpl(mi, new Integer(5),
-                new Integer(8), new Integer(2));
-
-        x.write(new InformationToSendImpl(inbandInfoImpl), "informationToSend");
-        x.flush();
-
-        String xml_1 = "<informationToSend>" + "<inbandInfo>"
-                + "<duration value=\"8\"/>" + "<interval value=\"2\"/>"
-                + "<numberOfRepetitions value=\"5\"/>" + "<messageID>"
-                + "<variableMessage>" + "<elementaryMessageID value=\"145\"/>"
-                + "<variablePart>" + "<date data=\"02516072\"/>"
-                + "</variablePart>" + "<variablePart>"
-                + "<time data=\"5101\"/>" + "</variablePart>"
-                + "<variablePart>" + "<integer value=\"145\"/>"
-                + "</variablePart>" + "</variableMessage>" + "</messageID>"
-                + "</inbandInfo>" + "</informationToSend>";
-
-        System.out.println("");
-        XMLObjectReader r_1 = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        InformationToSendImpl readHere_1 = null;
-        if (r_1.hasNext()) {
-            readHere_1 = r_1.read("informationToSend",
-                    InformationToSendImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere_1.toString());
-
-        x.write(new InformationToSendImpl(new ToneImpl(25, null)),
-                "informationToSend");
-        x.flush();
-
-        String xml_2 = "<informationToSend>" + "<tone>"
-                + "<toneID value=\"25\"/>" + "</tone>" + "</informationToSend>";
-
-        System.out.println("");
-        XMLObjectReader r_2 = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml_2.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        InformationToSendImpl readHere_2 = null;
-        if (r_2.hasNext()) {
-            readHere_2 = r_2.read("informationToSend",
-                    InformationToSendImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere_2.toString());
-    }
-    */
 }

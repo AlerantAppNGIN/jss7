@@ -313,6 +313,55 @@ public class VariablePartImpl implements VariablePart, CAPAsnPrimitive {
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((date == null) ? 0 : date.hashCode());
+        result = prime * result + ((integer == null) ? 0 : integer.hashCode());
+        result = prime * result + ((number == null) ? 0 : number.hashCode());
+        result = prime * result + ((price == null) ? 0 : price.hashCode());
+        result = prime * result + ((time == null) ? 0 : time.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        VariablePartImpl other = (VariablePartImpl) obj;
+        if (date == null) {
+            if (other.date != null)
+                return false;
+        } else if (!date.equals(other.date))
+            return false;
+        if (integer == null) {
+            if (other.integer != null)
+                return false;
+        } else if (!integer.equals(other.integer))
+            return false;
+        if (number == null) {
+            if (other.number != null)
+                return false;
+        } else if (!number.equals(other.number))
+            return false;
+        if (price == null) {
+            if (other.price != null)
+                return false;
+        } else if (!price.equals(other.price))
+            return false;
+        if (time == null) {
+            if (other.time != null)
+                return false;
+        } else if (!time.equals(other.time))
+            return false;
+        return true;
+    }
+
     protected static final XMLFormat<VariablePartImpl> VARIABLE_PART_XML = new XMLFormat<VariablePartImpl>(
             VariablePartImpl.class) {
 
@@ -374,18 +423,5 @@ public class VariablePartImpl implements VariablePart, CAPAsnPrimitive {
         }
 
     };
-
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-        x.write(new VariablePartImpl(new Integer(150)), "VariablePartImpl");
-        // x.write(new VariablePartImpl(new VariablePartDateImpl(2015,6,27)),
-        // "VariablePartImpl");
-        x.flush();
-    }
-    */
 
 }

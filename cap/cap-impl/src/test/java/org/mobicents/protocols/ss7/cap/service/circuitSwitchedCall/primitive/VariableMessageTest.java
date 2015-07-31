@@ -22,8 +22,13 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -34,12 +39,14 @@ import org.testng.annotations.Test;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class VariableMessageTest {
 
     public byte[] getData1() {
-        return new byte[] { 48, 13, (byte) 128, 2, 3, 32, (byte) 161, 7, (byte) 128, 1, 111, (byte) 130, 2, 50, (byte) 149 };
+        return new byte[] { 48, 13, (byte) 128, 2, 3, 32, (byte) 161, 7,
+                (byte) 128, 1, 111, (byte) 130, 2, 50, (byte) 149 };
     }
 
     @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
@@ -54,8 +61,10 @@ public class VariableMessageTest {
         assertEquals(elem.getElementaryMessageID(), 800);
         assertEquals(elem.getVariableParts().size(), 2);
         assertEquals((int) elem.getVariableParts().get(0).getInteger(), 111);
-        assertEquals((int) elem.getVariableParts().get(1).getTime().getHour(), 23);
-        assertEquals((int) elem.getVariableParts().get(1).getTime().getMinute(), 59);
+        assertEquals((int) elem.getVariableParts().get(1).getTime().getHour(),
+                23);
+        assertEquals(
+                (int) elem.getVariableParts().get(1).getTime().getMinute(), 59);
     }
 
     @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
@@ -74,5 +83,35 @@ public class VariableMessageTest {
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
         // int elementaryMessageID, ArrayList<VariablePart> variableParts
+    }
+
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+    public void testXMLSerialize() throws Exception {
+
+        ArrayList<VariablePart> aL = new ArrayList<VariablePart>();
+        aL.add(new VariablePartImpl(new VariablePartDateImpl(2015, 6, 27)));
+        aL.add(new VariablePartImpl(new VariablePartTimeImpl(15, 10)));
+        aL.add(new VariablePartImpl(new Integer(145)));
+        VariableMessageImpl original = new VariableMessageImpl(145, aL);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "variableMessageImpl", VariableMessageImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        VariableMessageImpl copy = reader.read("variableMessageImpl",
+                VariableMessageImpl.class);
+
+        assertEquals(original, copy);
     }
 }

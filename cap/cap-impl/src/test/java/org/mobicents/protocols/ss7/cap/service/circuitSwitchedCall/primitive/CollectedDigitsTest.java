@@ -23,7 +23,12 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -34,14 +39,16 @@ import org.testng.annotations.Test;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class CollectedDigitsTest {
 
     public byte[] getData1() {
-        return new byte[] { 48, 34, (byte) 128, 1, 15, (byte) 129, 1, 30, (byte) 130, 1, 1, (byte) 131, 2, 2, 2, (byte) 132, 1,
-                55, (byte) 133, 1, 100, (byte) 134, 1, 101, (byte) 135, 1, 2, (byte) 136, 1, 0, (byte) 137, 1, (byte) 255,
-                (byte) 138, 1, 0 };
+        return new byte[] { 48, 34, (byte) 128, 1, 15, (byte) 129, 1, 30,
+                (byte) 130, 1, 1, (byte) 131, 2, 2, 2, (byte) 132, 1, 55,
+                (byte) 133, 1, 100, (byte) 134, 1, 101, (byte) 135, 1, 2,
+                (byte) 136, 1, 0, (byte) 137, 1, (byte) 255, (byte) 138, 1, 0 };
     }
 
     public byte[] getEndOfReplyDigit() {
@@ -67,7 +74,8 @@ public class CollectedDigitsTest {
         elem.decodeAll(ais);
         assertEquals((int) elem.getMinimumNbOfDigits(), 15);
         assertEquals((int) elem.getMaximumNbOfDigits(), 30);
-        assertTrue(Arrays.equals(elem.getEndOfReplyDigit(), getEndOfReplyDigit()));
+        assertTrue(Arrays.equals(elem.getEndOfReplyDigit(),
+                getEndOfReplyDigit()));
         assertTrue(Arrays.equals(elem.getCancelDigit(), getCancelDigit()));
         assertTrue(Arrays.equals(elem.getStartDigit(), getStartDigit()));
         assertEquals((int) elem.getFirstDigitTimeOut(), 100);
@@ -81,15 +89,45 @@ public class CollectedDigitsTest {
     @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
     public void testEncode() throws Exception {
 
-        CollectedDigitsImpl elem = new CollectedDigitsImpl(15, 30, getEndOfReplyDigit(), getCancelDigit(), getStartDigit(),
-                100, 101, ErrorTreatment.repeatPrompt, false, true, false);
+        CollectedDigitsImpl elem = new CollectedDigitsImpl(15, 30,
+                getEndOfReplyDigit(), getCancelDigit(), getStartDigit(), 100,
+                101, ErrorTreatment.repeatPrompt, false, true, false);
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-        // Integer minimumNbOfDigits, int maximumNbOfDigits, byte[] endOfReplyDigit, byte[] cancelDigit, byte[] startDigit,
-        // Integer firstDigitTimeOut, Integer interDigitTimeOut, ErrorTreatment errorTreatment, Boolean interruptableAnnInd,
+        // Integer minimumNbOfDigits, int maximumNbOfDigits, byte[]
+        // endOfReplyDigit, byte[] cancelDigit, byte[] startDigit,
+        // Integer firstDigitTimeOut, Integer interDigitTimeOut, ErrorTreatment
+        // errorTreatment, Boolean interruptableAnnInd,
         // Boolean voiceInformation,
         // Boolean voiceBack
+    }
+
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+    public void testXMLSerialize() throws Exception {
+
+        CollectedDigitsImpl original = new CollectedDigitsImpl(null, 20,
+                "#".getBytes(), "*".getBytes(), "1".getBytes(), 5, 10,
+                ErrorTreatment.stdErrorAndInfo, false, false, false);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "collectedDigits", CollectedDigitsImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        CollectedDigitsImpl copy = reader.read("collectedDigits",
+                CollectedDigitsImpl.class);
+
+        assertEquals(original, copy);
     }
 }

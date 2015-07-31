@@ -196,6 +196,32 @@ public class CollectedInfoImpl implements CollectedInfo, CAPAsnPrimitive {
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((collectedDigits == null) ? 0 : collectedDigits.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CollectedInfoImpl other = (CollectedInfoImpl) obj;
+        if (collectedDigits == null) {
+            if (other.collectedDigits != null)
+                return false;
+        } else if (!collectedDigits.equals(other.collectedDigits))
+            return false;
+        return true;
+    }
+
     protected static final XMLFormat<CollectedInfoImpl> COLLECTED_INFO_XML = new XMLFormat<CollectedInfoImpl>(
             CollectedInfoImpl.class) {
 
@@ -218,42 +244,4 @@ public class CollectedInfoImpl implements CollectedInfo, CAPAsnPrimitive {
 
     };
 
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-
-        CollectedDigitsImpl collectedDigits = new CollectedDigitsImpl(10, 20,
-                "#".getBytes(), "*".getBytes(), "1".getBytes(), 5, 10,
-                ErrorTreatment.stdErrorAndInfo, false, false, false);
-        x.write(new CollectedInfoImpl(collectedDigits), "collectedInfo");
-        x.flush();
-
-        String xml_1 = "<collectedInfo>" + "<collectedDigits>"
-                + "<minimumNbOfDigits value=\"10\"/>"
-                + "<maximumNbOfDigits value=\"20\"/>"
-                + "<endOfReplyDigit value=\"23\"/>"
-                + "<cancelDigit value=\"2A\"/>" + "<startDigit value=\"31\"/>"
-                + "<firstDigitTimeOut value=\"5\"/>"
-                + "<interDigitTimeOut value=\"10\"/>"
-                + "<errorTreatment value=\"stdErrorAndInfo\"/>"
-                + "<interruptableAnnInd value=\"false\"/>"
-                + "<voiceInformation value=\"false\"/>"
-                + "<voiceBack value=\"false\"/>" + "</collectedDigits>"
-                + "</collectedInfo>";
-
-        System.out.println("");
-        XMLObjectReader r_1 = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        CollectedInfoImpl readHere_1 = null;
-        if (r_1.hasNext()) {
-            readHere_1 = r_1.read("collectedInfo", CollectedInfoImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere_1.toString());
-    }
-    */
 }

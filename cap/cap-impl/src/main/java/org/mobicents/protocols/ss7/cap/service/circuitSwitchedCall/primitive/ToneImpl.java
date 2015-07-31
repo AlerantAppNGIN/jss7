@@ -247,45 +247,33 @@ public class ToneImpl implements Tone, CAPAsnPrimitive {
 
     };
 
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-
-        x.write(new ToneImpl(25, new Integer(13)), "tone");
-        x.flush();
-
-        String xml_1 = "<tone>" + "<toneID value=\"25\"/>"
-                + "<duration value=\"13\"/>" + "</tone>";
-
-        System.out.println("");
-        XMLObjectReader r_1 = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        ToneImpl readHere_1 = null;
-        if (r_1.hasNext()) {
-            readHere_1 = r_1.read("tone", ToneImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere_1.toString());
-
-        x.write(new ToneImpl(25, null), "tone");
-        x.flush();
-
-        String xml_2 = "<tone>" + "<toneID value=\"25\"/>" + "</tone>";
-
-        System.out.println("");
-        XMLObjectReader r_2 = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml_2.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        ToneImpl readHere_2 = null;
-        if (r_2.hasNext()) {
-            readHere_2 = r_2.read("tone", ToneImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere_2.toString());
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((duration == null) ? 0 : duration.hashCode());
+        result = prime * result + toneID;
+        return result;
     }
-    */
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ToneImpl other = (ToneImpl) obj;
+        if (duration == null) {
+            if (other.duration != null)
+                return false;
+        } else if (!duration.equals(other.duration))
+            return false;
+        if (toneID != other.toneID)
+            return false;
+        return true;
+    }
+
 }

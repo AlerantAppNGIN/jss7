@@ -273,6 +273,55 @@ public class InbandInfoImpl implements InbandInfo, CAPAsnPrimitive {
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((duration == null) ? 0 : duration.hashCode());
+        result = prime * result
+                + ((interval == null) ? 0 : interval.hashCode());
+        result = prime * result
+                + ((messageID == null) ? 0 : messageID.hashCode());
+        result = prime
+                * result
+                + ((numberOfRepetitions == null) ? 0 : numberOfRepetitions
+                        .hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        InbandInfoImpl other = (InbandInfoImpl) obj;
+        if (duration == null) {
+            if (other.duration != null)
+                return false;
+        } else if (!duration.equals(other.duration))
+            return false;
+        if (interval == null) {
+            if (other.interval != null)
+                return false;
+        } else if (!interval.equals(other.interval))
+            return false;
+        if (messageID == null) {
+            if (other.messageID != null)
+                return false;
+        } else if (!messageID.equals(other.messageID))
+            return false;
+        if (numberOfRepetitions == null) {
+            if (other.numberOfRepetitions != null)
+                return false;
+        } else if (!numberOfRepetitions.equals(other.numberOfRepetitions))
+            return false;
+        return true;
+    }
+
     protected static final XMLFormat<InbandInfoImpl> INBAND_INFO_XML = new XMLFormat<InbandInfoImpl>(
             InbandInfoImpl.class) {
 
@@ -307,47 +356,5 @@ public class InbandInfoImpl implements InbandInfo, CAPAsnPrimitive {
         }
 
     };
-
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-
-        ArrayList<VariablePart> aL = new ArrayList<VariablePart>();
-        aL.add(new VariablePartImpl(new VariablePartDateImpl(2015, 6, 27)));
-        aL.add(new VariablePartImpl(new VariablePartTimeImpl(15, 10)));
-        aL.add(new VariablePartImpl(new Integer(145)));
-        VariableMessageImpl vm = new VariableMessageImpl(145, aL);
-        MessageIDImpl mi = new MessageIDImpl(vm);
-
-        x.write(new InbandInfoImpl(mi, new Integer(5), new Integer(8),
-                new Integer(2)), "inbandInfo");
-        x.flush();
-
-        String xml = "<inbandInfo>" + "<messageID>" + "<variableMessage>"
-                + "<elementaryMessageID value=\"145\"/>" + "<variablePart>"
-                + "<date data=\"02516072\"/>" + "</variablePart>"
-                + "<variablePart>" + "<time data=\"5101\"/>"
-                + "</variablePart>" + "<variablePart>"
-                + "<integer value=\"145\"/>" + "</variablePart>"
-                + "</variableMessage>" + "</messageID>"
-                + "<numberOfRepetitions value=\"5\"/>"
-                + "<duration value=\"8\"/>" + "<interval value=\"2\"/>"
-                + "</inbandInfo>";
-
-        System.out.println("");
-        XMLObjectReader r = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        InbandInfoImpl readHere = null;
-        if (r.hasNext()) {
-            readHere = r.read("inbandInfo", InbandInfoImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere.toString());
-    }
-    */
 
 }

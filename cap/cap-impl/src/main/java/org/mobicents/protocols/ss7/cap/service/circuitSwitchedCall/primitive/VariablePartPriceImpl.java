@@ -171,26 +171,4 @@ public class VariablePartPriceImpl extends OctetStringBase implements
 
     };
 
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-        x.write(new VariablePartPriceImpl(100), "variablePartPriceImpl");
-        x.flush();
-        String xml = "<variablePartPriceImpl data=\"00100000\"/>";
-
-        XMLObjectReader r = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        VariablePartPriceImpl readHere = null;// = new VariablePartPriceImpl();
-        if (r.hasNext()) {
-            readHere = r.read("variablePartPriceImpl",
-                    VariablePartPriceImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere.toString());
-    }
-    */
 }

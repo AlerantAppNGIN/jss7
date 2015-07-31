@@ -274,6 +274,48 @@ public class SpecializedResourceReportRequestImpl extends
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (isAllAnnouncementsComplete ? 1231 : 1237);
+        result = prime * result + (isCAPVersion4orLater ? 1231 : 1237);
+        result = prime * result + (isFirstAnnouncementStarted ? 1231 : 1237);
+        result = prime * result
+                + ((linkedId == null) ? 0 : linkedId.hashCode());
+        result = prime * result
+                + ((linkedInvoke == null) ? 0 : linkedInvoke.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SpecializedResourceReportRequestImpl other = (SpecializedResourceReportRequestImpl) obj;
+        if (isAllAnnouncementsComplete != other.isAllAnnouncementsComplete)
+            return false;
+        if (isCAPVersion4orLater != other.isCAPVersion4orLater)
+            return false;
+        if (isFirstAnnouncementStarted != other.isFirstAnnouncementStarted)
+            return false;
+        if (linkedId == null) {
+            if (other.linkedId != null)
+                return false;
+        } else if (!linkedId.equals(other.linkedId))
+            return false;
+        if (linkedInvoke == null) {
+            if (other.linkedInvoke != null)
+                return false;
+        } else if (!linkedInvoke.equals(other.linkedInvoke))
+            return false;
+        return true;
+    }
+
     protected static final XMLFormat<SpecializedResourceReportRequestImpl> SPECIALIZED_RESOURCE_REPORT_XML = new XMLFormat<SpecializedResourceReportRequestImpl>(
             SpecializedResourceReportRequestImpl.class) {
 
@@ -290,10 +332,12 @@ public class SpecializedResourceReportRequestImpl extends
 
             if (annComp != null && annComp) {
                 specializedResourceReportRequest.isAllAnnouncementsComplete = annComp;
+                specializedResourceReportRequest.isCAPVersion4orLater = true;
             } else {
                 // one of them is true...
                 specializedResourceReportRequest.isFirstAnnouncementStarted = xml
                         .get(FIRST_ANNOUNCEMENT_STARTED, Boolean.class);
+                specializedResourceReportRequest.isCAPVersion4orLater = true;
             }
         }
 
@@ -313,54 +357,5 @@ public class SpecializedResourceReportRequestImpl extends
         }
 
     };
-
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-
-        x.write(new SpecializedResourceReportRequestImpl(true, false, true),
-                "specializedResourceReport");
-        x.flush();
-
-        String xml_1 = "<specializedResourceReport invokeId=\"0\">"
-                + "<allAnnouncementsComplete value=\"true\"/>"
-                + "</specializedResourceReport>";
-
-        System.out.println("");
-        XMLObjectReader r_1 = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        SpecializedResourceReportRequestImpl readHere_1 = null;
-        if (r_1.hasNext()) {
-            readHere_1 = r_1.read("specializedResourceReport",
-                    SpecializedResourceReportRequestImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere_1.toString());
-
-        x.write(new SpecializedResourceReportRequestImpl(false, true, true),
-                "specializedResourceReport");
-        x.flush();
-
-        String xml_2 = "<specializedResourceReport invokeId=\"0\">"
-                + "<firstAnnouncementStarted value=\"true\"/>"
-                + "</specializedResourceReport>";
-
-        System.out.println("");
-        XMLObjectReader r_2 = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml_2.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        SpecializedResourceReportRequestImpl readHere_2 = null;
-        if (r_2.hasNext()) {
-            readHere_2 = r_2.read("specializedResourceReport",
-                    SpecializedResourceReportRequestImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere_2.toString());
-    }
-    */
 
 }

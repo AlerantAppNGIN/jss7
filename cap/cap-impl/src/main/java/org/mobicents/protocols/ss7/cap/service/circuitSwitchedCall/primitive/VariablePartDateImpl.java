@@ -143,27 +143,4 @@ public class VariablePartDateImpl extends OctetStringBase implements
 
     };
 
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-        x.write(new VariablePartDateImpl(2015, 6, 25), "variablePartDateImpl");
-        x.flush();
-
-        String xml = "<variablePartDateImpl data=\"02516052\"/>";
-
-        XMLObjectReader r = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        VariablePartDateImpl readHere = null;// = new VariablePartPriceImpl();
-        if (r.hasNext()) {
-            readHere = r.read("variablePartDateImpl",
-                    VariablePartDateImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere.toString());
-    }
-    */
 }

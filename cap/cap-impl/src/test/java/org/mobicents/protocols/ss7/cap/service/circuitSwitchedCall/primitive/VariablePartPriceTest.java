@@ -22,7 +22,12 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -32,6 +37,7 @@ import org.testng.annotations.Test;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class VariablePartPriceTest {
@@ -41,7 +47,8 @@ public class VariablePartPriceTest {
     }
 
     public byte[] getData2() {
-        return new byte[] { (byte) 132, 4, (byte) 135, (byte) 152, (byte) 137, (byte) 151 };
+        return new byte[] { (byte) 132, 4, (byte) 135, (byte) 152, (byte) 137,
+                (byte) 151 };
     }
 
     public byte[] getData3() {
@@ -82,5 +89,31 @@ public class VariablePartPriceTest {
         aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 4);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
+    }
+
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+    public void testXMLSerialize() throws Exception {
+
+        VariablePartPriceImpl original = new VariablePartPriceImpl(100);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "variablePartPriceImpl",
+                VariablePartPriceImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        VariablePartPriceImpl copy = reader.read("variablePartPriceImpl",
+                VariablePartPriceImpl.class);
+
+        assertEquals(original, copy);
     }
 }

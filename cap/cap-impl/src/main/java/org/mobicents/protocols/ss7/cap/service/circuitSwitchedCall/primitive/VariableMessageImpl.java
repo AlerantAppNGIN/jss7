@@ -260,6 +260,35 @@ public class VariableMessageImpl implements VariableMessage, CAPAsnPrimitive {
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + elementaryMessageID;
+        result = prime * result
+                + ((variableParts == null) ? 0 : variableParts.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        VariableMessageImpl other = (VariableMessageImpl) obj;
+        if (elementaryMessageID != other.elementaryMessageID)
+            return false;
+        if (variableParts == null) {
+            if (other.variableParts != null)
+                return false;
+        } else if (!variableParts.equals(other.variableParts))
+            return false;
+        return true;
+    }
+
     protected static final XMLFormat<VariableMessageImpl> VARIABLE_MESSAGE_XML = new XMLFormat<VariableMessageImpl>(
             VariableMessageImpl.class) {
 
@@ -295,37 +324,4 @@ public class VariableMessageImpl implements VariableMessage, CAPAsnPrimitive {
 
     };
 
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-        ArrayList<VariablePart> aL = new ArrayList<VariablePart>();
-        aL.add(new VariablePartImpl(new VariablePartDateImpl(2015, 6, 27)));
-        aL.add(new VariablePartImpl(new VariablePartTimeImpl(15, 10)));
-        aL.add(new VariablePartImpl(new Integer(145)));
-        x.write(new VariableMessageImpl(145, aL), "variableMessage");
-        x.flush();
-
-        String xml = "<variableMessage>"
-                + "<elementaryMessageID value=\"145\"/>" + "<variablePart>"
-                + "<date data=\"02516072\"/>" + "</variablePart>"
-                + "<variablePart>" + "<time data=\"5101\"/>"
-                + "</variablePart>" + "<variablePart>"
-                + "<integer value=\"145\"/>" + "</variablePart>"
-                + "</variableMessage>";
-
-        System.out.println("");
-        XMLObjectReader r = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        VariableMessageImpl readHere = null;
-        if (r.hasNext()) {
-            readHere = r.read("variableMessage", VariableMessageImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere.toString());
-    }
-    */
 }

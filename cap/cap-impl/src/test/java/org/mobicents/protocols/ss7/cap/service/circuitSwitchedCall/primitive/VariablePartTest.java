@@ -23,7 +23,12 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -34,6 +39,7 @@ import org.testng.annotations.Test;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class VariablePartTest {
@@ -86,7 +92,8 @@ public class VariablePartTest {
         assertNull(elem.getInteger());
         assertEquals(elem.getNumber().getGenericDigits().getEncodingScheme(), 3);
         assertEquals(elem.getNumber().getGenericDigits().getTypeOfDigits(), 0);
-        assertTrue(Arrays.equals(elem.getNumber().getGenericDigits().getEncodedDigits(), getGenericDigitsData()));
+        assertTrue(Arrays.equals(elem.getNumber().getGenericDigits()
+                .getEncodedDigits(), getGenericDigitsData()));
         assertNull(elem.getTime());
         assertNull(elem.getDate());
         assertNull(elem.getPrice());
@@ -140,7 +147,8 @@ public class VariablePartTest {
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-        GenericDigitsImpl genericDigits = new GenericDigitsImpl(3, 0, getGenericDigitsData());
+        GenericDigitsImpl genericDigits = new GenericDigitsImpl(3, 0,
+                getGenericDigitsData());
         // int encodingScheme, int typeOfDigits, int[] digits
         DigitsImpl digits = new DigitsImpl(genericDigits);
         elem = new VariablePartImpl(digits);
@@ -166,4 +174,31 @@ public class VariablePartTest {
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData5()));
     }
+
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+    public void testXMLSerialize() throws Exception {
+
+        VariablePartImpl original = new VariablePartImpl(
+                new VariablePartDateImpl(2015, 6, 25));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "variablePartImpl", VariablePartImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        VariablePartImpl copy = reader.read("variablePartImpl",
+                VariablePartImpl.class);
+
+        assertEquals(original, copy);
+    }
+
 }

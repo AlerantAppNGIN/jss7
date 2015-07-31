@@ -22,7 +22,12 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -33,6 +38,7 @@ import org.testng.annotations.Test;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class PromptAndCollectUserInformationResponseTest {
@@ -54,21 +60,56 @@ public class PromptAndCollectUserInformationResponseTest {
         int tag = ais.readTag();
         assertEquals(tag, 0);
         elem.decodeAll(ais);
-        assertEquals(elem.getDigitsResponse().getGenericDigits().getEncodingScheme(), 2);
-        assertEquals(elem.getDigitsResponse().getGenericDigits().getTypeOfDigits(), 1);
-        assertTrue(Arrays.equals(elem.getDigitsResponse().getGenericDigits().getEncodedDigits(), this.getDigits()));
+        assertEquals(elem.getDigitsResponse().getGenericDigits()
+                .getEncodingScheme(), 2);
+        assertEquals(elem.getDigitsResponse().getGenericDigits()
+                .getTypeOfDigits(), 1);
+        assertTrue(Arrays.equals(elem.getDigitsResponse().getGenericDigits()
+                .getEncodedDigits(), this.getDigits()));
     }
 
     @Test(groups = { "functional.encode", "circuitSwitchedCall" })
     public void testEncode() throws Exception {
 
-        GenericDigitsImpl genericDigits = new GenericDigitsImpl(2, 1, getDigits());
+        GenericDigitsImpl genericDigits = new GenericDigitsImpl(2, 1,
+                getDigits());
         // int encodingScheme, int typeOfDigits, int[] digits
         DigitsImpl digitsResponse = new DigitsImpl(genericDigits);
 
-        PromptAndCollectUserInformationResponseImpl elem = new PromptAndCollectUserInformationResponseImpl(digitsResponse);
+        PromptAndCollectUserInformationResponseImpl elem = new PromptAndCollectUserInformationResponseImpl(
+                digitsResponse);
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
+
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+    public void testXMLSerialize() throws Exception {
+
+        GenericDigitsImpl gd = new GenericDigitsImpl("123".getBytes());
+
+        PromptAndCollectUserInformationResponseImpl original = new PromptAndCollectUserInformationResponseImpl(
+                new DigitsImpl(gd));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "promptAndCollectResult",
+                PromptAndCollectUserInformationResponseImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        PromptAndCollectUserInformationResponseImpl copy = reader.read(
+                "promptAndCollectResult",
+                PromptAndCollectUserInformationResponseImpl.class);
+
+        assertEquals(original, copy);
     }
 }

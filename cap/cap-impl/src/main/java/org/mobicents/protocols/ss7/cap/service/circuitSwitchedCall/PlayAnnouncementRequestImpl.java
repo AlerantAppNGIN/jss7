@@ -343,6 +343,78 @@ public class PlayAnnouncementRequestImpl extends CircuitSwitchedCallMessageImpl
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((callSegmentID == null) ? 0 : callSegmentID.hashCode());
+        result = prime
+                * result
+                + ((disconnectFromIPForbidden == null) ? 0
+                        : disconnectFromIPForbidden.hashCode());
+        result = prime * result
+                + ((extensions == null) ? 0 : extensions.hashCode());
+        result = prime
+                * result
+                + ((informationToSend == null) ? 0 : informationToSend
+                        .hashCode());
+        result = prime
+                * result
+                + ((requestAnnouncementCompleteNotification == null) ? 0
+                        : requestAnnouncementCompleteNotification.hashCode());
+        result = prime
+                * result
+                + ((requestAnnouncementStartedNotification == null) ? 0
+                        : requestAnnouncementStartedNotification.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PlayAnnouncementRequestImpl other = (PlayAnnouncementRequestImpl) obj;
+        if (callSegmentID == null) {
+            if (other.callSegmentID != null)
+                return false;
+        } else if (!callSegmentID.equals(other.callSegmentID))
+            return false;
+        if (disconnectFromIPForbidden == null) {
+            if (other.disconnectFromIPForbidden != null)
+                return false;
+        } else if (!disconnectFromIPForbidden
+                .equals(other.disconnectFromIPForbidden))
+            return false;
+        if (extensions == null) {
+            if (other.extensions != null)
+                return false;
+        } else if (!extensions.equals(other.extensions))
+            return false;
+        if (informationToSend == null) {
+            if (other.informationToSend != null)
+                return false;
+        } else if (!informationToSend.equals(other.informationToSend))
+            return false;
+        if (requestAnnouncementCompleteNotification == null) {
+            if (other.requestAnnouncementCompleteNotification != null)
+                return false;
+        } else if (!requestAnnouncementCompleteNotification
+                .equals(other.requestAnnouncementCompleteNotification))
+            return false;
+        if (requestAnnouncementStartedNotification == null) {
+            if (other.requestAnnouncementStartedNotification != null)
+                return false;
+        } else if (!requestAnnouncementStartedNotification
+                .equals(other.requestAnnouncementStartedNotification))
+            return false;
+        return true;
+    }
+
     /**
      * XML Serialization/Deserialization
      */
@@ -439,59 +511,5 @@ public class PlayAnnouncementRequestImpl extends CircuitSwitchedCallMessageImpl
         }
 
     };
-
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-
-        ArrayList<VariablePart> aL = new ArrayList<VariablePart>();
-        aL.add(new VariablePartImpl(new VariablePartDateImpl(2015, 6, 27)));
-        aL.add(new VariablePartImpl(new VariablePartTimeImpl(15, 10)));
-        aL.add(new VariablePartImpl(new Integer(145)));
-        VariableMessageImpl vm = new VariableMessageImpl(145, aL);
-        MessageIDImpl mi = new MessageIDImpl(vm);
-        InbandInfoImpl inbandInfo = new InbandInfoImpl(mi, new Integer(5),
-                new Integer(8), new Integer(2));
-        InformationToSendImpl informationToSend = new InformationToSendImpl(
-                inbandInfo);
-
-        x.write(new PlayAnnouncementRequestImpl(informationToSend,
-                Boolean.TRUE, Boolean.TRUE, null, new Integer(1), Boolean.FALSE),
-                "playAnnouncementArg");
-        x.flush();
-
-        String xml_1 = "<playAnnouncementArg invokeId=\"0\">"
-                + "<informationToSend>" + "<inbandInfo>" + "<messageID>"
-                + "<variableMessage>" + "<elementaryMessageID value=\"145\"/>"
-                + "<variablePart>" + "<date data=\"02516072\"/>"
-                + "</variablePart>" + "<variablePart>"
-                + "<time data=\"5101\"/>" + "</variablePart>"
-                + "<variablePart>" + "<integer value=\"145\"/>"
-                + "</variablePart>" + "</variableMessage>" + "</messageID>"
-                + "<numberOfRepetitions value=\"5\"/>"
-                + "<duration value=\"8\"/>" + "<interval value=\"2\"/>"
-                + "</inbandInfo>" + "</informationToSend>"
-                + "<disconnectFromIPForbidden value=\"true\"/>"
-                + "<requestAnnouncementCompleteNotification value=\"true\"/>"
-                + "<callSegmentID value=\"1\"/>"
-                + "<requestAnnouncementStartedNotification value=\"false\"/>"
-                + "</playAnnouncementArg>";
-
-        System.out.println("");
-        XMLObjectReader r_1 = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        PlayAnnouncementRequestImpl readHere_1 = null;
-        if (r_1.hasNext()) {
-            readHere_1 = r_1.read("playAnnouncementArg",
-                    PlayAnnouncementRequestImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere_1.toString());
-    }
-    */
 
 }

@@ -20,6 +20,7 @@
 package org.mobicents.protocols.ss7.cap.isup;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
@@ -43,6 +44,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
  *
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class DigitsImpl implements Digits, CAPAsnPrimitive {
@@ -81,14 +83,17 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
         if (this.data == null)
             throw new CAPException("The data has not been filled");
         if (!this.isGenericDigits)
-            throw new CAPException("Primitive is not marked as GenericDigits (use setGenericDigits() before)");
+            throw new CAPException(
+                    "Primitive is not marked as GenericDigits (use setGenericDigits() before)");
 
         try {
             GenericDigitsImpl ocn = new GenericDigitsImpl();
             ocn.decode(this.data);
             return ocn;
         } catch (ParameterException e) {
-            throw new CAPException("ParameterException when decoding GenericDigits: " + e.getMessage(), e);
+            throw new CAPException(
+                    "ParameterException when decoding GenericDigits: "
+                            + e.getMessage(), e);
         }
     }
 
@@ -97,14 +102,17 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
         if (this.data == null)
             throw new CAPException("The data has not been filled");
         if (!this.isGenericNumber)
-            throw new CAPException("Primitive is not marked as GenericNumber (use setGenericNumber() before)");
+            throw new CAPException(
+                    "Primitive is not marked as GenericNumber (use setGenericNumber() before)");
 
         try {
             GenericNumberImpl ocn = new GenericNumberImpl();
             ocn.decode(this.data);
             return ocn;
         } catch (ParameterException e) {
-            throw new CAPException("ParameterException when decoding GenericNumber: " + e.getMessage(), e);
+            throw new CAPException(
+                    "ParameterException when decoding GenericNumber: "
+                            + e.getMessage(), e);
         }
     }
 
@@ -114,28 +122,36 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
     }
 
     @Override
-    public void setGenericDigits(GenericDigits genericDigits) throws CAPException {
+    public void setGenericDigits(GenericDigits genericDigits)
+            throws CAPException {
 
         if (genericDigits == null)
-            throw new CAPException("The genericDigits parameter must not be null");
+            throw new CAPException(
+                    "The genericDigits parameter must not be null");
         try {
             this.data = ((GenericDigitsImpl) genericDigits).encode();
             setIsGenericDigits();
         } catch (ParameterException e) {
-            throw new CAPException("ParameterException when encoding genericDigits: " + e.getMessage(), e);
+            throw new CAPException(
+                    "ParameterException when encoding genericDigits: "
+                            + e.getMessage(), e);
         }
     }
 
     @Override
-    public void setGenericNumber(GenericNumber genericNumber) throws CAPException {
+    public void setGenericNumber(GenericNumber genericNumber)
+            throws CAPException {
 
         if (genericNumber == null)
-            throw new CAPException("The genericNumber parameter must not be null");
+            throw new CAPException(
+                    "The genericNumber parameter must not be null");
         try {
             this.data = ((GenericNumberImpl) genericNumber).encode();
             setIsGenericNumber();
         } catch (ParameterException e) {
-            throw new CAPException("ParameterException when encoding genericNumber: " + e.getMessage(), e);
+            throw new CAPException(
+                    "ParameterException when encoding genericNumber: "
+                            + e.getMessage(), e);
         }
     }
 
@@ -177,41 +193,51 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
     }
 
     @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    public void decodeAll(AsnInputStream ansIS)
+            throws CAPParsingComponentException {
 
         try {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
     @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    public void decodeData(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException {
 
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException("IOException when decoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": "
+                            + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException,
-            IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.data = ansIS.readOctetStringData(length);
         if (this.data.length < 2 || this.data.length > 16)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": data must be from 2 to 16 bytes length, found: " + this.data.length,
+            throw new CAPParsingComponentException("Error while decoding "
+                    + _PrimitiveName
+                    + ": data must be from 2 to 16 bytes length, found: "
+                    + this.data.length,
                     CAPParsingComponentExceptionReason.MistypedParameter);
     }
 
@@ -221,7 +247,8 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
     }
 
     @Override
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
+            throws CAPException {
 
         try {
             asnOs.writeTag(tagClass, true, tag);
@@ -229,7 +256,8 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
             this.encodeData(asnOs);
             asnOs.FinalizeContent(pos);
         } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            throw new CAPException("AsnException when encoding "
+                    + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 
@@ -285,18 +313,50 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(data);
+        result = prime * result + (isGenericDigits ? 1231 : 1237);
+        result = prime * result + (isGenericNumber ? 1231 : 1237);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DigitsImpl other = (DigitsImpl) obj;
+        if (!Arrays.equals(data, other.data))
+            return false;
+        if (isGenericDigits != other.isGenericDigits)
+            return false;
+        if (isGenericNumber != other.isGenericNumber)
+            return false;
+        return true;
+    }
+
     /**
      * XML Serialization/Deserialization
      */
-    protected static final XMLFormat<DigitsImpl> DIGITS_XML = new XMLFormat<DigitsImpl>(DigitsImpl.class) {
+    protected static final XMLFormat<DigitsImpl> DIGITS_XML = new XMLFormat<DigitsImpl>(
+            DigitsImpl.class) {
 
         @Override
-        public void read(javolution.xml.XMLFormat.InputElement xml, DigitsImpl digits) throws XMLStreamException {
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                DigitsImpl digits) throws XMLStreamException {
             try {
-                GenericDigits gd = xml.get(ISUP_GENERIC_DIGITS_XML, GenericDigitsImpl.class);
+                GenericDigits gd = xml.get(ISUP_GENERIC_DIGITS_XML,
+                        GenericDigitsImpl.class);
                 if (gd != null)
                     digits.setGenericDigits(gd);
-                GenericNumber gn = xml.get(ISUP_GENERIC_NUMBER_XML, GenericNumberImpl.class);
+                GenericNumber gn = xml.get(ISUP_GENERIC_NUMBER_XML,
+                        GenericNumberImpl.class);
                 if (gn != null)
                     digits.setGenericNumber(gn);
             } catch (CAPException e) {
@@ -305,12 +365,16 @@ public class DigitsImpl implements Digits, CAPAsnPrimitive {
         }
 
         @Override
-        public void write(DigitsImpl digits, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+        public void write(DigitsImpl digits,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
             try {
                 if (digits.getIsGenericDigits())
-                    xml.add(((GenericDigitsImpl) digits.getGenericDigits()), ISUP_GENERIC_DIGITS_XML, GenericDigitsImpl.class);
+                    xml.add(((GenericDigitsImpl) digits.getGenericDigits()),
+                            ISUP_GENERIC_DIGITS_XML, GenericDigitsImpl.class);
                 else if (digits.getIsGenericNumber())
-                    xml.add(((GenericNumberImpl) digits.getGenericNumber()), ISUP_GENERIC_NUMBER_XML, GenericNumberImpl.class);
+                    xml.add(((GenericNumberImpl) digits.getGenericNumber()),
+                            ISUP_GENERIC_NUMBER_XML, GenericNumberImpl.class);
                 else
                     throw new XMLStreamException(
                             "Error when serializing Digits: primitive is marked neither GenericDigits nor GenericNumber");

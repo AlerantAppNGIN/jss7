@@ -41,6 +41,7 @@ import org.testng.annotations.Test;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class DigitsTest {
@@ -91,19 +92,22 @@ public class DigitsTest {
     @Test(groups = { "functional.encode", "isup" })
     public void testEncode() throws Exception {
 
-        GenericDigitsImpl genericDigits = new GenericDigitsImpl(2, 1, getGenericDigitsInt());
+        GenericDigitsImpl genericDigits = new GenericDigitsImpl(2, 1,
+                getGenericDigitsInt());
         DigitsImpl elem = new DigitsImpl(genericDigits);
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 29);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
         // int encodingScheme, int typeOfDigits, int[] digits
 
-        GenericNumber rn = new GenericNumberImpl(4, "7010900", 3, 2, 0, false, 1);
+        GenericNumber rn = new GenericNumberImpl(4, "7010900", 3, 2, 0, false,
+                1);
         elem = new DigitsImpl(rn);
         aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 29);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
-        // int natureOfAddresIndicator, String address, int numberQualifierIndicator, int numberingPlanIndicator, int
+        // int natureOfAddresIndicator, String address, int
+        // numberQualifierIndicator, int numberingPlanIndicator, int
         // addressRepresentationREstrictedIndicator,
         // boolean numberIncomplete, int screeningIndicator
     }
@@ -115,15 +119,17 @@ public class DigitsTest {
     @Test(groups = { "functional.xml.serialize", "isup" })
     public void testXMLSerialize() throws Exception {
 
-        GenericDigitsImpl gd = new GenericDigitsImpl(GenericDigits._ENCODING_SCHEME_BCD_ODD, GenericDigits._TOD_BGCI,
-                getEncodedData());
+        GenericDigitsImpl gd = new GenericDigitsImpl(
+                GenericDigits._ENCODING_SCHEME_BCD_ODD,
+                GenericDigits._TOD_BGCI, getEncodedData());
         DigitsImpl original = new DigitsImpl(gd);
 
         // Writes the area to a file.
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
         // writer.setBinding(binding); // Optional.
-        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
         writer.write(original, "digits", DigitsImpl.class);
         writer.close();
 
@@ -139,20 +145,26 @@ public class DigitsTest {
         assertEquals(copy.getIsGenericDigits(), original.getIsGenericDigits());
         assertEquals(copy.getIsGenericNumber(), original.getIsGenericNumber());
 
-        assertEquals(copy.getGenericDigits().getEncodingScheme(), original.getGenericDigits().getEncodingScheme());
-        assertEquals(copy.getGenericDigits().getTypeOfDigits(), original.getGenericDigits().getTypeOfDigits());
-        assertEquals(copy.getGenericDigits().getEncodedDigits(), original.getGenericDigits().getEncodedDigits());
+        assertEquals(copy.getGenericDigits().getEncodingScheme(), original
+                .getGenericDigits().getEncodingScheme());
+        assertEquals(copy.getGenericDigits().getTypeOfDigits(), original
+                .getGenericDigits().getTypeOfDigits());
+        assertEquals(copy.getGenericDigits().getEncodedDigits(), original
+                .getGenericDigits().getEncodedDigits());
 
-        GenericNumberImpl gn = new GenericNumberImpl(GenericNumber._NAI_NATIONAL_SN, "12345",
-                GenericNumber._NQIA_CONNECTED_NUMBER, GenericNumber._NPI_TELEX, GenericNumber._APRI_ALLOWED,
-                GenericNumber._NI_INCOMPLETE, GenericNumber._SI_USER_PROVIDED_VERIFIED_FAILED);
+        GenericNumberImpl gn = new GenericNumberImpl(
+                GenericNumber._NAI_NATIONAL_SN, "12345",
+                GenericNumber._NQIA_CONNECTED_NUMBER, GenericNumber._NPI_TELEX,
+                GenericNumber._APRI_ALLOWED, GenericNumber._NI_INCOMPLETE,
+                GenericNumber._SI_USER_PROVIDED_VERIFIED_FAILED);
         original = new DigitsImpl(gn);
 
         // Writes the area to a file.
         baos = new ByteArrayOutputStream();
         writer = XMLObjectWriter.newInstance(baos);
         // writer.setBinding(binding); // Optional.
-        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
         writer.write(original, "digits", DigitsImpl.class);
         writer.close();
 
@@ -168,18 +180,24 @@ public class DigitsTest {
         assertEquals(copy.getIsGenericDigits(), original.getIsGenericDigits());
         assertEquals(copy.getIsGenericNumber(), original.getIsGenericNumber());
 
-        assertEquals(copy.getGenericNumber().getNatureOfAddressIndicator(), original.getGenericNumber()
-                .getNatureOfAddressIndicator());
-        assertEquals(copy.getGenericNumber().getAddress(), original.getGenericNumber().getAddress());
-        assertEquals(copy.getGenericNumber().getNumberQualifierIndicator(), original.getGenericNumber()
-                .getNumberQualifierIndicator());
-        assertEquals(copy.getGenericNumber().getNumberingPlanIndicator(), original.getGenericNumber()
-                .getNumberingPlanIndicator());
-        assertEquals(copy.getGenericNumber().isNumberIncomplete(), original.getGenericNumber().isNumberIncomplete());
-        assertEquals(copy.getGenericNumber().getAddressRepresentationRestrictedIndicator(), original.getGenericNumber()
+        assertEquals(copy.getGenericNumber().getNatureOfAddressIndicator(),
+                original.getGenericNumber().getNatureOfAddressIndicator());
+        assertEquals(copy.getGenericNumber().getAddress(), original
+                .getGenericNumber().getAddress());
+        assertEquals(copy.getGenericNumber().getNumberQualifierIndicator(),
+                original.getGenericNumber().getNumberQualifierIndicator());
+        assertEquals(copy.getGenericNumber().getNumberingPlanIndicator(),
+                original.getGenericNumber().getNumberingPlanIndicator());
+        assertEquals(copy.getGenericNumber().isNumberIncomplete(), original
+                .getGenericNumber().isNumberIncomplete());
+        assertEquals(copy.getGenericNumber()
+                .getAddressRepresentationRestrictedIndicator(), original
+                .getGenericNumber()
                 .getAddressRepresentationRestrictedIndicator());
-        assertEquals(copy.getGenericNumber().getScreeningIndicator(), original.getGenericNumber().getScreeningIndicator());
-        assertEquals(copy.getGenericNumber().isOddFlag(), original.getGenericNumber().isOddFlag());
+        assertEquals(copy.getGenericNumber().getScreeningIndicator(), original
+                .getGenericNumber().getScreeningIndicator());
+        assertEquals(copy.getGenericNumber().isOddFlag(), original
+                .getGenericNumber().isOddFlag());
 
     }
 }

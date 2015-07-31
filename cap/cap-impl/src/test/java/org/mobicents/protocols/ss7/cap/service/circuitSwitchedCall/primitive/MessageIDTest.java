@@ -23,8 +23,13 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -34,6 +39,7 @@ import org.testng.annotations.Test;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class MessageIDTest {
@@ -51,7 +57,8 @@ public class MessageIDTest {
     }
 
     public byte[] getData4() {
-        return new byte[] { (byte) 190, 8, (byte) 128, 1, 99, (byte) 161, 3, (byte) 128, 1, 28 };
+        return new byte[] { (byte) 190, 8, (byte) 128, 1, 99, (byte) 161, 3,
+                (byte) 128, 1, 28 };
     }
 
     @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
@@ -104,7 +111,8 @@ public class MessageIDTest {
         assertNull(elem.getElementaryMessageIDs());
         assertEquals(elem.getVariableMessage().getElementaryMessageID(), 99);
         assertEquals(elem.getVariableMessage().getVariableParts().size(), 1);
-        assertEquals((int) elem.getVariableMessage().getVariableParts().get(0).getInteger(), 28);
+        assertEquals((int) elem.getVariableMessage().getVariableParts().get(0)
+                .getInteger(), 28);
     }
 
     @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
@@ -138,5 +146,53 @@ public class MessageIDTest {
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData4()));
         // int elementaryMessageID, ArrayList<VariablePart> variableParts
+    }
+
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+    public void testXMLSerialize() throws Exception {
+
+        MessageIDImpl original = new MessageIDImpl(new Integer(134));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "messageID", MessageIDImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        MessageIDImpl copy = reader.read("messageID", MessageIDImpl.class);
+
+        assertEquals(original, copy);
+
+        ArrayList<Integer> idList = new ArrayList<Integer>();
+        idList.add(new Integer(23));
+        idList.add(new Integer(25));
+
+        original = new MessageIDImpl(idList);
+        baos = new ByteArrayOutputStream();
+        writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "messageID", MessageIDImpl.class);
+        writer.close();
+
+        rawData = baos.toByteArray();
+        serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        bais = new ByteArrayInputStream(rawData);
+        reader = XMLObjectReader.newInstance(bais);
+        copy = reader.read("messageID", MessageIDImpl.class);
+
+        assertEquals(original, copy);
     }
 }

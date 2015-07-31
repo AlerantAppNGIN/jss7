@@ -328,6 +328,56 @@ public class MessageIDImpl implements MessageID, CAPAsnPrimitive {
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime
+                * result
+                + ((elementaryMessageID == null) ? 0 : elementaryMessageID
+                        .hashCode());
+        result = prime
+                * result
+                + ((elementaryMessageIDs == null) ? 0 : elementaryMessageIDs
+                        .hashCode());
+        result = prime * result + ((text == null) ? 0 : text.hashCode());
+        result = prime * result
+                + ((variableMessage == null) ? 0 : variableMessage.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        MessageIDImpl other = (MessageIDImpl) obj;
+        if (elementaryMessageID == null) {
+            if (other.elementaryMessageID != null)
+                return false;
+        } else if (!elementaryMessageID.equals(other.elementaryMessageID))
+            return false;
+        if (elementaryMessageIDs == null) {
+            if (other.elementaryMessageIDs != null)
+                return false;
+        } else if (!elementaryMessageIDs.equals(other.elementaryMessageIDs))
+            return false;
+        if (text == null) {
+            if (other.text != null)
+                return false;
+        } else if (!text.equals(other.text))
+            return false;
+        if (variableMessage == null) {
+            if (other.variableMessage != null)
+                return false;
+        } else if (!variableMessage.equals(other.variableMessage))
+            return false;
+        return true;
+    }
+
     protected static final XMLFormat<MessageIDImpl> MESSAGE_ID_XML = new XMLFormat<MessageIDImpl>(
             MessageIDImpl.class) {
 
@@ -391,87 +441,4 @@ public class MessageIDImpl implements MessageID, CAPAsnPrimitive {
 
     };
 
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-        MessageID messageID_1 = new MessageIDImpl(new Integer(134));
-
-        x.write(messageID_1, "messageID");
-        x.flush();
-
-        String xml_1 = "<messageID>" + "<elementaryMessageID value=\"134\"/>"
-                + "</messageID>";
-
-        System.out.println("");
-        XMLObjectReader r_1 = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml_1.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        MessageIDImpl readHere_1 = null;
-        if (r_1.hasNext()) {
-            readHere_1 = r_1.read("messageID", MessageIDImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere_1.toString());
-
-        // /////////////////////////////////////////////////////////////////
-
-        ArrayList<Integer> idList = new ArrayList<Integer>();
-        idList.add(new Integer(23));
-        idList.add(new Integer(25));
-
-        MessageID messageID_2 = new MessageIDImpl(idList);
-
-        x.write(messageID_2, "messageID");
-        x.flush();
-
-        String xml_2 = "<messageID>" + "<elementaryMessageID value=\"23\"/>"
-                + "<elementaryMessageID value=\"25\"/>" + "</messageID>";
-
-        System.out.println("");
-        XMLObjectReader r_2 = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml_2.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        MessageIDImpl readHere_2 = null;
-        if (r_2.hasNext()) {
-            readHere_2 = r_2.read("messageID", MessageIDImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere_2.toString());
-
-        ArrayList<VariablePart> vp = new ArrayList<VariablePart>();
-        vp.add(new VariablePartImpl(new VariablePartDateImpl(2015, 6, 27)));
-        vp.add(new VariablePartImpl(new VariablePartDateImpl(2015, 6, 28)));
-        vp.add(new VariablePartImpl(new VariablePartPriceImpl(25000)));
-        vp.add(new VariablePartImpl(new VariablePartTimeImpl(11, 30)));
-        VariableMessageImpl vm = new VariableMessageImpl(256, vp);
-
-        MessageID messageID_3 = new MessageIDImpl(vm);
-
-        x.write(messageID_3, "messageID");
-        x.flush();
-
-        String xml_3 = "<messageID>" + "<variableMessage>"
-                + "<elementaryMessageID value=\"256\"/>" + "<variablePart>"
-                + "<date data=\"02516072\"/>" + "</variablePart>"
-                + "<variablePart>" + "<date data=\"02516082\"/>"
-                + "</variablePart>" + "<variablePart>"
-                + "<price data=\"20050000\"/>" + "</variablePart>"
-                + "<variablePart>" + "<time data=\"1103\"/>"
-                + "</variablePart>" + "</variableMessage>" + "</messageID>";
-
-        System.out.println("");
-        XMLObjectReader r_3 = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml_3.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        MessageIDImpl readHere_3 = null;
-        if (r_3.hasNext()) {
-            readHere_3 = r_3.read("messageID", MessageIDImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere_3.toString());
-    }
-    */
 }

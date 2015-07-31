@@ -130,29 +130,4 @@ public class VariablePartTimeImpl extends OctetStringBase implements
 
     };
 
-    /*
-     * TODO: move this code into the appropriate test class
-    public static void main(String[] args) throws UnsupportedEncodingException,
-            XMLStreamException {
-        XMLObjectWriter x = new XMLObjectWriter().setBinding(new XMLBinding())
-                .setOutput(System.out).setIndentation(" ");
-        x.write(new VariablePartTimeImpl(15, 47), "variablePartTimeImpl");
-        x.flush();
-
-        String xml = "<variablePartTimeImpl data=\"5174\"/>";
-
-        XMLObjectReader r = new XMLObjectReader().setInput(
-                new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8
-                        .name()))).setBinding(new XMLBinding());
-        VariablePartTimeImpl readHere = null;// = new VariablePartPriceImpl();
-        if (r.hasNext()) {
-            readHere = r.read("variablePartTimeImpl",
-                    VariablePartTimeImpl.class);
-        }
-        System.out.println("");
-        System.out.println(readHere.toString());
-
-    }
-    */
-
 }
