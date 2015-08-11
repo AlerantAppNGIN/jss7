@@ -426,6 +426,8 @@ public class PromptAndCollectUserInformationRequestImpl extends
         public void read(javolution.xml.XMLFormat.InputElement xml,
                 PromptAndCollectUserInformationRequestImpl pacui)
                 throws XMLStreamException {
+
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, pacui);
             pacui.collectedInfo = xml.get(COLLECTED_INFO,
                     CollectedInfoImpl.class);
             pacui.disconnectFromIPForbidden = xml.get(
@@ -460,6 +462,7 @@ public class PromptAndCollectUserInformationRequestImpl extends
                 javolution.xml.XMLFormat.OutputElement xml)
                 throws XMLStreamException {
 
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(obj, xml);
             xml.add((CollectedInfoImpl) obj.getCollectedInfo(), COLLECTED_INFO,
                     CollectedInfoImpl.class);
 
