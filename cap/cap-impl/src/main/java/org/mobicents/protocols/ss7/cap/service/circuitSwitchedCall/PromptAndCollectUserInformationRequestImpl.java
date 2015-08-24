@@ -430,30 +430,29 @@ public class PromptAndCollectUserInformationRequestImpl extends
             CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, pacui);
             pacui.collectedInfo = xml.get(COLLECTED_INFO,
                     CollectedInfoImpl.class);
+
             pacui.disconnectFromIPForbidden = xml.get(
                     DISCONNECT_FROM_IP_FORBIDDEN, Boolean.class);
-            if (pacui.disconnectFromIPForbidden == null) {
-                pacui.disconnectFromIPForbidden = true;
-            }
+
             InformationToSendImpl informationToSend = xml.get(
                     INFORMATION_TO_SEND, InformationToSendImpl.class);
             if (informationToSend != null) {
                 pacui.informationToSend = informationToSend;
             }
+
             CAPExtensionsImpl extensions = xml.get(EXTENSIONS,
                     CAPExtensionsImpl.class);
             if (extensions != null) {
                 pacui.extensions = extensions;
             }
+
             Integer callSegmentID = xml.get(CALL_SEGMENT_ID, Integer.class);
             if (callSegmentID != null) {
                 pacui.callSegmentID = callSegmentID;
             }
+
             pacui.requestAnnouncementStartedNotification = xml.get(
                     REQUEST_ANNOUNCEMENT_STARTED_NOTIFICATION, Boolean.class);
-            if (pacui.requestAnnouncementStartedNotification == null) {
-                pacui.requestAnnouncementStartedNotification = false;
-            }
 
         }
 
@@ -466,9 +465,7 @@ public class PromptAndCollectUserInformationRequestImpl extends
             xml.add((CollectedInfoImpl) obj.getCollectedInfo(), COLLECTED_INFO,
                     CollectedInfoImpl.class);
 
-            // it has a default value, true
-            if (obj.getDisconnectFromIPForbidden() != null
-                    && !obj.getDisconnectFromIPForbidden()) {
+            if (obj.getDisconnectFromIPForbidden() != null) {
                 xml.add(obj.getDisconnectFromIPForbidden(),
                         DISCONNECT_FROM_IP_FORBIDDEN, Boolean.class);
             }
@@ -484,13 +481,12 @@ public class PromptAndCollectUserInformationRequestImpl extends
                 xml.add(obj.getCallSegmentID(), CALL_SEGMENT_ID, Integer.class);
             }
 
-            // it has a default value, false
-            if (obj.getRequestAnnouncementStartedNotification() != null
-                    && obj.getRequestAnnouncementStartedNotification()) {
+            if (obj.getRequestAnnouncementStartedNotification() != null) {
                 xml.add(obj.getRequestAnnouncementStartedNotification(),
                         REQUEST_ANNOUNCEMENT_STARTED_NOTIFICATION,
                         Boolean.class);
             }
+
         }
 
     };

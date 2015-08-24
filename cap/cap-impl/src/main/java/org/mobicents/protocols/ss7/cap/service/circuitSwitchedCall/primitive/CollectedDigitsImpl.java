@@ -580,26 +580,23 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
 
             collectedDigits.firstDigitTimeOut = xml.get(FIRST_DIGIT_TIMEOUT,
                     Integer.class);
+
             collectedDigits.interDigitTimeOut = xml.get(INTER_DIGIT_TIMEOUT,
                     Integer.class);
 
             String errorTreatment = xml.get(ERROR_TREATMENT, String.class);
+
             collectedDigits.errorTreatment = errorTreatment != null ? ErrorTreatment
-                    .valueOf(errorTreatment) : ErrorTreatment.stdErrorAndInfo;
+                    .valueOf(errorTreatment) : null;
+
             collectedDigits.interruptableAnnInd = xml.get(
                     INTERRUPTABLE_ANN_IND, Boolean.class);
-            if (collectedDigits.interruptableAnnInd == null) {
-                collectedDigits.interruptableAnnInd = true;
-            }
+
             collectedDigits.voiceInformation = xml.get(VOICE_INFORMATION,
                     Boolean.class);
-            if (collectedDigits.voiceInformation == null) {
-                collectedDigits.voiceInformation = false;
-            }
+
             collectedDigits.voiceBack = xml.get(VOICE_BACK, Boolean.class);
-            if (collectedDigits.voiceBack == null) {
-                collectedDigits.voiceBack = false;
-            }
+
         }
 
         @Override
@@ -608,8 +605,7 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
                 throws XMLStreamException {
 
             // it has a default value, 1
-            if (obj.getMinimumNbOfDigits() != null
-                    && !obj.getMinimumNbOfDigits().equals(1)) {
+            if (obj.getMinimumNbOfDigits() != null) {
                 xml.add(obj.getMinimumNbOfDigits(), MINIMUM_NB_OF_DIGITS,
                         Integer.class);
             }
@@ -637,28 +633,23 @@ public class CollectedDigitsImpl implements CollectedDigits, CAPAsnPrimitive {
                 xml.add(obj.getInterDigitTimeOut(), INTER_DIGIT_TIMEOUT,
                         Integer.class);
             }
-            // it has a default value, stdErrorAndInfo
-            if (obj.getErrorTreatment() != null
-                    && obj.getErrorTreatment() != ErrorTreatment.stdErrorAndInfo) {
+
+            if (obj.getErrorTreatment() != null) {
                 xml.add(obj.getErrorTreatment().toString(), ERROR_TREATMENT,
                         String.class);
             }
 
-            // it has a default value, true
-            if (obj.getInterruptableAnnInd() != null
-                    && !obj.getInterruptableAnnInd()) {
+            if (obj.getInterruptableAnnInd() != null) {
                 xml.add(obj.getInterruptableAnnInd(), INTERRUPTABLE_ANN_IND,
                         Boolean.class);
             }
 
-            // it has a default value, false
-            if (obj.getVoiceInformation() != null && obj.getVoiceInformation()) {
+            if (obj.getVoiceInformation() != null) {
                 xml.add(obj.getVoiceInformation(), VOICE_INFORMATION,
                         Boolean.class);
             }
 
-            // it has a default value, false
-            if (obj.getVoiceBack() != null && obj.getVoiceBack()) {
+            if (obj.getVoiceBack() != null) {
                 xml.add(obj.getVoiceBack(), VOICE_BACK, Boolean.class);
             }
         }

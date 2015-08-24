@@ -32,6 +32,7 @@ import javolution.xml.XMLObjectWriter;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
+import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericDigitsImpl;
 import org.testng.annotations.Test;
 
@@ -86,7 +87,7 @@ public class PromptAndCollectUserInformationResponseTest {
     @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
     public void testXMLSerialize() throws Exception {
 
-        GenericDigitsImpl gd = new GenericDigitsImpl("123".getBytes());
+        GenericDigitsImpl gd = new GenericDigitsImpl(OctetStringBase.hexToBytes("001bc2"));
 
         PromptAndCollectUserInformationResponseImpl original = new PromptAndCollectUserInformationResponseImpl(
                 new DigitsImpl(gd));

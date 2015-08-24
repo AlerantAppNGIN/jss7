@@ -434,16 +434,14 @@ public class PlayAnnouncementRequestImpl extends CircuitSwitchedCallMessageImpl
                     DISCONNECT_FROM_IP_FORBIDDEN, Boolean.class);
             if (disconnectFromIPForbidden != null) {
                 playAnnouncementRequest.disconnectFromIPForbidden = disconnectFromIPForbidden;
-            } else {
-                playAnnouncementRequest.disconnectFromIPForbidden = true;
             }
+
             Boolean requestAnnouncementCompleteNotification = xml.get(
                     REQUEST_ANNOUNCEMENT_COMPLETE_NOTIFICATION, Boolean.class);
             if (requestAnnouncementCompleteNotification != null) {
                 playAnnouncementRequest.requestAnnouncementCompleteNotification = requestAnnouncementCompleteNotification;
-            } else {
-                playAnnouncementRequest.requestAnnouncementCompleteNotification = true;
             }
+
             playAnnouncementRequest.extensions = xml.get(EXTENSIONS,
                     CAPExtensionsImpl.class);
             playAnnouncementRequest.callSegmentID = xml.get(CALL_SEGMENT_ID,
@@ -453,8 +451,6 @@ public class PlayAnnouncementRequestImpl extends CircuitSwitchedCallMessageImpl
                     REQUEST_ANNOUNCEMENT_STARTED_NOTIFICATION, Boolean.class);
             if (requestAnnouncementStartedNotification != null) {
                 playAnnouncementRequest.requestAnnouncementStartedNotification = requestAnnouncementStartedNotification;
-            } else {
-                playAnnouncementRequest.requestAnnouncementStartedNotification = false;
             }
 
         }
@@ -470,18 +466,13 @@ public class PlayAnnouncementRequestImpl extends CircuitSwitchedCallMessageImpl
                     .getInformationToSend(), INFORMATION_TO_SEND,
                     InformationToSendImpl.class);
 
-            // it has a default value, true
-            if (playAnnoucnementRequest.getDisconnectFromIPForbidden() != null
-                    && !playAnnoucnementRequest.getDisconnectFromIPForbidden()) {
+            if (playAnnoucnementRequest.getDisconnectFromIPForbidden() != null) {
                 xml.add(playAnnoucnementRequest.getDisconnectFromIPForbidden(),
                         DISCONNECT_FROM_IP_FORBIDDEN, Boolean.class);
             }
 
-            // it has a default value, true
             if (playAnnoucnementRequest
-                    .getRequestAnnouncementCompleteNotification() != null
-                    && !playAnnoucnementRequest
-                            .getRequestAnnouncementCompleteNotification()) {
+                    .getRequestAnnouncementCompleteNotification() != null) {
                 xml.add(playAnnoucnementRequest
                         .getRequestAnnouncementCompleteNotification(),
                         REQUEST_ANNOUNCEMENT_COMPLETE_NOTIFICATION,
@@ -497,17 +488,13 @@ public class PlayAnnouncementRequestImpl extends CircuitSwitchedCallMessageImpl
                         CALL_SEGMENT_ID, Integer.class);
             }
 
-            // it has a default value, false
             if (playAnnoucnementRequest
-                    .getRequestAnnouncementStartedNotification() != null
-                    && playAnnoucnementRequest
-                            .getRequestAnnouncementStartedNotification()) {
+                    .getRequestAnnouncementStartedNotification() != null) {
                 xml.add(playAnnoucnementRequest
                         .getRequestAnnouncementStartedNotification(),
                         REQUEST_ANNOUNCEMENT_STARTED_NOTIFICATION,
                         Boolean.class);
             }
-
         }
 
     };
