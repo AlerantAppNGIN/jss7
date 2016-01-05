@@ -173,7 +173,7 @@ public class GenericNumberCapImpl implements GenericNumberCap, CAPAsnPrimitive {
 
         if (this.data == null)
             throw new CAPException("data field must not be null");
-        if (this.data.length < 3 && this.data.length > 11)
+        if (this.data.length < 3 || this.data.length > 11)
             throw new CAPException("data field length must be from 3 to 11");
 
         asnOs.writeOctetStringData(data);
