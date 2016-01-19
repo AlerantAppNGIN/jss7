@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -109,7 +110,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                                            // direct
     // mapping, but not described
     // explicitly...
-    private transient Map<Long, DialogImpl> dialogs = new ConcurrentHashMap<Long, DialogImpl>();
+    private transient ConcurrentMap<Long, DialogImpl> dialogs = new ConcurrentHashMap<Long, DialogImpl>();
     private transient AtomicInteger dialogCount = new AtomicInteger(0);
     protected transient Map<PrevewDialogDataKey, PrevewDialogData> dialogPreviewList = new HashMap<PrevewDialogDataKey, PrevewDialogData>();
 
