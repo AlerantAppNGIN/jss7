@@ -228,7 +228,7 @@ public class AspTrafficMaintenanceHandler extends MessageHandler {
         try {
             aspLocalFSM.signal(TransitionState.ASP_ACTIVE_ACK);
 
-            if (aspFactoryImpl.getFunctionality() == Functionality.IPSP) {
+            if (aspFactoryImpl.getFunctionality() == Functionality.IPSP || !aspFactoryImpl.isNotifyNeeded()) {
                 // If its IPSP, we know NTFY will not be received,
                 // so transition AS FSM here
                 FSM asPeerFSM = asImpl.getPeerFSM();

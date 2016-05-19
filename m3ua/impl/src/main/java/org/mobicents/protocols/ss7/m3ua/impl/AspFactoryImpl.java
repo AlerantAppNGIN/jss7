@@ -79,6 +79,8 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 
     private static final Logger logger = Logger.getLogger(AspFactoryImpl.class);
 
+    private static final String WAIT_FOR_NOTIFY_KEY="ss7.m3ua.waitfornotify";
+
     private static long ASP_ID_COUNT = 1L;
 
     private static final int SCTP_PAYLOAD_PROT_ID_M3UA = 3;
@@ -787,4 +789,12 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
         }
     }
 
+    /**
+     *
+     * @return true if Notify have to be arrived after ASP UP ACK and ASP ACTIVE ACK, otherwise false. The default value is true.
+     */
+    boolean isNotifyNeeded() {
+        String waitForNotifyString = System.getProperty(WAIT_FOR_NOTIFY_KEY, "true");
+        return Boolean.valueOf(waitForNotifyString);
+    }
 }

@@ -162,7 +162,7 @@ public class AspStateMaintenanceHandler extends MessageHandler {
                     try {
                         aspLocalFSM.signal(TransitionState.ASP_ACTIVE_SENT);
 
-                        if (aspFactoryImpl.getFunctionality() == Functionality.IPSP) {
+                        if (aspFactoryImpl.getFunctionality() == Functionality.IPSP || !aspFactoryImpl.isNotifyNeeded()) {
                             // If its IPSP, we know NTFY will not be received,
                             // so transition AS FSM here
                             AsImpl asImpl = (AsImpl) aspImpl.getAs();
