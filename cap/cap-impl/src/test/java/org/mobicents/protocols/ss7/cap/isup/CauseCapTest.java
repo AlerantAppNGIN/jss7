@@ -20,7 +20,6 @@
 package org.mobicents.protocols.ss7.cap.isup;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -44,11 +43,11 @@ import org.testng.annotations.Test;
 public class CauseCapTest {
 
     public byte[] getData() {
-        return new byte[] { (byte) 128, 2, (byte) 132, (byte) 144 };
+        return new byte[] { (byte) 128, 4, (byte) 132, (byte) 144 , 35, 42};
     }
 
     public byte[] getIntData() {
-        return new byte[] { (byte) 132, (byte) 144 };
+        return new byte[] { (byte) 132, (byte) 144 , 35, 42};
     }
 
     @Test(groups = { "functional.decode", "isup" })
@@ -59,12 +58,13 @@ public class CauseCapTest {
         CauseCapImpl elem = new CauseCapImpl();
         int tag = ais.readTag();
         elem.decodeAll(ais);
+        System.out.println("Decoded: " + elem);
         assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
         CauseIndicators ci = elem.getCauseIndicators();
         assertEquals(ci.getCodingStandard(), 0);
         assertEquals(ci.getLocation(), 4);
         assertEquals(ci.getCauseValue(), 16);
-        assertNull(ci.getDiagnostics());
+        assertEquals(ci.getDiagnostics(), new byte[] {35,42});
     }
 
     @Test(groups = { "functional.xml.serialize", "isup" })
@@ -118,11 +118,13 @@ public class CauseCapTest {
         byte[] rawData = baos.toByteArray();
         String serializedEvent = new String(rawData);
 
+        System.out.println("Serializing " + original + " to XML: ");
         System.out.println(serializedEvent);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
         XMLObjectReader reader = XMLObjectReader.newInstance(bais);
         CauseCapImpl copy = reader.read("causeCap", CauseCapImpl.class);
+        System.out.println("Read back " + copy + " from XML");
 
         assertEquals(copy.getCauseIndicators().getCodingStandard(), original.getCauseIndicators().getCodingStandard());
         assertEquals(copy.getCauseIndicators().getLocation(), original.getCauseIndicators().getLocation());

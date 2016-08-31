@@ -28,15 +28,32 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
  *
  ISUP CauseIndicators wrapper
  *
- * Cause {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( bound.&minCauseLength .. bound.&maxCauseLength)) -- Indicates the
- * cause for interface related information. -- Refer to ETSI EN 300 356-1 [23] Cause parameter for encoding. -- For the use of
- * cause and location values refer to ITU-T Recommendation Q.850 [47] -- Shall always include the cause value and shall also
- * include the diagnostics field, -- if available.
+ * <h1>CAP phase 2:</h1>
  *
- * minCauseLength ::= 2 maxCauseLength ::= 32
+ * Cause ::= OCTET STRING (SIZE (minCauseLength .. maxCauseLength))
+ * --  Indicates the cause for interface related information. Refer to the ETS 300 356‑1 [3] Cause 
+ * --  parameter for encoding. For the use of Cause and Location values refer to Q.850.
+ * --  Shall only include the cause value.
+ *
+ * minCauseLength               INTEGER ::= 2
+ * maxCauseLength               INTEGER ::= 2
+ *
+ * <h1> CAP phase 3, 4:</h1>
+ *
+ * Cause {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
+ *         bound.&minCauseLength .. bound.&maxCauseLength))
+ * -- Indicates the cause for interface related information.
+ * -- Refer to ETS 300 356‑1 [8] Cause parameter for encoding.
+ * -- For the use of cause and location values refer to ITU‑T Recommendation Q.850 [22] 
+ * -- Shall always include the cause value and shall also include the diagnostics field,
+ * -- if available.
+ *
+ * MINIMUM-FOR-CAUSE            2
+ * MAXIMUM-FOR-CAUSE            32
  *
  *
  * @author sergey vetyutnev
+ * @author alerant appngin
  *
  */
 public interface CauseCap extends Serializable {

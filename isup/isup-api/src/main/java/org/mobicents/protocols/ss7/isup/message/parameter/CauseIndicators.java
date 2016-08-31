@@ -37,7 +37,7 @@ public interface CauseIndicators extends ISUPParameter {
     /**
      * See Q.850
      */
-    int _CODING_STANDARD_IOS_IEC = 1;
+    int _CODING_STANDARD_ISO_IEC = 1;
 
     /**
      * See Q.850
@@ -185,6 +185,18 @@ public interface CauseIndicators extends ISUPParameter {
     int _CV_PROTOCOL_ERROR = 111;
 
     int _CV_INTERNETWORKING_UNSPECIFIED = 127;
+
+    // recommendations (7bits, other values reserved)
+
+    int _RECOMMENDATION_Q931 = 0;
+
+    int _RECOMMENDATION_X21 = 3;
+
+    int _RECOMMENDATION_X25 = 4;
+
+    int _RECOMMENDATION_PLMN_Q1031_Q1051 = 5;
+
+    int _RECOMMENDATION_Q763 = -1; // default interpretation for ISUP is Q.763, which has no defined value, so we use this invalid one
 
     int getCodingStandard();
 

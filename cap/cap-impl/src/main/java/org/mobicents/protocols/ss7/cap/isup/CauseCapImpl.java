@@ -36,6 +36,7 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.util.ISUPUtility;
 
 /**
  *
@@ -89,7 +90,7 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
             ln.decode(this.data);
             return ln;
         } catch (ParameterException e) {
-            throw new CAPException("ParameterException when decoding locationNumber: " + e.getMessage(), e);
+            throw new CAPException("ParameterException when decoding ISUP CauseIndicator: " + e.getMessage(), e);
         }
     }
 
@@ -121,7 +122,7 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
             throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (CAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+            throw new CAPParsingComponentException("CAPParsingComponentException when decoding " + _PrimitiveName + ": "
                     + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
@@ -138,7 +139,7 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
             throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (CAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+            throw new CAPParsingComponentException("CAPParsingComponentException when decoding " + _PrimitiveName + ": "
                     + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
@@ -190,7 +191,7 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
 
         if (this.data != null) {
             sb.append("data=[");
-            sb.append(printDataArr(this.data));
+            ISUPUtility.appendHexStream(sb, this.data, " ", false, false);
             sb.append("]");
             try {
                 CauseIndicators ci = this.getCauseIndicators();
@@ -201,16 +202,6 @@ public class CauseCapImpl implements CauseCap, CAPAsnPrimitive {
         }
 
         sb.append("]");
-
-        return sb.toString();
-    }
-
-    private String printDataArr(byte[] arr) {
-        StringBuilder sb = new StringBuilder();
-        for (int b : arr) {
-            sb.append(b);
-            sb.append(", ");
-        }
 
         return sb.toString();
     }

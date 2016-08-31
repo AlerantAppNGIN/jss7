@@ -47,6 +47,10 @@ public class ISUPUtility {
 
         for (int index = 0; index < b.length; index++) {
 
+            // FIXME: is this really the intended behavior? This outputs lines like: b[0][fffffffd]
+            // For output like b[0][fd] with only 2 hex digits per byte, b[index] & 0xFF should be used
+            // (though values < 0x10 will only be one digit then).
+            // Also, a StringBuilder would be nice
             out += "b[" + index + "][" + Integer.toHexString(b[index]) + "]\n";
 
             // out+="\n";
@@ -55,6 +59,29 @@ public class ISUPUtility {
         return out;
 
     }
+
+    /** Produces a hex stream where bytes are separated by <code>delimiter</code>, and optionally prefixed with "0x" if <code>prefixEachValue</code> is <code>true</code>.*/
+    public static String toHexStream(byte[] bytes, String delimiter, boolean prefixEachValue, boolean upperCase) {
+        StringBuilder sb = new StringBuilder();
+        appendHexStream(sb, bytes, delimiter, prefixEachValue, upperCase);
+        return sb.toString();
+    }
+
+    /** Same as {@link #toHexStream(byte[], String, boolean, boolean)}, but appends to an existing StringBuilder. */
+    public static void appendHexStream(StringBuilder sb, byte[] bytes, String delimiter, boolean prefixEachValue, boolean upperCase) {
+        sb.ensureCapacity(bytes.length* (prefixEachValue? 4:2) + (bytes.length-1)*(delimiter==null?0: delimiter.length()));
+        for(int i=0; i<bytes.length;i++) {
+            if(prefixEachValue)
+                sb.append("0x");
+            char c1 = Character.forDigit((bytes[i] & 0xF0) >> 4, 16);
+            char c2 = Character.forDigit((bytes[i] & 0x0F), 16);
+            sb.append(upperCase? Character.toUpperCase(c1) : c1);
+            sb.append(upperCase? Character.toUpperCase(c2) : c2);
+            if (delimiter != null && i < bytes.length - 1)
+                sb.append(delimiter);
+        }
+    }
+
     //
     // /**
     // * Offset where ISUP data should start in MSU

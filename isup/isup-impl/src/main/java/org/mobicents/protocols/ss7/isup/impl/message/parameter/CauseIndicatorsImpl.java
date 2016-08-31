@@ -21,12 +21,15 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.util.ISUPUtility;
 
 /**
  * Start time:15:14:32 2009-03-30<br>
@@ -37,18 +40,20 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
  */
 public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseIndicators {
 
+    protected final Logger logger = Logger.getLogger(this.getClass());
+
     private static final String LOCATION = "location";
     private static final String CAUSE_VALUE = "causeValue";
     private static final String CODING_STANDARD = "codingStandard";
     private static final String RECOMMENDATION = "recommendation";
     private static final String DIAGNOSTICS = "diagnostics";
 
-    private static final int DEFAULT_VALUE = 0;
+    private static final int DEFAULT_VALUE = -1; // 0 is a valid value for some of the attributes
 
     private int location = 0;
     private int causeValue = 0;
     private int codingStandard = 0;
-    private int recommendation = 0;
+    private int recommendation = _RECOMMENDATION_Q763;
     private byte[] diagnostics = null;
 
     public CauseIndicatorsImpl() {
@@ -67,13 +72,19 @@ public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseI
 
     public int decode(byte[] b) throws ParameterException {
 
-        // NOTE: there are ext bits but we do not care about them
-        // FIXME: "Recommendation" optional field must be encoded/decoded when codingStandard!=_CODING_STANDARD_ITUT
+        // Q.850:
+        //
+        //    NOTE 1 – If the default applies for the Recommendation field, octet including this field shall be omitted.
+        //    NOTE 2 – The Recommendation field is not supported by the ISUP. The default interpretation for ISUP is Q.763.
+
+        // This means that on ISUP, the octet containing the Recommendation field will not be present (ext bit of first octet must be 1),
+        // and the interpretation is always Q.763.
+        // The meaning of the diagnostics field is dependent on the cause value and may or may not be present, we don't interpret it, just record it.
 
         if (b == null || b.length < 2) {
             throw new ParameterException("byte[] must not be null or has size less than 2");
         }
-        // Used because of Q.850 - we must ignore recomendation
+        // Used because of Q.850 - we must ignore recommendation if present, but it shouldn't be
         int index = 0;
         // first two bytes are mandatory
         int v = 0;
@@ -81,48 +92,45 @@ public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseI
         v = b[index] & 0x7F;
         this.location = v & 0x0F;
         this.codingStandard = v >> 5;
-        if (((b[index] & 0x7F) >> 7) == 0) {
-            index += 2;
+        if (((b[index++] & 0x80) >> 7) == 0) {
+            logger.warn("ISUP Cause Indicator octet "+index+" extension bit indicates that Recommendation field is present, but it shouldn't be, as it is not supported by ISUP.");
+            this.recommendation = b[index++] & 0x7F; // parse to skip the octet and record the value, but don't interpret it
+            logger.warn("ISUP Cause Indicator ignoring parsed value of Recommendation field: " + this.recommendation);
         } else {
-            index++;
+            this.recommendation = _RECOMMENDATION_Q763;
         }
-        v = 0;
-        v = b[1] & 0x7F;
-        this.causeValue = v;
-        if (b.length == 2) {
-            return 2;
-        } else {
-            if ((b.length - 2) % 3 != 0) {
-                throw new ParameterException("Diagnostics part  must have 3xN bytes, it has: " + (b.length - 2));
-            }
-
-            int byteCounter = 2;
-
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            for (int i = 2; i < b.length; i++) {
-                bos.write(b[i]);
-                byteCounter++;
-            }
-
-            this.diagnostics = bos.toByteArray();
-
-            return byteCounter;
+        // cause
+        if(index >= b.length)
+            throw new ParameterException("Octet " + (index + 1) + " missing from ISUP Cause Indicator!");
+        v = b[index++] & 0xFF;
+        if((v & 0x80) == 0)
+            logger.warn("ISUP Cause Indicator octet "+index+" (cause) extension bit is 0, but it must be 1!");
+        this.causeValue = v & 0x7F;
+        // diagnostics
+        if(index < b.length) {
+            this.diagnostics = Arrays.copyOfRange(b, index, b.length);
         }
+        return b.length;
     }
 
     public byte[] encode() throws ParameterException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
         int v = this.location & 0x0F;
-        v |= (byte) ((this.codingStandard & 0x03) << 5) | (0x01 << 7);
-        bos.write(v);
-        bos.write(this.causeValue | (0x01 << 7));
+        v |= ((this.codingStandard & 0x03) << 5);
+        if(this.recommendation != _RECOMMENDATION_Q763) {
+            logger.warn("ISUP Cause Indicator Recommendation field set to " + this.recommendation + ". This is not supported on ISUP, but encoding it anyway.");
+            v &= 0x7F; // extension bit cleared to 0 for continuation
+            bos.write(v);
+            v = 0x80 /* no extension */ | (this.recommendation & 0x7F);
+            bos.write(v);
+        } else {
+            v |= 0x80; // no extension set on first octet: no recommendation
+            bos.write(v);
+        }
+        bos.write(0x80 | this.causeValue );
         if (this.diagnostics != null) {
-            try {
-                bos.write(this.diagnostics);
-            } catch (IOException e) {
-                throw new ParameterException(e);
-            }
+            bos.write(this.diagnostics, 0, this.diagnostics.length);
         }
         byte[] b = bos.toByteArray();
 
@@ -144,7 +152,9 @@ public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseI
     }
 
     public void setCodingStandard(int codingStandard) {
-        this.codingStandard = codingStandard & 0x03;
+        if(codingStandard != (codingStandard & 0x03))
+            throw new IllegalArgumentException("Invalid codingStandard value for ISUP cause indicator: " + codingStandard + ". Only 2 bit values allowed");
+        this.codingStandard = codingStandard;
     }
 
     public int getLocation() {
@@ -152,11 +162,13 @@ public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseI
     }
 
     public void setLocation(int location) {
-        this.location = location & 0x0F;
+        if(location != (location & 0x0F))
+            throw new IllegalArgumentException("Invalid location value for ISUP cause indicator: " + location + ". Only 4 bit values allowed");
+        this.location = location;
     }
 
     public int getCauseValue() {
-        return causeValue & 0x7F;
+        return causeValue;
     }
 
     public int getRecommendation() {
@@ -164,10 +176,20 @@ public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseI
     }
 
     public void setRecommendation(int recommendation) {
-        this.recommendation = recommendation & 0x7F;
+        if (recommendation == _RECOMMENDATION_Q763) { // unset value
+            this.recommendation = recommendation;
+        } else if (recommendation != (recommendation & 0x7F)) {
+            throw new IllegalArgumentException("Invalid recommendation value for ISUP cause indicator: "
+                    + recommendation + ". Only 7 bit values allowed");
+        } else {
+            logger.warn("ISUP cause indicator: setting unsupported recommendation value " + recommendation);
+            this.recommendation = recommendation;
+        }
     }
 
     public void setCauseValue(int causeValue) {
+        if(causeValue != (causeValue & 0x7F))
+            throw new IllegalArgumentException("Invalid causeValue for ISUP cause indicator: " + causeValue + ". Only 7 bit values allowed");
         this.causeValue = causeValue;
     }
 
@@ -193,34 +215,20 @@ public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseI
         sb.append(codingStandard);
         sb.append(", location=");
         sb.append(location);
-        sb.append(", recommendation=");
-        sb.append(recommendation);
+        if(recommendation != _RECOMMENDATION_Q763) {
+            sb.append(", recommendation=");
+            sb.append(recommendation);
+        }
         sb.append(", causeValue=");
         sb.append(causeValue);
 
         if (this.diagnostics != null) {
-            sb.append(", diagnostics=[");
-            sb.append(printDataArr(this.diagnostics));
-            sb.append("]");
+            sb.append(", diagnostics=[hex ");
+            ISUPUtility.appendHexStream(sb, diagnostics, " ", false, false);
+            sb.append(']');
         }
 
         sb.append("]");
-
-        return sb.toString();
-    }
-
-    protected String printDataArr(byte[] data) {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        if (data != null) {
-            for (int b : data) {
-                if (first)
-                    first = false;
-                else
-                    sb.append(", ");
-                sb.append(b);
-            }
-        }
 
         return sb.toString();
     }
@@ -234,14 +242,15 @@ public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseI
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, CauseIndicatorsImpl causeIndicators)
                 throws XMLStreamException {
-            causeIndicators.location = xml.getAttribute(LOCATION, DEFAULT_VALUE);
-            causeIndicators.causeValue = xml.getAttribute(CAUSE_VALUE, DEFAULT_VALUE);
-            causeIndicators.codingStandard = xml.getAttribute(CODING_STANDARD, DEFAULT_VALUE);
-            causeIndicators.recommendation = xml.getAttribute(RECOMMENDATION, DEFAULT_VALUE);
+            // use setters to perform validity checks
+            causeIndicators.setLocation(xml.getAttribute(LOCATION, DEFAULT_VALUE));
+            causeIndicators.setCauseValue(xml.getAttribute(CAUSE_VALUE, DEFAULT_VALUE));
+            causeIndicators.setCodingStandard(xml.getAttribute(CODING_STANDARD, DEFAULT_VALUE));
+            causeIndicators.setRecommendation(xml.getAttribute(RECOMMENDATION, _RECOMMENDATION_Q763)); // should not be present
 
             ByteArrayContainer bc = xml.get(DIAGNOSTICS, ByteArrayContainer.class);
             if (bc != null) {
-                causeIndicators.diagnostics = bc.getData();
+                causeIndicators.setDiagnostics(bc.getData());
             }
         }
 
@@ -251,7 +260,12 @@ public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseI
             xml.setAttribute(LOCATION, causeIndicators.location);
             xml.setAttribute(CAUSE_VALUE, causeIndicators.causeValue);
             xml.setAttribute(CODING_STANDARD, causeIndicators.codingStandard);
-            xml.setAttribute(RECOMMENDATION, causeIndicators.recommendation);
+            if (causeIndicators.recommendation != _RECOMMENDATION_Q763) {
+                Logger.getLogger(CauseIndicatorsImpl.class).warn(
+                        "ISUP Cause Indicator Recommendation field set to " + causeIndicators.recommendation
+                                + ". This is not supported on ISUP, but encoding it anyway.");
+                xml.setAttribute(RECOMMENDATION, causeIndicators.recommendation);
+            }
 
             if (causeIndicators.diagnostics != null) {
                 ByteArrayContainer bac = new ByteArrayContainer(causeIndicators.diagnostics);

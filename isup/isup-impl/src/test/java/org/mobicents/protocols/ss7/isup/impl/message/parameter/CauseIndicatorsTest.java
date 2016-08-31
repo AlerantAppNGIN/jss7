@@ -63,12 +63,22 @@ public class CauseIndicatorsTest {
         return new byte[] { (byte) 133, (byte) 149 };
     }
 
+    // with diagnostics
     private byte[] getData2() {
-        return new byte[] { (byte) 133, (byte) 149, 1, 2, (byte) 0xFF };
+        return new byte[] { (byte) 133, (byte) 149, 1, (byte) 0xFF };
+    }
+
+    // with custom recommendation value and diagnostics
+    private byte[] getData3() {
+        return new byte[] {
+                /*ext=0 + ISO coding + INTL */ (byte)(CauseIndicators._CODING_STANDARD_ISO_IEC << 5 | CauseIndicators._LOCATION_INTERNATIONAL_NETWORK),
+                /*rec: X.21*/ (byte) (0x80 | CauseIndicators._RECOMMENDATION_X21) ,
+                /* code 21 */ (byte) (0x80 | CauseIndicators._CV_CALL_REJECTED),
+                /* diag: */ 1, (byte) 0xFF };
     }
 
     private byte[] getDiagnosticsData() {
-        return new byte[] { 1, 2, (byte) 0xFF };
+        return new byte[] { 1, (byte) 0xFF };
     }
 
     @Test(groups = { "functional.decode", "parameter" })
@@ -76,38 +86,47 @@ public class CauseIndicatorsTest {
 
         CauseIndicatorsImpl prim = new CauseIndicatorsImpl();
         prim.decode(getData());
+        System.out.println("Decode 1: " + prim);
 
         assertEquals(prim.getCodingStandard(), CauseIndicators._CODING_STANDARD_ITUT);
         assertEquals(prim.getLocation(), CauseIndicators._LOCATION_PRIVATE_NSRU);
-        assertEquals(prim.getRecommendation(), 0);
+        assertEquals(prim.getRecommendation(), CauseIndicators._RECOMMENDATION_Q763);
         assertEquals(prim.getCauseValue(), CauseIndicators._CV_CALL_REJECTED);
         assertNull(prim.getDiagnostics());
 
         prim = new CauseIndicatorsImpl();
         prim.decode(getData2());
+        System.out.println("Decode 2: " + prim);
 
         assertEquals(prim.getCodingStandard(), CauseIndicators._CODING_STANDARD_ITUT);
         assertEquals(prim.getLocation(), CauseIndicators._LOCATION_PRIVATE_NSRU);
-        assertEquals(prim.getRecommendation(), 0);
+        assertEquals(prim.getRecommendation(), CauseIndicators._RECOMMENDATION_Q763);
         assertEquals(prim.getCauseValue(), CauseIndicators._CV_CALL_REJECTED);
         assertEquals(prim.getDiagnostics(), getDiagnosticsData());
 
-        // TODO: add an encoding/decoding unittest for CodingStandard!=CauseIndicators._CODING_STANDARD_ITUT and
-        // recomendations!=null (extra Recommendation byte)
+        prim = new CauseIndicatorsImpl();
+        prim.decode(getData3());
+        System.out.println("Decode 3: " + prim);
+
+        assertEquals(prim.getCodingStandard(), CauseIndicators._CODING_STANDARD_ISO_IEC);
+        assertEquals(prim.getLocation(), CauseIndicators._LOCATION_INTERNATIONAL_NETWORK);
+        assertEquals(prim.getRecommendation(), CauseIndicators._RECOMMENDATION_X21);
+        assertEquals(prim.getCauseValue(), CauseIndicators._CV_CALL_REJECTED);
+        assertEquals(prim.getDiagnostics(), getDiagnosticsData());
     }
 
     @Test(groups = { "functional.encode", "parameter" })
     public void testEncode() throws Exception {
 
         CauseIndicatorsImpl prim = new CauseIndicatorsImpl(CauseIndicators._CODING_STANDARD_ITUT,
-                CauseIndicators._LOCATION_PRIVATE_NSRU, 0, CauseIndicators._CV_CALL_REJECTED, null);
+                CauseIndicators._LOCATION_PRIVATE_NSRU, CauseIndicators._RECOMMENDATION_Q763, CauseIndicators._CV_CALL_REJECTED, null);
 
         byte[] data = getData();
         byte[] encodedData = prim.encode();
 
         assertTrue(Arrays.equals(data, encodedData));
 
-        prim = new CauseIndicatorsImpl(CauseIndicators._CODING_STANDARD_ITUT, CauseIndicators._LOCATION_PRIVATE_NSRU, 0,
+        prim = new CauseIndicatorsImpl(CauseIndicators._CODING_STANDARD_ITUT, CauseIndicators._LOCATION_PRIVATE_NSRU,  CauseIndicators._RECOMMENDATION_Q763,
                 CauseIndicators._CV_CALL_REJECTED, getDiagnosticsData());
 
         data = getData2();
@@ -115,8 +134,14 @@ public class CauseIndicatorsTest {
 
         assertTrue(Arrays.equals(data, encodedData));
 
-        // TODO: add an encoding/decoding unittest for CodingStandard!=CauseIndicators._CODING_STANDARD_ITUT and
-        // recomendations!=null (extra Recommendation byte)
+        prim = new CauseIndicatorsImpl(CauseIndicators._CODING_STANDARD_ISO_IEC, CauseIndicators._LOCATION_INTERNATIONAL_NETWORK,  CauseIndicators._RECOMMENDATION_X21,
+                CauseIndicators._CV_CALL_REJECTED, getDiagnosticsData());
+
+        data = getData3();
+        encodedData = prim.encode();
+
+        assertTrue(Arrays.equals(data, encodedData));
+
     }
 
     @Test(groups = { "functional.xml.serialize", "parameter" })
@@ -150,7 +175,7 @@ public class CauseIndicatorsTest {
         assertNull(copy.getDiagnostics());
 
         original = new CauseIndicatorsImpl(CauseIndicators._CODING_STANDARD_NATIONAL, CauseIndicators._LOCATION_PRIVATE_NSRU,
-                1, CauseIndicators._CV_CALL_REJECTED, getDiagnosticsData());
+                CauseIndicators._RECOMMENDATION_Q763, CauseIndicators._CV_CALL_REJECTED, getDiagnosticsData());
 
         // Writes the area to a file.
         baos = new ByteArrayOutputStream();
