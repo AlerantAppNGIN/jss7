@@ -862,8 +862,15 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                 if (addr != null
                         && addr.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
                     if (!addr.getAddressIndicator().pcPresent()) {
+                        // fix: don't remove remote GT if present, just warn about it
+                        GlobalTitle gt = addr.getGlobalTitle();
+                        if (gt != null) {
+                            logger.warn(String
+                                    .format("Rx SCCP CallingPartyAddress with GT present and no OPC but routing indicator set to OPC+SSN. %s",
+                                            msg));
+                        }
                         msgAddr.setCallingPartyAddress(new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, msgAddr
-                                .getIncomingOpc(), null, addr.getSubsystemNumber()));
+                                .getIncomingOpc(), addr.getGlobalTitle(), addr.getSubsystemNumber()));
                     }
                 }
 
