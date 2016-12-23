@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
  * <h1>CAP phase 2:</h1>
  *
  * Cause ::= OCTET STRING (SIZE (minCauseLength .. maxCauseLength))
- * --  Indicates the cause for interface related information. Refer to the ETS 300 356‑1 [3] Cause 
+ * --  Indicates the cause for interface related information. Refer to the ETS 300 356‑1 [3] Cause
  * --  parameter for encoding. For the use of Cause and Location values refer to Q.850.
  * --  Shall only include the cause value.
  *
