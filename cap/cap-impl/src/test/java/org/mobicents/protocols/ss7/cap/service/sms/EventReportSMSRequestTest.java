@@ -23,6 +23,8 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -41,6 +43,9 @@ import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
 import org.mobicents.protocols.ss7.inap.primitives.MiscCallInfoImpl;
 import org.testng.annotations.Test;
 
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
+
 /**
  *
  * @author Lasith Waruna Perera
@@ -49,8 +54,8 @@ import org.testng.annotations.Test;
 public class EventReportSMSRequestTest {
 
     public byte[] getData() {
-        return new byte[] { 48, 35, -128, 1, 3, -95, 5, -96, 3, -128, 1, 2, -94, 3, -128, 1, 1, -86, 18, 48, 5, 2, 1,
-                2, -127, 0, 48, 9, 2, 1, 3, 10, 1, 1, -127, 1, -1 };
+        return new byte[] { 48, 35, -128, 1, 3, -95, 5, -96, 3, -128, 1, 2, -94, 3, -128, 1, 1, -86, 18, 48, 5, 2, 1, 2,
+                -127, 0, 48, 9, 2, 1, 3, 10, 1, 1, -127, 1, -1 };
     };
 
     @Test(groups = { "functional.decode", "primitives" })
@@ -98,6 +103,44 @@ public class EventReportSMSRequestTest {
         prim.encodeAll(asn);
 
         assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+    }
+
+    @Test(groups = { "functional.xml.serialize", "capMessage" })
+    public void testXMLSerialize() throws Exception {
+
+        EventTypeSMS eventTypeSMS = EventTypeSMS.oSmsSubmission;
+        OSmsFailureSpecificInfo oSmsFailureSpecificInfo = new OSmsFailureSpecificInfoImpl(
+                MOSMSCause.facilityNotSupported);
+        EventSpecificInformationSMSImpl eventSpecificInformationSMS = new EventSpecificInformationSMSImpl(
+                oSmsFailureSpecificInfo);
+        MiscCallInfo miscCallInfo = new MiscCallInfoImpl(MiscCallInfoMessageType.notification, null);
+
+        CAPExtensions extensions = CAPExtensionsTest.createTestCAPExtensions();
+
+        EventReportSMSRequestImpl prim = new EventReportSMSRequestImpl(eventTypeSMS, eventSpecificInformationSMS,
+                miscCallInfo, extensions);
+
+        EventReportSMSRequestImpl original = new EventReportSMSRequestImpl(eventTypeSMS, eventSpecificInformationSMS,
+                miscCallInfo, extensions);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "eventReportSMS", EventReportSMSRequestImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        EventReportSMSRequestImpl copy = reader.read("eventReportSMS", EventReportSMSRequestImpl.class);
+
+        assertEquals(original, copy);
     }
 
 }

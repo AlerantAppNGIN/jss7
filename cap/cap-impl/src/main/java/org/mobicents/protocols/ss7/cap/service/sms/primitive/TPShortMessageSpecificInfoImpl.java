@@ -21,12 +21,17 @@ package org.mobicents.protocols.ss7.cap.service.sms.primitive;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.TPShortMessageSpecificInfo;
 import org.mobicents.protocols.ss7.cap.primitives.OctetStringLength1Base;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
  *
  */
 public class TPShortMessageSpecificInfoImpl extends OctetStringLength1Base implements TPShortMessageSpecificInfo {
+
+    private static final String DATA = "data";
 
     public TPShortMessageSpecificInfoImpl() {
         super("TPShortMessageSpecificInfo");
@@ -41,4 +46,25 @@ public class TPShortMessageSpecificInfoImpl extends OctetStringLength1Base imple
         return data;
     }
 
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<TPShortMessageSpecificInfoImpl> TP_SHORT_MESSAGE_SPECIFIC_INFO_XML = new XMLFormat<TPShortMessageSpecificInfoImpl>(
+            TPShortMessageSpecificInfoImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                TPShortMessageSpecificInfoImpl tPShortMessageSpecificInfo) throws XMLStreamException {
+            tPShortMessageSpecificInfo.data = OctetStringLength1Base
+                    .octetStringLength1ToInt(xml.getAttribute(DATA, (String) null));
+        }
+
+        @Override
+        public void write(TPShortMessageSpecificInfoImpl tPShortMessageSpecificInfo,
+                javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(DATA,
+                    OctetStringLength1Base.intToOctetStringLength1(tPShortMessageSpecificInfo.getData()));
+        }
+
+    };
 }

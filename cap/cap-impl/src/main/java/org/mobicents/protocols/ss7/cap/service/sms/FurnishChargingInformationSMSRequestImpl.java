@@ -21,9 +21,6 @@ package org.mobicents.protocols.ss7.cap.service.sms;
 
 import java.io.IOException;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -38,15 +35,21 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequ
 import org.mobicents.protocols.ss7.cap.service.sms.primitive.FCIBCCCAMELsequence1SMSImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
  * @author alerant appngin
  */
 @SuppressWarnings("serial")
-public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl implements FurnishChargingInformationSMSRequest {
+public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl
+        implements FurnishChargingInformationSMSRequest {
 
     private static final String FCI_BCC_CAMEL_SEQUENCE1 = "fCIBCCCAMELsequence1";
+
+    public static final int _ID_fCIBCCCAMELsequence1 = 0;
 
     public static final String _PrimitiveName = "FurnishChargingInformationSMSRequest";
 
@@ -95,14 +98,17 @@ public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl imp
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
@@ -111,19 +117,22 @@ public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl imp
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException,
-            AsnException, MAPParsingComponentException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
 
         this.FCIBCCCAMELsequence1 = null;
 
@@ -143,14 +152,14 @@ public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl imp
 
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
                 switch (tag) {
-                    case FCIBCCCAMELsequence1SMSImpl._ID_FCIBCCCAMELsequence1:
-                        this.FCIBCCCAMELsequence1 = new FCIBCCCAMELsequence1SMSImpl();
-                        ((FCIBCCCAMELsequence1SMSImpl) this.FCIBCCCAMELsequence1).decodeAll(ais);
-                        break;
+                case FCIBCCCAMELsequence1SMSImpl._ID_FCIBCCCAMELsequence1:
+                    this.FCIBCCCAMELsequence1 = new FCIBCCCAMELsequence1SMSImpl();
+                    ((FCIBCCCAMELsequence1SMSImpl) this.FCIBCCCAMELsequence1).decodeAll(ais);
+                    break;
 
-                    default:
-                        ais.advanceElement();
-                        break;
+                default:
+                    ais.advanceElement();
+                    break;
                 }
             } else {
                 ais.advanceElement();
@@ -158,8 +167,8 @@ public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl imp
         }
 
         if (this.FCIBCCCAMELsequence1 == null)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": the single choice FCIBCCCAMELsequence1 is not found",
+            throw new CAPParsingComponentException(
+                    "Error while decoding " + _PrimitiveName + ": the single choice FCIBCCCAMELsequence1 is not found",
                     CAPParsingComponentExceptionReason.MistypedParameter);
     }
 
@@ -184,7 +193,8 @@ public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl imp
     public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
         if (this.FCIBCCCAMELsequence1 == null)
-            throw new CAPException("Error while encoding " + _PrimitiveName + ": FCIBCCCAMELsequence1 must not be null");
+            throw new CAPException(
+                    "Error while encoding " + _PrimitiveName + ": FCIBCCCAMELsequence1 must not be null");
 
         AsnOutputStream aos = new AsnOutputStream();
         ((FCIBCCCAMELsequence1SMSImpl) this.FCIBCCCAMELsequence1).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
@@ -192,8 +202,8 @@ public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl imp
 
         byte[] buf = aos.toByteArray();
         if (buf.length < 5 || buf.length > 255)
-            throw new CAPException("Error while encoding " + _PrimitiveName + ": data length must be from 5 to 255, encoded: "
-                    + buf.length);
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": data length must be from 5 to 255, encoded: " + buf.length);
 
         asnOs.writeOctetStringData(buf);
     }
@@ -215,6 +225,31 @@ public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl imp
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((FCIBCCCAMELsequence1 == null) ? 0 : FCIBCCCAMELsequence1.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FurnishChargingInformationSMSRequestImpl other = (FurnishChargingInformationSMSRequestImpl) obj;
+        if (FCIBCCCAMELsequence1 == null) {
+            if (other.FCIBCCCAMELsequence1 != null)
+                return false;
+        } else if (!FCIBCCCAMELsequence1.equals(other.FCIBCCCAMELsequence1))
+            return false;
+        return true;
+    }
+
     /**
      * XML Serialization/Deserialization
      */
@@ -222,8 +257,8 @@ public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl imp
             FurnishChargingInformationSMSRequestImpl.class) {
 
         @Override
-        public void read(javolution.xml.XMLFormat.InputElement xml, FurnishChargingInformationSMSRequestImpl fciSmsRequest)
-                throws XMLStreamException {
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                FurnishChargingInformationSMSRequestImpl fciSmsRequest) throws XMLStreamException {
             CAP_MESSAGE_XML.read(xml, fciSmsRequest);
 
             fciSmsRequest.FCIBCCCAMELsequence1 = xml.get(FCI_BCC_CAMEL_SEQUENCE1, FCIBCCCAMELsequence1SMSImpl.class);

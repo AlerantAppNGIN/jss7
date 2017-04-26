@@ -65,8 +65,8 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
     }
 
     @Override
-    public CAPDialogSms createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress,
-            SccpAddress destAddress, Long localTrId) throws CAPException {
+    public CAPDialogSms createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress,
+            Long localTrId) throws CAPException {
 
         // We cannot create a dialog if the service is not activated
         if (!this.isActivated())
@@ -192,7 +192,8 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
                 || parameter.isPrimitive())
             throw new CAPParsingComponentException(
                     "Error while decoding connectSMSRequest: Bad tag or tagClass or parameter is primitive, received tag="
-                            + parameter.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
+                            + parameter.getTag(),
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
         byte[] buf = parameter.getData();
         AsnInputStream ais = new AsnInputStream(buf);
@@ -224,7 +225,8 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
                 || parameter.isPrimitive())
             throw new CAPParsingComponentException(
                     "Error while decoding EventReportSMSRequest: Bad tag or tagClass or parameter is primitive, received tag="
-                            + parameter.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
+                            + parameter.getTag(),
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
         byte[] buf = parameter.getData();
         AsnInputStream ais = new AsnInputStream(buf);
@@ -244,8 +246,8 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
         }
     }
 
-    private void furnishChargingInformationSMSRequest(Parameter parameter, CAPDialogSmsImpl capDialogImpl, Long invokeId)
-            throws CAPParsingComponentException {
+    private void furnishChargingInformationSMSRequest(Parameter parameter, CAPDialogSmsImpl capDialogImpl,
+            Long invokeId) throws CAPParsingComponentException {
 
         if (parameter == null)
             throw new CAPParsingComponentException(
@@ -256,7 +258,8 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
                 || !parameter.isPrimitive())
             throw new CAPParsingComponentException(
                     "Error while decoding FurnishChargingInformationSMSRequest: Bad tag or tagClass or parameter is not a primitive, received tag="
-                            + parameter.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
+                            + parameter.getTag(),
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
         byte[] buf = parameter.getData();
         AsnInputStream ais = new AsnInputStream(buf);
@@ -288,11 +291,12 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
                 || parameter.isPrimitive())
             throw new CAPParsingComponentException(
                     "Error while decoding InitialDPSMSRequest: Bad tag or tagClass or parameter is primitive, received tag="
-                            + parameter.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
+                            + parameter.getTag(),
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
         byte[] buf = parameter.getData();
         AsnInputStream ais = new AsnInputStream(buf);
-        InitialDPSMSRequestImpl ind = new InitialDPSMSRequestImpl();
+        InitialDPSMSRequestImpl ind = new InitialDPSMSRequestImpl(capDialogImpl.getApplicationContext().getVersion());
         ind.decodeData(ais, buf.length);
 
         ind.setInvokeId(invokeId);
@@ -320,7 +324,8 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
                 || !parameter.isPrimitive())
             throw new CAPParsingComponentException(
                     "Error while decoding ReleaseSMSRequest: Bad tag or tagClass or parameter is not primitive, received tag="
-                            + parameter.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
+                            + parameter.getTag(),
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
         byte[] buf = parameter.getData();
         AsnInputStream ais = new AsnInputStream(buf);
@@ -352,7 +357,8 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
                 || parameter.isPrimitive())
             throw new CAPParsingComponentException(
                     "Error while decoding RequestReportSMSEventRequest: Bad tag or tagClass or parameter is primitive, received tag="
-                            + parameter.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
+                            + parameter.getTag(),
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
         byte[] buf = parameter.getData();
         AsnInputStream ais = new AsnInputStream(buf);
@@ -384,7 +390,8 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
                 || parameter.isPrimitive())
             throw new CAPParsingComponentException(
                     "Error while decoding ResetTimerSMSRequest: Bad tag or tagClass or parameter is primitive, received tag="
-                            + parameter.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
+                            + parameter.getTag(),
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
         byte[] buf = parameter.getData();
         AsnInputStream ais = new AsnInputStream(buf);

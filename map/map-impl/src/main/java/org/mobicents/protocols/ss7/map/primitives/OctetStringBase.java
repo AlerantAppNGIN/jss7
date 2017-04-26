@@ -79,7 +79,8 @@ public abstract class OctetStringBase implements MAPAsnPrimitive {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new MAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     MAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
@@ -89,7 +90,8 @@ public abstract class OctetStringBase implements MAPAsnPrimitive {
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new MAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     MAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
@@ -101,8 +103,9 @@ public abstract class OctetStringBase implements MAPAsnPrimitive {
                     MAPParsingComponentExceptionReason.MistypedParameter);
 
         if (length < this.minLength || length > this.maxLength)
-            throw new MAPParsingComponentException("Error decoding " + _PrimitiveName + ": the field must contain from "
-                    + this.minLength + " to " + this.maxLength + " octets. Contains: " + length,
+            throw new MAPParsingComponentException(
+                    "Error decoding " + _PrimitiveName + ": the field must contain from " + this.minLength + " to "
+                            + this.maxLength + " octets. Contains: " + length,
                     MAPParsingComponentExceptionReason.MistypedParameter);
 
         data = new byte[length];
@@ -140,12 +143,12 @@ public abstract class OctetStringBase implements MAPAsnPrimitive {
 
     @Override
     public int hashCode() {
-        if (data == null)
-            return 0;
-
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((_PrimitiveName == null) ? 0 : _PrimitiveName.hashCode());
         result = prime * result + Arrays.hashCode(data);
+        result = prime * result + maxLength;
+        result = prime * result + minLength;
         return result;
     }
 
@@ -158,10 +161,16 @@ public abstract class OctetStringBase implements MAPAsnPrimitive {
         if (getClass() != obj.getClass())
             return false;
         OctetStringBase other = (OctetStringBase) obj;
-        if (data == null) {
-            if (other.data != null)
+        if (_PrimitiveName == null) {
+            if (other._PrimitiveName != null)
                 return false;
-        } else if (!Arrays.equals(data, other.data))
+        } else if (!_PrimitiveName.equals(other._PrimitiveName))
+            return false;
+        if (!Arrays.equals(data, other.data))
+            return false;
+        if (maxLength != other.maxLength)
+            return false;
+        if (minLength != other.minLength)
             return false;
         return true;
     }
@@ -213,8 +222,7 @@ public abstract class OctetStringBase implements MAPAsnPrimitive {
             return null;
         char[] c = hex.toCharArray();
         if ((c.length & 1) > 0)
-            throw new IllegalArgumentException(
-                    "Hex string must be 2n characters long!");
+            throw new IllegalArgumentException("Hex string must be 2n characters long!");
         byte[] b = new byte[c.length / 2];
         for (int i = 0, j = i; i < b.length; i++, j += 2) {
             b[i] = (byte) ((byteFromHexChar(c[j]) << 4) + byteFromHexChar(c[j + 1]));

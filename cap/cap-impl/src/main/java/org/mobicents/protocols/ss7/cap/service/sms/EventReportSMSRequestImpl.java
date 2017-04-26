@@ -41,6 +41,9 @@ import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.primitives.MiscCallInfoImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
@@ -55,13 +58,18 @@ public class EventReportSMSRequestImpl extends SmsMessageImpl implements EventRe
     public static final int _ID_miscCallInfo = 2;
     public static final int _ID_extensions = 10;
 
+    private static final String EVENT_TYPE_SMS = "eventTypeSms";
+    private static final String EVENT_SPECIFIC_INFORMATION_SMS = "eventSpecificInformationSms";
+    private static final String MISC_CALL_INFO = "miscCallInfo";
+    private static final String EXTENSIONS = "extensions";
+
     private EventTypeSMS eventTypeSMS;
     private EventSpecificInformationSMS eventSpecificInformationSMS;
     private MiscCallInfo miscCallInfo;
     private CAPExtensions extensions;
 
-    public EventReportSMSRequestImpl(EventTypeSMS eventTypeSMS,
-            EventSpecificInformationSMS eventSpecificInformationSMS, MiscCallInfo miscCallInfo, CAPExtensions extensions) {
+    public EventReportSMSRequestImpl(EventTypeSMS eventTypeSMS, EventSpecificInformationSMS eventSpecificInformationSMS,
+            MiscCallInfo miscCallInfo, CAPExtensions extensions) {
         super();
         this.eventTypeSMS = eventTypeSMS;
         this.eventSpecificInformationSMS = eventSpecificInformationSMS;
@@ -124,17 +132,21 @@ public class EventReportSMSRequestImpl extends SmsMessageImpl implements EventRe
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (INAPParsingComponentException e) {
-            throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName
-                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
@@ -143,17 +155,21 @@ public class EventReportSMSRequestImpl extends SmsMessageImpl implements EventRe
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (INAPParsingComponentException e) {
-            throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName
-                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
@@ -176,16 +192,17 @@ public class EventReportSMSRequestImpl extends SmsMessageImpl implements EventRe
                 switch (tag) {
                 case _ID_eventTypeSMS:
                     if (!ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ".eventTypeSMS: Parameter is not primitive",
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + ".eventTypeSMS: Parameter is not primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
                     int i1 = (int) ais.readInteger();
                     this.eventTypeSMS = EventTypeSMS.getInstance(i1);
                     break;
                 case _ID_eventSpecificInformationSMS:
                     if (ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ".eventSpecificInformationSMS: Parameter is primitive",
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + ".eventSpecificInformationSMS: Parameter is primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
                     this.eventSpecificInformationSMS = new EventSpecificInformationSMSImpl();
                     AsnInputStream ais3 = ais.readSequenceStream();
@@ -194,16 +211,16 @@ public class EventReportSMSRequestImpl extends SmsMessageImpl implements EventRe
                     break;
                 case _ID_miscCallInfo:
                     if (ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ".miscCallInfo: Parameter is primitive",
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + ".miscCallInfo: Parameter is primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
                     this.miscCallInfo = new MiscCallInfoImpl();
                     ((MiscCallInfoImpl) this.miscCallInfo).decodeAll(ais);
                     break;
                 case _ID_extensions:
                     if (ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ".extensions: Parameter is primitive",
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + ".extensions: Parameter is primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
                     this.extensions = new CAPExtensionsImpl();
                     ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
@@ -219,7 +236,8 @@ public class EventReportSMSRequestImpl extends SmsMessageImpl implements EventRe
         }
 
         if (this.eventTypeSMS == null) {
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": eventTypeSMS parameter mandatory but not found",
+            throw new CAPParsingComponentException(
+                    "Error while decoding " + _PrimitiveName + ": eventTypeSMS parameter mandatory but not found",
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
@@ -257,7 +275,8 @@ public class EventReportSMSRequestImpl extends SmsMessageImpl implements EventRe
                     ((EventSpecificInformationSMSImpl) this.eventSpecificInformationSMS).encodeAll(asnOs);
                     asnOs.FinalizeContent(pos);
                 } catch (AsnException e) {
-                    throw new CAPException("AsnException while encoding " + _PrimitiveName + " parameter subscribedQoS");
+                    throw new CAPException(
+                            "AsnException while encoding " + _PrimitiveName + " parameter subscribedQoS");
                 }
             }
 
@@ -274,6 +293,46 @@ public class EventReportSMSRequestImpl extends SmsMessageImpl implements EventRe
         } catch (INAPException e) {
             throw new CAPException("INAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((eventSpecificInformationSMS == null) ? 0 : eventSpecificInformationSMS.hashCode());
+        result = prime * result + ((eventTypeSMS == null) ? 0 : eventTypeSMS.hashCode());
+        result = prime * result + ((extensions == null) ? 0 : extensions.hashCode());
+        result = prime * result + ((miscCallInfo == null) ? 0 : miscCallInfo.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EventReportSMSRequestImpl other = (EventReportSMSRequestImpl) obj;
+        if (eventSpecificInformationSMS == null) {
+            if (other.eventSpecificInformationSMS != null)
+                return false;
+        } else if (!eventSpecificInformationSMS.equals(other.eventSpecificInformationSMS))
+            return false;
+        if (eventTypeSMS != other.eventTypeSMS)
+            return false;
+        if (extensions == null) {
+            if (other.extensions != null)
+                return false;
+        } else if (!extensions.equals(other.extensions))
+            return false;
+        if (miscCallInfo == null) {
+            if (other.miscCallInfo != null)
+                return false;
+        } else if (!miscCallInfo.equals(other.miscCallInfo))
+            return false;
+        return true;
     }
 
     @Override
@@ -304,5 +363,45 @@ public class EventReportSMSRequestImpl extends SmsMessageImpl implements EventRe
 
         return sb.toString();
     }
+
+    protected static final XMLFormat<EventReportSMSRequestImpl> EVENT_REPORT_SMS_REQUEST_XML = new XMLFormat<EventReportSMSRequestImpl>(
+            EventReportSMSRequestImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, EventReportSMSRequestImpl eventReportSmsRequest)
+                throws XMLStreamException {
+            CAP_MESSAGE_XML.read(xml, eventReportSmsRequest);
+
+            String str = xml.get(EVENT_TYPE_SMS, String.class);
+            if (str != null) {
+                eventReportSmsRequest.eventTypeSMS = Enum.valueOf(EventTypeSMS.class, str);
+            }
+            eventReportSmsRequest.eventSpecificInformationSMS = xml.get(EVENT_SPECIFIC_INFORMATION_SMS,
+                    EventSpecificInformationSMSImpl.class);
+            eventReportSmsRequest.miscCallInfo = xml.get(MISC_CALL_INFO, MiscCallInfoImpl.class);
+            eventReportSmsRequest.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
+        }
+
+        @Override
+        public void write(EventReportSMSRequestImpl eventReportSmsRequest, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            CAP_MESSAGE_XML.write(eventReportSmsRequest, xml);
+
+            if (eventReportSmsRequest.getEventTypeSMS() != null) {
+                xml.add(eventReportSmsRequest.eventTypeSMS.toString(), EVENT_TYPE_SMS, String.class);
+            }
+            if (eventReportSmsRequest.getEventSpecificInformationSMS() != null) {
+                xml.add((EventSpecificInformationSMSImpl) eventReportSmsRequest.getEventSpecificInformationSMS(),
+                        EVENT_SPECIFIC_INFORMATION_SMS, EventSpecificInformationSMSImpl.class);
+            }
+            if (eventReportSmsRequest.getMiscCallInfo() != null) {
+                xml.add((MiscCallInfoImpl) eventReportSmsRequest.getMiscCallInfo(), MISC_CALL_INFO,
+                        MiscCallInfoImpl.class);
+            }
+            if (eventReportSmsRequest.getExtensions() != null) {
+                xml.add((CAPExtensionsImpl) eventReportSmsRequest.getExtensions(), EXTENSIONS, CAPExtensionsImpl.class);
+            }
+        }
+    };
 
 }

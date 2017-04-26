@@ -33,6 +33,9 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSRadioAccessCapability;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  * @author abhayani
  * @author sergey vetyutnev
@@ -47,6 +50,9 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 
     private MSNetworkCapability mSNetworkCapability;
     private MSRadioAccessCapability mSRadioAccessCapability;
+
+    private static final String MS_NETWORK_CAPABILITY = "mSNetworkCapability";
+    private static final String MS_RADIO_ACCESS_CAPABILITY = "mSRadioAccessCapability";
 
     /**
      *
@@ -71,7 +77,8 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
      */
     public int getTagClass() {
         return Tag.CLASS_UNIVERSAL;
@@ -80,7 +87,9 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive ()
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
+     * ()
      */
     public boolean getIsPrimitive() {
         return false;
@@ -89,17 +98,21 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll( org.mobicents.protocols.asn.AsnInputStream)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
+     * org.mobicents.protocols.asn.AsnInputStream)
      */
     public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
         try {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new MAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     MAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new MAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     MAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
@@ -107,22 +120,26 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData (org.mobicents.protocols.asn.AsnInputStream,
-     * int)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
+     * (org.mobicents.protocols.asn.AsnInputStream, int)
      */
     public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new MAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     MAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new MAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     MAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws MAPParsingComponentException, IOException, AsnException {
         this.mSNetworkCapability = null;
         this.mSRadioAccessCapability = null;
 
@@ -136,25 +153,27 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
 
                 int tag = ais.readTag();
                 switch (tag) {
-                    case _ID_mSNetworkCapability:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " mSNetworkCapability: Parameter is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.mSNetworkCapability = new MSNetworkCapabilityImpl();
-                        ((MSNetworkCapabilityImpl) this.mSNetworkCapability).decodeAll(ais);
-                        break;
-                    case _ID_mSRadioAccessCapability:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " mSRadioAccessCapability: Parameter is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.mSRadioAccessCapability = new MSRadioAccessCapabilityImpl();
-                        ((MSRadioAccessCapabilityImpl) this.mSRadioAccessCapability).decodeAll(ais);
-                        break;
-                    default:
-                        ais.advanceElement();
-                        break;
+                case _ID_mSNetworkCapability:
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + " mSNetworkCapability: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.mSNetworkCapability = new MSNetworkCapabilityImpl();
+                    ((MSNetworkCapabilityImpl) this.mSNetworkCapability).decodeAll(ais);
+                    break;
+                case _ID_mSRadioAccessCapability:
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + " mSRadioAccessCapability: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.mSRadioAccessCapability = new MSRadioAccessCapabilityImpl();
+                    ((MSRadioAccessCapabilityImpl) this.mSRadioAccessCapability).decodeAll(ais);
+                    break;
+                default:
+                    ais.advanceElement();
+                    break;
                 }
             } else {
                 ais.advanceElement();
@@ -162,14 +181,17 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
         }
 
         if (this.mSNetworkCapability == null)
-            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": mSNetworkCapability must not be null", MAPParsingComponentExceptionReason.MistypedParameter);
+            throw new MAPParsingComponentException(
+                    "Error while decoding " + _PrimitiveName + ": mSNetworkCapability must not be null",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll( org.mobicents.protocols.asn.AsnOutputStream)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
+     * org.mobicents.protocols.asn.AsnOutputStream)
      */
     public void encodeAll(AsnOutputStream asnOs) throws MAPException {
         this.encodeAll(asnOs, this.getTagClass(), this.getTag());
@@ -178,8 +200,9 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll( org.mobicents.protocols.asn.AsnOutputStream,
-     * int, int)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
+     * org.mobicents.protocols.asn.AsnOutputStream, int, int)
      */
     public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
         try {
@@ -195,7 +218,9 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData (org.mobicents.protocols.asn.AsnOutputStream)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
+     * (org.mobicents.protocols.asn.AsnOutputStream)
      */
     public void encodeData(AsnOutputStream asnOs) throws MAPException {
         if (this.mSNetworkCapability == null)
@@ -212,7 +237,8 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GPRSMSClass #getMSNetworkCapability()
+     * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+     * GPRSMSClass #getMSNetworkCapability()
      */
     public MSNetworkCapability getMSNetworkCapability() {
         return this.mSNetworkCapability;
@@ -221,7 +247,8 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.GPRSMSClass #getMSRadioAccessCapability()
+     * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+     * GPRSMSClass #getMSRadioAccessCapability()
      */
     public MSRadioAccessCapability getMSRadioAccessCapability() {
         return this.mSRadioAccessCapability;
@@ -245,5 +272,65 @@ public class GPRSMSClassImpl implements GPRSMSClass, MAPAsnPrimitive {
         sb.append("]");
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mSNetworkCapability == null) ? 0 : mSNetworkCapability.hashCode());
+        result = prime * result + ((mSRadioAccessCapability == null) ? 0 : mSRadioAccessCapability.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        GPRSMSClassImpl other = (GPRSMSClassImpl) obj;
+        if (mSNetworkCapability == null) {
+            if (other.mSNetworkCapability != null)
+                return false;
+        } else if (!mSNetworkCapability.equals(other.mSNetworkCapability))
+            return false;
+        if (mSRadioAccessCapability == null) {
+            if (other.mSRadioAccessCapability != null)
+                return false;
+        } else if (!mSRadioAccessCapability.equals(other.mSRadioAccessCapability))
+            return false;
+        return true;
+    }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<GPRSMSClassImpl> GPRS_MS_CLASS = new XMLFormat<GPRSMSClassImpl>(
+            GPRSMSClassImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, GPRSMSClassImpl gPRSMSClassImpl)
+                throws XMLStreamException {
+            gPRSMSClassImpl.mSNetworkCapability = xml.get(MS_NETWORK_CAPABILITY, MSNetworkCapabilityImpl.class);
+            gPRSMSClassImpl.mSRadioAccessCapability = xml.get(MS_RADIO_ACCESS_CAPABILITY,
+                    MSRadioAccessCapabilityImpl.class);
+        }
+
+        @Override
+        public void write(GPRSMSClassImpl gPRSMSClassImpl, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            if (gPRSMSClassImpl.getMSNetworkCapability() != null) {
+                xml.add((MSNetworkCapabilityImpl) gPRSMSClassImpl.getMSNetworkCapability(), MS_NETWORK_CAPABILITY,
+                        MSNetworkCapabilityImpl.class);
+            }
+            if (gPRSMSClassImpl.getMSRadioAccessCapability() != null) {
+                xml.add((MSRadioAccessCapabilityImpl) gPRSMSClassImpl.getMSRadioAccessCapability(),
+                        MS_RADIO_ACCESS_CAPABILITY, MSRadioAccessCapabilityImpl.class);
+            }
+        }
+
+    };
 
 }

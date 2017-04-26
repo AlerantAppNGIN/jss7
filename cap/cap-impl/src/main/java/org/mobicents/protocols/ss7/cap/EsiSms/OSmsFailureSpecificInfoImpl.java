@@ -33,6 +33,9 @@ import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
@@ -41,6 +44,8 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 public class OSmsFailureSpecificInfoImpl extends SequenceBase implements OSmsFailureSpecificInfo {
 
     public static final int _ID_failureCause = 0;
+
+    private static final String FAILURE_CAUSE = "failureCause";
 
     private MOSMSCause failureCause;
 
@@ -75,8 +80,8 @@ public class OSmsFailureSpecificInfoImpl extends SequenceBase implements OSmsFai
 
                 case _ID_failureCause:
                     if (!ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ".failureCause: Parameter is not  primitive",
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + ".failureCause: Parameter is not  primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
                     int i1 = (int) ais.readInteger();
                     this.failureCause = MOSMSCause.getInstance(i1);
@@ -104,5 +109,48 @@ public class OSmsFailureSpecificInfoImpl extends SequenceBase implements OSmsFai
             throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((failureCause == null) ? 0 : failureCause.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OSmsFailureSpecificInfoImpl other = (OSmsFailureSpecificInfoImpl) obj;
+        if (failureCause != other.failureCause)
+            return false;
+        return true;
+    }
+
+    protected static final XMLFormat<OSmsFailureSpecificInfoImpl> O_SMS_FAILURE_SPECIFIC_INFO_XML = new XMLFormat<OSmsFailureSpecificInfoImpl>(
+            OSmsFailureSpecificInfoImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                OSmsFailureSpecificInfoImpl oSmsFailureSpecificInfoImpl) throws XMLStreamException {
+            String str = xml.get(FAILURE_CAUSE, String.class);
+            if (str != null) {
+                oSmsFailureSpecificInfoImpl.failureCause = Enum.valueOf(MOSMSCause.class, str);
+            }
+        }
+
+        @Override
+        public void write(OSmsFailureSpecificInfoImpl oSmsFailureSpecificInfoImpl,
+                javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            if (oSmsFailureSpecificInfoImpl.getFailureCause() != null) {
+                xml.add(oSmsFailureSpecificInfoImpl.getFailureCause().toString(), FAILURE_CAUSE, String.class);
+            }
+        }
+    };
 
 }

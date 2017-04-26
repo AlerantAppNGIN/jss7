@@ -33,6 +33,9 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSEvent;
 import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
@@ -45,6 +48,9 @@ public class SMSEventImpl extends SequenceBase implements SMSEvent {
 
     private EventTypeSMS eventTypeSMS;
     private MonitorMode monitorMode;
+
+    private static final String EVENT_TYPE_SMS = "eventTypeSMS";
+    private static final String MONITOR_MODE = "monitorMode";
 
     @Override
     public EventTypeSMS getEventTypeSMS() {
@@ -67,8 +73,8 @@ public class SMSEventImpl extends SequenceBase implements SMSEvent {
     }
 
     @Override
-    protected void _decode(AsnInputStream asnIS, int length) throws CAPParsingComponentException, IOException,
-            AsnException, MAPParsingComponentException {
+    protected void _decode(AsnInputStream asnIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
 
         this.eventTypeSMS = null;
         this.monitorMode = null;
@@ -84,16 +90,16 @@ public class SMSEventImpl extends SequenceBase implements SMSEvent {
                 switch (tag) {
                 case _ID_eventTypeSMS:
                     if (!ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ".eventTypeSMS: Parameter is not primitive",
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + ".eventTypeSMS: Parameter is not primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
                     int i1 = (int) ais.readInteger();
                     this.eventTypeSMS = EventTypeSMS.getInstance(i1);
                     break;
                 case _ID_monitorMode:
                     if (!ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ".monitorMode: Parameter is not primitive",
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + ".monitorMode: Parameter is not primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
                     int i2 = (int) ais.readInteger();
                     this.monitorMode = MonitorMode.getInstance(i2);
@@ -108,13 +114,13 @@ public class SMSEventImpl extends SequenceBase implements SMSEvent {
         }
 
         if (this.eventTypeSMS == null)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": parameter eventTypeSMS is mandatory but not found",
+            throw new CAPParsingComponentException(
+                    "Error while decoding " + _PrimitiveName + ": parameter eventTypeSMS is mandatory but not found",
                     CAPParsingComponentExceptionReason.MistypedParameter);
 
         if (this.monitorMode == null)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": parameter monitorMode is mandatory but not found",
+            throw new CAPParsingComponentException(
+                    "Error while decoding " + _PrimitiveName + ": parameter monitorMode is mandatory but not found",
                     CAPParsingComponentExceptionReason.MistypedParameter);
 
     }
@@ -159,5 +165,62 @@ public class SMSEventImpl extends SequenceBase implements SMSEvent {
 
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((eventTypeSMS == null) ? 0 : eventTypeSMS.hashCode());
+        result = prime * result + ((monitorMode == null) ? 0 : monitorMode.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SMSEventImpl other = (SMSEventImpl) obj;
+        if (eventTypeSMS != other.eventTypeSMS)
+            return false;
+        if (monitorMode != other.monitorMode)
+            return false;
+        return true;
+    }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<SMSEventImpl> SMS_EVENT_XML = new XMLFormat<SMSEventImpl>(SMSEventImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, SMSEventImpl smsEventImpl)
+                throws XMLStreamException {
+            String str = xml.get(EVENT_TYPE_SMS, String.class);
+            if (str != null) {
+                smsEventImpl.eventTypeSMS = Enum.valueOf(EventTypeSMS.class, str);
+            }
+            str = xml.get(MONITOR_MODE, String.class);
+            if (str != null) {
+                smsEventImpl.monitorMode = Enum.valueOf(MonitorMode.class, str);
+            }
+        }
+
+        @Override
+        public void write(SMSEventImpl smsEventImpl, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            if (smsEventImpl.getEventTypeSMS() != null) {
+                xml.add((String) smsEventImpl.getEventTypeSMS().toString(), EVENT_TYPE_SMS, String.class);
+            }
+            if (smsEventImpl.getMonitorMode() != null) {
+                xml.add((String) smsEventImpl.getMonitorMode().toString(), MONITOR_MODE, String.class);
+            }
+        }
+
+    };
 
 }

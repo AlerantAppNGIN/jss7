@@ -22,11 +22,16 @@ package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RAIdentity;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  * @author amit bhayani
  *
  */
 public class RAIdentityImpl extends OctetStringBase implements RAIdentity {
+
+    private static final String DATA = "data";
 
     public RAIdentityImpl() {
         super(6, 6, "RAIdentity");
@@ -39,4 +44,22 @@ public class RAIdentityImpl extends OctetStringBase implements RAIdentity {
     public byte[] getData() {
         return data;
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<RAIdentityImpl> RAI_IDENTITY_XML = new XMLFormat<RAIdentityImpl>(
+            RAIdentityImpl.class) {
+
+        @Override
+        public void write(RAIdentityImpl obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(DATA, OctetStringBase.bytesToHex(obj.data));
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, RAIdentityImpl obj) throws XMLStreamException {
+            obj.data = OctetStringBase.hexToBytes(xml.getAttribute(DATA, (String) null));
+        }
+
+    };
 }

@@ -21,12 +21,17 @@ package org.mobicents.protocols.ss7.cap.service.sms.primitive;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.TPProtocolIdentifier;
 import org.mobicents.protocols.ss7.cap.primitives.OctetStringLength1Base;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
  *
  */
 public class TPProtocolIdentifierImpl extends OctetStringLength1Base implements TPProtocolIdentifier {
+
+    private static final String DATA = "data";
 
     public TPProtocolIdentifierImpl() {
         super("TPProtocolIdentifier");
@@ -40,5 +45,26 @@ public class TPProtocolIdentifierImpl extends OctetStringLength1Base implements 
     public int getData() {
         return data;
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<TPProtocolIdentifierImpl> TP_PROTOCOL_IDENTIFIER_XML = new XMLFormat<TPProtocolIdentifierImpl>(
+            TPProtocolIdentifierImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, TPProtocolIdentifierImpl tPProtocolIdentifierImpl)
+                throws XMLStreamException {
+            tPProtocolIdentifierImpl.data = OctetStringLength1Base
+                    .octetStringLength1ToInt(xml.getAttribute(DATA, (String) null));
+        }
+
+        @Override
+        public void write(TPProtocolIdentifierImpl tPProtocolIdentifierImpl, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            xml.setAttribute(DATA, OctetStringLength1Base.intToOctetStringLength1(tPProtocolIdentifierImpl.getData()));
+        }
+
+    };
 
 }

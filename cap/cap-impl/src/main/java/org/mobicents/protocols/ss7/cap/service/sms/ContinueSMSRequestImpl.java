@@ -28,11 +28,14 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.sms.ContinueSMSRequest;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class ContinueSMSRequestImpl extends SmsMessageImpl implements ContinueSMSRequest {
 
     public static final String _PrimitiveName = "ContinueSmsRequest";
@@ -100,5 +103,21 @@ public class ContinueSMSRequestImpl extends SmsMessageImpl implements ContinueSM
 
         return sb.toString();
     }
+
+    protected static final XMLFormat<ContinueSMSRequestImpl> CONTINUE_SMS_REQUEST_XML = new XMLFormat<ContinueSMSRequestImpl>(
+            ContinueSMSRequestImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, ContinueSMSRequestImpl continueSmsRequest)
+                throws XMLStreamException {
+            CAP_MESSAGE_XML.read(xml, continueSmsRequest);
+        }
+
+        @Override
+        public void write(ContinueSMSRequestImpl continueSmsRequest, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            CAP_MESSAGE_XML.write(continueSmsRequest, xml);
+        }
+    };
 
 }

@@ -71,7 +71,8 @@ public abstract class OctetStringLength1Base implements CAPAsnPrimitive {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
@@ -81,7 +82,8 @@ public abstract class OctetStringLength1Base implements CAPAsnPrimitive {
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
@@ -89,8 +91,8 @@ public abstract class OctetStringLength1Base implements CAPAsnPrimitive {
     protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException {
 
         if (length != 1)
-            throw new CAPParsingComponentException("Error decoding " + _PrimitiveName
-                    + ": the field must contain 1 octet. Contains: " + length,
+            throw new CAPParsingComponentException(
+                    "Error decoding " + _PrimitiveName + ": the field must contain 1 octet. Contains: " + length,
                     CAPParsingComponentExceptionReason.MistypedParameter);
 
         this.data = ansIS.read();
@@ -134,6 +136,14 @@ public abstract class OctetStringLength1Base implements CAPAsnPrimitive {
         OctetStringLength1Base other = (OctetStringLength1Base) obj;
 
         return data == other.data;
+    }
+
+    public static String intToOctetStringLength1(int data) {
+        return OctetStringBase.bytesToHex(new byte[] { (byte) data });
+    }
+
+    public static int octetStringLength1ToInt(String octet) {
+        return OctetStringBase.hexToBytes(octet)[0];
     }
 
     @Override

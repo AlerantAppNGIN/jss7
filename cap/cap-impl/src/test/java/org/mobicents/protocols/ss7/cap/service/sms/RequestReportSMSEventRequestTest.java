@@ -22,6 +22,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -35,6 +37,9 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSEvent;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsTest;
 import org.mobicents.protocols.ss7.cap.service.sms.primitive.SMSEventImpl;
 import org.testng.annotations.Test;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 /**
  * 
@@ -81,6 +86,36 @@ public class RequestReportSMSEventRequestTest {
         prim.encodeAll(asn);
 
         assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+    }
+
+    @Test(groups = { "functional.xml.serialize", "capMessage" })
+    public void testXMLSerialize() throws Exception {
+
+        SMSEventImpl smsEvent = new SMSEventImpl(EventTypeSMS.oSmsSubmission, MonitorMode.notifyAndContinue);
+        ArrayList<SMSEvent> smsEvents = new ArrayList<SMSEvent>();
+        smsEvents.add(smsEvent);
+        CAPExtensions extensions = CAPExtensionsTest.createTestCAPExtensions();
+        RequestReportSMSEventRequestImpl original = new RequestReportSMSEventRequestImpl(smsEvents, extensions);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "requestReportSMSEvent", RequestReportSMSEventRequestImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        RequestReportSMSEventRequestImpl copy = reader.read("requestReportSMSEvent",
+                RequestReportSMSEventRequestImpl.class);
+
+        assertEquals(original, copy);
     }
 
 }

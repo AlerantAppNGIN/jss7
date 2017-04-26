@@ -39,6 +39,9 @@ import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetDecodingData;
 import org.mobicents.protocols.ss7.map.datacoding.GSMCharsetEncoder;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
@@ -86,8 +89,8 @@ public class SMSAddressStringImpl extends AddressStringImpl implements SMSAddres
             try {
                 rawAddress = ansIS.readOctetStringData(length - 1);
             } catch (AsnException e) {
-                throw new MAPParsingComponentException("AsnException when reading data from ansIS: " + e.getMessage(), e,
-                        MAPParsingComponentExceptionReason.MistypedParameter);
+                throw new MAPParsingComponentException("AsnException when reading data from ansIS: " + e.getMessage(),
+                        e, MAPParsingComponentExceptionReason.MistypedParameter);
             }
             ByteBuffer bb = ByteBuffer.wrap(rawAddress, 0, rawAddress.length);
             GSMCharset cs = new GSMCharset(GSMCharset.GSM_CANONICAL_NAME, new String[] {});
@@ -132,5 +135,21 @@ public class SMSAddressStringImpl extends AddressStringImpl implements SMSAddres
         return "SMSAddressString [AddressNature=" + this.addressNature.toString() + ", NumberingPlan="
                 + this.numberingPlan.toString() + ", Address=" + this.address + "]";
     }
+
+    protected static final XMLFormat<SMSAddressStringImpl> SMS_ADDRESS_STRING = new XMLFormat<SMSAddressStringImpl>(
+            SMSAddressStringImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, SMSAddressStringImpl smsAddressString)
+                throws XMLStreamException {
+            ADDRESS_STRING_XML.read(xml, smsAddressString);
+        }
+
+        @Override
+        public void write(SMSAddressStringImpl smsAddressString, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            ADDRESS_STRING_XML.write(smsAddressString, xml);
+        }
+    };
 
 }

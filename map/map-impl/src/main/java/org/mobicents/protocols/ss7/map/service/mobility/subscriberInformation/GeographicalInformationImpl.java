@@ -19,13 +19,13 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeographicalInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 /**
  *
@@ -43,6 +43,7 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
     private static final String UNCERTAINTY = "uncertainty";
+    private static final String OCTET_STRING = "octets";
 
     private static final String DEFAULT_STRING_VALUE = null;
     private static final double DEFAULT_DOUBLE_VALUE = 0;
@@ -73,7 +74,8 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
         setData(typeOfShape, latitude, longitude, uncertainty);
     }
 
-    public void setData(TypeOfShape typeOfShape, double latitude, double longitude, double uncertainty) throws MAPException {
+    public void setData(TypeOfShape typeOfShape, double latitude, double longitude, double uncertainty)
+            throws MAPException {
         if (typeOfShape != TypeOfShape.EllipsoidPointWithUncertaintyCircle) {
             throw new MAPException(
                     "typeOfShape parameter for GeographicalInformation can be only \"ellipsoid point with uncertainty circle\"");
@@ -86,6 +88,10 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
         encodeLatitude(data, 1, latitude);
         encodeLongitude(data, 4, longitude);
         data[7] = (byte) encodeUncertainty(uncertainty);
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
     }
 
     public static double decodeLatitude(byte[] data, int begin) {
@@ -209,7 +215,10 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
         sb.append(_PrimitiveName);
         sb.append(" [");
 
-        sb.append("TypeOfShape=");
+        sb.append("data=");
+        sb.append(OctetStringBase.bytesToHex(data));
+
+        sb.append(", TypeOfShape=");
         sb.append(this.getTypeOfShape());
 
         sb.append(", Latitude=");
@@ -235,25 +244,31 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, GeographicalInformationImpl geographicalInformation)
                 throws XMLStreamException {
-            String str = xml.getAttribute(TYPE_OF_SHAPE, DEFAULT_STRING_VALUE);
-            TypeOfShape tos = null;
-            if (str != null)
-                tos = Enum.valueOf(TypeOfShape.class, str);
+            if (xml.getAttribute(OCTET_STRING) != null) {
+                geographicalInformation.setData(hexToBytes(xml.getAttribute(OCTET_STRING).toString()));
+            } else {
+                String str = xml.getAttribute(TYPE_OF_SHAPE, DEFAULT_STRING_VALUE);
+                TypeOfShape tos = null;
+                if (str != null)
+                    tos = Enum.valueOf(TypeOfShape.class, str);
 
-            double lat = xml.getAttribute(LATITUDE, DEFAULT_DOUBLE_VALUE);
-            double lng = xml.getAttribute(LONGITUDE, DEFAULT_DOUBLE_VALUE);
-            double unc = xml.getAttribute(UNCERTAINTY, DEFAULT_DOUBLE_VALUE);
+                double lat = xml.getAttribute(LATITUDE, DEFAULT_DOUBLE_VALUE);
+                double lng = xml.getAttribute(LONGITUDE, DEFAULT_DOUBLE_VALUE);
+                double unc = xml.getAttribute(UNCERTAINTY, DEFAULT_DOUBLE_VALUE);
 
-            try {
-                geographicalInformation.setData(tos, lat, lng, unc);
-            } catch (MAPException e) {
-                throw new XMLStreamException("MAPException when deserializing GeographicalInformation", e);
+                try {
+                    geographicalInformation.setData(tos, lat, lng, unc);
+                } catch (MAPException e) {
+                    throw new XMLStreamException("MAPException when deserializing GeographicalInformation", e);
+                }
             }
         }
 
         @Override
-        public void write(GeographicalInformationImpl geographicalInformation, javolution.xml.XMLFormat.OutputElement xml)
-                throws XMLStreamException {
+        public void write(GeographicalInformationImpl geographicalInformation,
+                javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+
+            xml.setAttribute(OCTET_STRING, OctetStringBase.bytesToHex(geographicalInformation.data));
             if (geographicalInformation.getTypeOfShape() != null) {
                 xml.setAttribute(TYPE_OF_SHAPE, geographicalInformation.getTypeOfShape().toString());
             }

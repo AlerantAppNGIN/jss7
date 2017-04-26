@@ -35,6 +35,9 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.ResetTimerSMSRequest;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
@@ -47,6 +50,10 @@ public class ResetTimerSMSRequestImpl extends SmsMessageImpl implements ResetTim
     public static final int _ID_timerID = 0;
     public static final int _ID_timerValue = 1;
     public static final int _ID_extensions = 2;
+
+    private static final String TIMER_ID = "timerID";
+    private static final String TIMER_VALUE = "timerValue";
+    private static final String EXTENSIONS = "extensions";
 
     private TimerID timerID;
     private int timerValue;
@@ -109,14 +116,17 @@ public class ResetTimerSMSRequestImpl extends SmsMessageImpl implements ResetTim
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
@@ -125,19 +135,22 @@ public class ResetTimerSMSRequestImpl extends SmsMessageImpl implements ResetTim
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException,
-            AsnException, MAPParsingComponentException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
 
         this.timerID = null;
         this.timerValue = -1;
@@ -155,24 +168,24 @@ public class ResetTimerSMSRequestImpl extends SmsMessageImpl implements ResetTim
                 switch (tag) {
                 case _ID_timerID:
                     if (!ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ".timerID: Parameter is not primitive",
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + ".timerID: Parameter is not primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
                     int i1 = (int) ais.readInteger();
                     this.timerID = TimerID.getInstance(i1);
                     break;
                 case _ID_timerValue:
                     if (!ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ".timerValue: Parameter is not primitive",
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + ".timerValue: Parameter is not primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
                     this.timerValue = (int) ais.readInteger();
                     istimerValueFound = true;
                     break;
                 case _ID_extensions:
                     if (ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ".extensions: Parameter is primitive",
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + ".extensions: Parameter is primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
                     this.extensions = new CAPExtensionsImpl();
                     ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
@@ -188,8 +201,8 @@ public class ResetTimerSMSRequestImpl extends SmsMessageImpl implements ResetTim
         }
 
         if (!istimerValueFound)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": parameter timerValue is mandatory but not found",
+            throw new CAPParsingComponentException(
+                    "Error while decoding " + _PrimitiveName + ": parameter timerValue is mandatory but not found",
                     CAPParsingComponentExceptionReason.MistypedParameter);
     }
 
@@ -253,5 +266,62 @@ public class ResetTimerSMSRequestImpl extends SmsMessageImpl implements ResetTim
 
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((extensions == null) ? 0 : extensions.hashCode());
+        result = prime * result + ((timerID == null) ? 0 : timerID.hashCode());
+        result = prime * result + timerValue;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ResetTimerSMSRequestImpl other = (ResetTimerSMSRequestImpl) obj;
+        if (extensions == null) {
+            if (other.extensions != null)
+                return false;
+        } else if (!extensions.equals(other.extensions))
+            return false;
+        if (timerID != other.timerID)
+            return false;
+        if (timerValue != other.timerValue)
+            return false;
+        return true;
+    }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<ResetTimerSMSRequestImpl> RESETTIMERSMS_REQUEST_XML = new XMLFormat<ResetTimerSMSRequestImpl>(
+            ResetTimerSMSRequestImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, ResetTimerSMSRequestImpl resetTimerSMSRequest)
+                throws XMLStreamException {
+            CAP_MESSAGE_XML.read(xml, resetTimerSMSRequest);
+            resetTimerSMSRequest.timerID = TimerID.valueOf(xml.getAttribute(TIMER_ID, TimerID.tssf.name()));
+            resetTimerSMSRequest.timerValue = xml.get(TIMER_VALUE, Integer.class);
+            resetTimerSMSRequest.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
+        }
+
+        @Override
+        public void write(ResetTimerSMSRequestImpl resetTimerSMSRequest, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            CAP_MESSAGE_XML.write(resetTimerSMSRequest, xml);
+            xml.setAttribute(TIMER_ID, resetTimerSMSRequest.timerID.name());
+            xml.add(resetTimerSMSRequest.timerValue, TIMER_VALUE, Integer.class);
+            xml.add((CAPExtensionsImpl) resetTimerSMSRequest.extensions, EXTENSIONS, CAPExtensionsImpl.class);
+        }
+
+    };
 
 }

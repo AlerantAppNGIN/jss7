@@ -21,6 +21,8 @@ package org.mobicents.protocols.ss7.cap.service.sms;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -30,6 +32,9 @@ import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimerID;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsTest;
 import org.testng.annotations.Test;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 /**
  * 
@@ -73,6 +78,34 @@ public class ResetTimerSMSRequestTest {
         prim.encodeAll(asn);
 
         assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+    }
+
+    @Test(groups = { "functional.xml.serialize", "capMessage" })
+    public void testXMLSerialize() throws Exception {
+
+        TimerID timerID = TimerID.tssf;
+        int timerValue = 2;
+        CAPExtensions extensions = CAPExtensionsTest.createTestCAPExtensions();
+        ResetTimerSMSRequestImpl original = new ResetTimerSMSRequestImpl(timerID, timerValue, extensions);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "resetTimerSMS", ResetTimerSMSRequestImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        ResetTimerSMSRequestImpl copy = reader.read("resetTimerSMS", ResetTimerSMSRequestImpl.class);
+
+        assertEquals(original, copy);
     }
 
 }

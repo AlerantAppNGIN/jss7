@@ -22,6 +22,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -34,6 +36,9 @@ import org.mobicents.protocols.ss7.cap.service.sms.primitive.FCIBCCCAMELsequence
 import org.mobicents.protocols.ss7.cap.service.sms.primitive.FreeFormatDataSMSImpl;
 import org.testng.annotations.Test;
 
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
+
 /**
  * 
  * @author Lasith Waruna Perera
@@ -43,7 +48,8 @@ public class FurnishChargingInformationSMSRequestTest {
 
     public byte[] getData() {
         return new byte[] { 4, 15, -96, 13, -128, 8, 48, 6, -128, 1, 3, -118, 1, 1, -127, 1, 1 };
-//        return new byte[] { 4, 17, 48, 15, -96, 13, -128, 8, 48, 6, -128, 1, 3, -118, 1, 1, -127, 1, 1 };
+        // return new byte[] { 4, 17, 48, 15, -96, 13, -128, 8, 48, 6, -128, 1,
+        // 3, -118, 1, 1, -127, 1, 1 };
     };
 
     public byte[] getFreeFormatData() {
@@ -75,11 +81,43 @@ public class FurnishChargingInformationSMSRequestTest {
         FCIBCCCAMELsequence1SMSImpl fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1SMSImpl(freeFormatData,
                 AppendFreeFormatData.append);
 
-        FurnishChargingInformationSMSRequestImpl prim = new FurnishChargingInformationSMSRequestImpl(fcIBCCCAMELsequence1);
+        FurnishChargingInformationSMSRequestImpl prim = new FurnishChargingInformationSMSRequestImpl(
+                fcIBCCCAMELsequence1);
         AsnOutputStream asn = new AsnOutputStream();
         prim.encodeAll(asn);
 
         assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+    }
+
+    @Test(groups = { "functional.xml.serialize", "capMessage" })
+    public void testXMLSerialize() throws Exception {
+
+        FreeFormatDataSMS freeFormatData = new FreeFormatDataSMSImpl(getFreeFormatData());
+        FCIBCCCAMELsequence1SMSImpl fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1SMSImpl(freeFormatData,
+                AppendFreeFormatData.append);
+
+        FurnishChargingInformationSMSRequestImpl original = new FurnishChargingInformationSMSRequestImpl(
+                fcIBCCCAMELsequence1);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "furnishChargingInformationSMS", FurnishChargingInformationSMSRequestImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        FurnishChargingInformationSMSRequestImpl copy = reader.read("furnishChargingInformationSMS",
+                FurnishChargingInformationSMSRequestImpl.class);
+
+        assertEquals(original, copy);
     }
 
 }

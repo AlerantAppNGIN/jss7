@@ -21,12 +21,17 @@ package org.mobicents.protocols.ss7.cap.service.sms.primitive;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.RPCause;
 import org.mobicents.protocols.ss7.cap.primitives.OctetStringLength1Base;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
  *
  */
 public class RPCauseImpl extends OctetStringLength1Base implements RPCause {
+
+    private static final String DATA = "data";
 
     public RPCauseImpl() {
         super("RPCause");
@@ -40,5 +45,24 @@ public class RPCauseImpl extends OctetStringLength1Base implements RPCause {
     public int getData() {
         return data;
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<RPCauseImpl> RP_CAUSE_XML = new XMLFormat<RPCauseImpl>(RPCauseImpl.class) {
+
+        // serialize as simple text content
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, RPCauseImpl rpCauseImpl) throws XMLStreamException {
+            rpCauseImpl.data = OctetStringLength1Base.octetStringLength1ToInt(xml.getAttribute(DATA, (String) null));
+        }
+
+        @Override
+        public void write(RPCauseImpl rpCause, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+
+            xml.setAttribute(DATA, OctetStringLength1Base.intToOctetStringLength1(rpCause.getData()));
+        }
+    };
 
 }

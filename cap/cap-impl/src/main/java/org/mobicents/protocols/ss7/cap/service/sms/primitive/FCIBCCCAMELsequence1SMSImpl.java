@@ -21,9 +21,6 @@ package org.mobicents.protocols.ss7.cap.service.sms.primitive;
 
 import java.io.IOException;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -37,6 +34,9 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataS
 import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 /**
  *
@@ -105,16 +105,18 @@ public class FCIBCCCAMELsequence1SMSImpl extends SequenceBase implements FCIBCCC
                 switch (tag) {
                 case _ID_freeFormatData:
                     if (!ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ".freeFormatData: Parameter is not primitive",
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + ".freeFormatData: Parameter is not primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
                     this.freeFormatData = new FreeFormatDataSMSImpl();
                     ((FreeFormatDataSMSImpl) this.freeFormatData).decodeAll(ais);
                     break;
                 case _ID_appendFreeFormatData:
                     if (!ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ".appendFreeFormatData: Parameter is not primitive",
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + ".appendFreeFormatData: Parameter is not primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
                     int i1 = (int) ais.readInteger();
                     this.appendFreeFormatData = AppendFreeFormatData.getInstance(i1);
@@ -129,8 +131,8 @@ public class FCIBCCCAMELsequence1SMSImpl extends SequenceBase implements FCIBCCC
         }
 
         if (this.freeFormatData == null)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": parameter freeFormatData is mandatory but not found",
+            throw new CAPParsingComponentException(
+                    "Error while decoding " + _PrimitiveName + ": parameter freeFormatData is mandatory but not found",
                     CAPParsingComponentExceptionReason.MistypedParameter);
 
     }
@@ -143,7 +145,8 @@ public class FCIBCCCAMELsequence1SMSImpl extends SequenceBase implements FCIBCCC
 
         try {
 
-            ((FreeFormatDataSMSImpl) this.freeFormatData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_freeFormatData);
+            ((FreeFormatDataSMSImpl) this.freeFormatData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                    _ID_freeFormatData);
 
             if (this.appendFreeFormatData != null) {
                 asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_appendFreeFormatData,
@@ -178,6 +181,34 @@ public class FCIBCCCAMELsequence1SMSImpl extends SequenceBase implements FCIBCCC
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((appendFreeFormatData == null) ? 0 : appendFreeFormatData.hashCode());
+        result = prime * result + ((freeFormatData == null) ? 0 : freeFormatData.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FCIBCCCAMELsequence1SMSImpl other = (FCIBCCCAMELsequence1SMSImpl) obj;
+        if (appendFreeFormatData != other.appendFreeFormatData)
+            return false;
+        if (freeFormatData == null) {
+            if (other.freeFormatData != null)
+                return false;
+        } else if (!freeFormatData.equals(other.freeFormatData))
+            return false;
+        return true;
+    }
+
     /**
      * XML Serialization/Deserialization
      */
@@ -189,8 +220,8 @@ public class FCIBCCCAMELsequence1SMSImpl extends SequenceBase implements FCIBCCC
                 throws XMLStreamException {
 
             // default value is overwrite
-            fcibccSms.appendFreeFormatData = AppendFreeFormatData.valueOf(xml.getAttribute(APPEND_FREE_FORMAT_DATA,
-                    "overwrite"));
+            fcibccSms.appendFreeFormatData = AppendFreeFormatData
+                    .valueOf(xml.getAttribute(APPEND_FREE_FORMAT_DATA, "overwrite"));
 
             fcibccSms.freeFormatData = xml.get(FREE_FORMAT_DATA, FreeFormatDataSMSImpl.class);
         }

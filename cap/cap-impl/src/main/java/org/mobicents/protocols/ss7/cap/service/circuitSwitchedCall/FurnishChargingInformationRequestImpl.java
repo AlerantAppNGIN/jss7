@@ -51,7 +51,7 @@ public class FurnishChargingInformationRequestImpl extends CircuitSwitchedCallMe
 
     public static final int _ID_fCIBCCCAMELsequence1 = 0;
 
-    public static final String _PrimitiveName = "FurnishChargingInformationIndication";
+    public static final String _PrimitiveName = "FurnishChargingInformationRequest";
 
     private FCIBCCCAMELsequence1 FCIBCCCAMELsequence1;
 

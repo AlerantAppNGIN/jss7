@@ -34,6 +34,9 @@ import org.mobicents.protocols.ss7.cap.service.sms.primitive.MTSMSCauseImpl;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
@@ -42,6 +45,8 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 public class TSmsFailureSpecificInfoImpl extends SequenceBase implements TSmsFailureSpecificInfo {
 
     public static final int _ID_failureCause = 0;
+
+    private static final String FAILURE_CAUSE = "failureCause";
 
     private MTSMSCause failureCause;
 
@@ -55,7 +60,7 @@ public class TSmsFailureSpecificInfoImpl extends SequenceBase implements TSmsFai
     }
 
     @Override
-    public MTSMSCause GetFailureCause() {
+    public MTSMSCause getFailureCause() {
         return this.failureCause;
     }
 
@@ -76,8 +81,8 @@ public class TSmsFailureSpecificInfoImpl extends SequenceBase implements TSmsFai
 
                 case _ID_failureCause:
                     if (!ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ".failureCause: Parameter is not  primitive",
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + ".failureCause: Parameter is not  primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
                     this.failureCause = new MTSMSCauseImpl();
                     ((MTSMSCauseImpl) this.failureCause).decodeAll(ais);
@@ -98,5 +103,49 @@ public class TSmsFailureSpecificInfoImpl extends SequenceBase implements TSmsFai
             ((MTSMSCauseImpl) this.failureCause).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_failureCause);
 
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((failureCause == null) ? 0 : failureCause.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TSmsFailureSpecificInfoImpl other = (TSmsFailureSpecificInfoImpl) obj;
+        if (failureCause == null) {
+            if (other.failureCause != null)
+                return false;
+        } else if (!failureCause.equals(other.failureCause))
+            return false;
+        return true;
+    }
+
+    protected static final XMLFormat<TSmsFailureSpecificInfoImpl> T_SMS_FAILURE_SPECIFIC_INFO_XML = new XMLFormat<TSmsFailureSpecificInfoImpl>(
+            TSmsFailureSpecificInfoImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                TSmsFailureSpecificInfoImpl tSmsFailureSpecificInfoImpl) throws XMLStreamException {
+            tSmsFailureSpecificInfoImpl.failureCause = xml.get(FAILURE_CAUSE, MTSMSCause.class);
+        }
+
+        @Override
+        public void write(TSmsFailureSpecificInfoImpl tSmsFailureSpecificInfoImpl,
+                javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            if (tSmsFailureSpecificInfoImpl.getFailureCause() != null) {
+                xml.add((TSmsFailureSpecificInfoImpl) tSmsFailureSpecificInfoImpl.getFailureCause(), FAILURE_CAUSE,
+                        TSmsFailureSpecificInfoImpl.class);
+            }
+        }
+    };
 
 }

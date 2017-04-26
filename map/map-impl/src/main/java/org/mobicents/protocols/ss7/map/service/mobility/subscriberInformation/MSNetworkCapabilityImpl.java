@@ -22,12 +22,17 @@ package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSNetworkCapability;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  * @author amit bhayani
  * @author sergey vetyutnev
  *
  */
 public class MSNetworkCapabilityImpl extends OctetStringBase implements MSNetworkCapability {
+
+    private static final String DATA = "data";
 
     public MSNetworkCapabilityImpl() {
         super(1, 8, "MSNetworkCapability");
@@ -40,4 +45,24 @@ public class MSNetworkCapabilityImpl extends OctetStringBase implements MSNetwor
     public byte[] getData() {
         return data;
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<MSNetworkCapabilityImpl> MS_NETWORK_CAPABILITY_XML = new XMLFormat<MSNetworkCapabilityImpl>(
+            MSNetworkCapabilityImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, MSNetworkCapabilityImpl mSNetworkCapabilityImpl)
+                throws XMLStreamException {
+            mSNetworkCapabilityImpl.data = OctetStringBase.hexToBytes(xml.getAttribute(DATA, (String) null));
+        }
+
+        @Override
+        public void write(MSNetworkCapabilityImpl mSNetworkCapabilityImpl, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            xml.setAttribute(DATA, OctetStringBase.bytesToHex(mSNetworkCapabilityImpl.data));
+        }
+
+    };
 }

@@ -22,6 +22,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -39,6 +41,9 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.testng.annotations.Test;
 
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
+
 /**
  * 
  * @author Lasith Waruna Perera
@@ -48,8 +53,8 @@ public class ConnectSMSRequestTest {
 
     public byte[] getData() {
         return new byte[] { 48, 48, -128, 9, -111, 33, 67, 101, -121, 25, 50, 84, 118, -127, 7, -111, 20, -121, 8, 80,
-                64, -9, -126, 6, -111, 34, 112, 87, 0, -128, -86, 18, 48, 5, 2, 1, 2, -127, 0, 48, 9, 2, 1, 3, 10, 1,
-                1, -127, 1, -1 };
+                64, -9, -126, 6, -111, 34, 112, 87, 0, -128, -86, 18, 48, 5, 2, 1, 2, -127, 0, 48, 9, 2, 1, 3, 10, 1, 1,
+                -127, 1, -1 };
     };
 
     @Test(groups = { "functional.decode", "primitives" })
@@ -98,6 +103,39 @@ public class ConnectSMSRequestTest {
         prim.encodeAll(asn);
 
         assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+    }
+
+    @Test(groups = { "functional.xml.serialize", "capMessage" })
+    public void testXMLSerialize() throws Exception {
+
+        SMSAddressStringImpl callingPartysNumber = new SMSAddressStringImpl(AddressNature.international_number,
+                NumberingPlan.ISDN, "36306122368");
+        CalledPartyBCDNumber destinationSubscriberNumber = new CalledPartyBCDNumberImpl(
+                AddressNature.international_number, NumberingPlan.ISDN, "41788005047");
+        ISDNAddressString smscAddress = new ISDNAddressStringImpl(AddressNature.international_number,
+                NumberingPlan.ISDN, "2207750008");
+        CAPExtensions extensions = CAPExtensionsTest.createTestCAPExtensions();
+        ConnectSMSRequestImpl original = new ConnectSMSRequestImpl(callingPartysNumber, destinationSubscriberNumber,
+                smscAddress, extensions);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "connectSMS", ConnectSMSRequestImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        ConnectSMSRequestImpl copy = reader.read("connectSMS", ConnectSMSRequestImpl.class);
+
+        assertEquals(original, copy);
     }
 
 }

@@ -21,9 +21,6 @@ package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -37,6 +34,9 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CSGIdImpl;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 /**
  * @author amit bhayani
@@ -65,7 +65,8 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
     public UserCSGInformationImpl() {
     }
 
-    public UserCSGInformationImpl(CSGId csgId, MAPExtensionContainer extensionContainer, Integer accessMode, Integer cmi) {
+    public UserCSGInformationImpl(CSGId csgId, MAPExtensionContainer extensionContainer, Integer accessMode,
+            Integer cmi) {
         this.csgId = csgId;
         this.extensionContainer = extensionContainer;
         this.accessMode = accessMode;
@@ -75,7 +76,8 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation. UserCSGInformation#getCSGId()
+     * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+     * UserCSGInformation#getCSGId()
      */
     public CSGId getCSGId() {
         return this.csgId;
@@ -84,7 +86,8 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation. UserCSGInformation#getExtensionContainer()
+     * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+     * UserCSGInformation#getExtensionContainer()
      */
     public MAPExtensionContainer getExtensionContainer() {
         return this.extensionContainer;
@@ -93,7 +96,8 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation. UserCSGInformation#getAccessMode()
+     * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+     * UserCSGInformation#getAccessMode()
      */
     public Integer getAccessMode() {
         return this.accessMode;
@@ -102,7 +106,8 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation. UserCSGInformation#getCmi()
+     * @see org.mobicents.protocols.ss7.map.api.service.subscriberInformation.
+     * UserCSGInformation#getCmi()
      */
     public Integer getCmi() {
         return this.cmi;
@@ -120,7 +125,8 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
      */
     public int getTagClass() {
         return Tag.CLASS_UNIVERSAL;
@@ -129,7 +135,9 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive ()
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
+     * ()
      */
     public boolean getIsPrimitive() {
         return false;
@@ -138,17 +146,21 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll( org.mobicents.protocols.asn.AsnInputStream)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
+     * org.mobicents.protocols.asn.AsnInputStream)
      */
     public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
         try {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new MAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     MAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new MAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     MAPParsingComponentExceptionReason.MistypedParameter);
         }
 
@@ -157,22 +169,26 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData (org.mobicents.protocols.asn.AsnInputStream,
-     * int)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
+     * (org.mobicents.protocols.asn.AsnInputStream, int)
      */
     public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new MAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     MAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new MAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     MAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws MAPParsingComponentException, IOException, AsnException {
 
         this.csgId = null;
         this.extensionContainer = null;
@@ -189,49 +205,52 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 
                 switch (tag) {
-                    case _ID_csgId:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " csgId: Parameter is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.csgId = new CSGIdImpl();
-                        ((CSGIdImpl) this.csgId).decodeAll(ais);
-                        break;
-                    case _ID_extensionContainer:
-                        if (ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " extensionContainer: Parameter is primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.extensionContainer = new MAPExtensionContainerImpl();
-                        ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-                        break;
-                    case _ID_accessMode:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " accessMode: Parameter is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        byte[] buf = ais.readOctetString();
-                        if (buf.length != 1)
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " accessMode: Parameter length must be 1, found: " + buf.length,
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.accessMode = (int) buf[0];
-                        break;
-                    case _ID_cmi:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " cmi: Parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-                        buf = ais.readOctetString();
-                        if (buf.length != 1)
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " cmi: Parameter length must be 1, found: " + buf.length,
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.cmi = (int) buf[0];
-                        break;
+                case _ID_csgId:
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + " csgId: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.csgId = new CSGIdImpl();
+                    ((CSGIdImpl) this.csgId).decodeAll(ais);
+                    break;
+                case _ID_extensionContainer:
+                    if (ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + " extensionContainer: Parameter is primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.extensionContainer = new MAPExtensionContainerImpl();
+                    ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                    break;
+                case _ID_accessMode:
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + " accessMode: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    byte[] buf = ais.readOctetString();
+                    if (buf.length != 1)
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + " accessMode: Parameter length must be 1, found: " + buf.length,
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.accessMode = (int) buf[0];
+                    break;
+                case _ID_cmi:
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + " cmi: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    buf = ais.readOctetString();
+                    if (buf.length != 1)
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + " cmi: Parameter length must be 1, found: " + buf.length,
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.cmi = (int) buf[0];
+                    break;
 
-                    default:
-                        ais.advanceElement();
-                        break;
+                default:
+                    ais.advanceElement();
+                    break;
                 }
             } else {
                 ais.advanceElement();
@@ -239,15 +258,18 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
         }
 
         if (this.csgId == null) {
-            throw new MAPParsingComponentException("Error when decoding " + _PrimitiveName
-                    + ": csgId is mandatory but not found", MAPParsingComponentExceptionReason.MistypedParameter);
+            throw new MAPParsingComponentException(
+                    "Error when decoding " + _PrimitiveName + ": csgId is mandatory but not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll( org.mobicents.protocols.asn.AsnOutputStream)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
+     * org.mobicents.protocols.asn.AsnOutputStream)
      */
     public void encodeAll(AsnOutputStream asnOs) throws MAPException {
         this.encodeAll(asnOs, this.getTagClass(), this.getTag());
@@ -256,8 +278,9 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll( org.mobicents.protocols.asn.AsnOutputStream,
-     * int, int)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
+     * org.mobicents.protocols.asn.AsnOutputStream, int, int)
      */
     public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
         try {
@@ -273,12 +296,14 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData (org.mobicents.protocols.asn.AsnOutputStream)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
+     * (org.mobicents.protocols.asn.AsnOutputStream)
      */
     public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
         if (this.csgId == null)
-            throw new MAPException("Parametr csgId must not be null");
+            throw new MAPException("Parameter csgId must not be null");
 
         try {
             ((CSGIdImpl) this.csgId).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_csgId);
@@ -329,6 +354,49 @@ public class UserCSGInformationImpl implements UserCSGInformation, MAPAsnPrimiti
         sb.append("]");
 
         return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((accessMode == null) ? 0 : accessMode.hashCode());
+        result = prime * result + ((cmi == null) ? 0 : cmi.hashCode());
+        result = prime * result + ((csgId == null) ? 0 : csgId.hashCode());
+        result = prime * result + ((extensionContainer == null) ? 0 : extensionContainer.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        UserCSGInformationImpl other = (UserCSGInformationImpl) obj;
+        if (accessMode == null) {
+            if (other.accessMode != null)
+                return false;
+        } else if (!accessMode.equals(other.accessMode))
+            return false;
+        if (cmi == null) {
+            if (other.cmi != null)
+                return false;
+        } else if (!cmi.equals(other.cmi))
+            return false;
+        if (csgId == null) {
+            if (other.csgId != null)
+                return false;
+        } else if (!csgId.equals(other.csgId))
+            return false;
+        if (extensionContainer == null) {
+            if (other.extensionContainer != null)
+                return false;
+        } else if (!extensionContainer.equals(other.extensionContainer))
+            return false;
+        return true;
     }
 
     /**

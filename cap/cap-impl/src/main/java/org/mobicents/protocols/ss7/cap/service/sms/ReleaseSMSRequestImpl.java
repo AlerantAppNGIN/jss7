@@ -33,6 +33,9 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.RPCause;
 import org.mobicents.protocols.ss7.cap.service.sms.primitive.RPCauseImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
@@ -41,6 +44,8 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 public class ReleaseSMSRequestImpl extends SmsMessageImpl implements ReleaseSMSRequest {
 
     public static final String _PrimitiveName = "ReleaseSMSRequest";
+
+    private static final String RP_CAUSE = "rpCause";
 
     private RPCause rpCause;
 
@@ -89,14 +94,17 @@ public class ReleaseSMSRequestImpl extends SmsMessageImpl implements ReleaseSMSR
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
@@ -105,19 +113,22 @@ public class ReleaseSMSRequestImpl extends SmsMessageImpl implements ReleaseSMSR
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException,
-            AsnException, MAPParsingComponentException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
 
         this.rpCause = new RPCauseImpl();
         ((RPCauseImpl) this.rpCause).decodeData(ansIS, length);
@@ -166,5 +177,56 @@ public class ReleaseSMSRequestImpl extends SmsMessageImpl implements ReleaseSMSR
 
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((rpCause == null) ? 0 : rpCause.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ReleaseSMSRequestImpl other = (ReleaseSMSRequestImpl) obj;
+        if (rpCause == null) {
+            if (other.rpCause != null)
+                return false;
+        } else if (!rpCause.equals(other.rpCause))
+            return false;
+        return true;
+    }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<ReleaseSMSRequestImpl> RELEASESMS_REQUEST_XML = new XMLFormat<ReleaseSMSRequestImpl>(
+            ReleaseSMSRequestImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, ReleaseSMSRequestImpl releaseSMSRequest)
+                throws XMLStreamException {
+            CAP_MESSAGE_XML.read(xml, releaseSMSRequest);
+            releaseSMSRequest.rpCause = xml.get(RP_CAUSE, RPCauseImpl.class);
+
+        }
+
+        @Override
+        public void write(ReleaseSMSRequestImpl releaseSMSRequest, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            CAP_MESSAGE_XML.write(releaseSMSRequest, xml);
+            if (releaseSMSRequest.getRPCause() != null) {
+                xml.add((RPCauseImpl) releaseSMSRequest.getRPCause(), RP_CAUSE, RPCauseImpl.class);
+            }
+
+        }
+
+    };
 
 }

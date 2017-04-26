@@ -20,9 +20,7 @@
 package org.mobicents.protocols.ss7.cap.primitives;
 
 import java.io.IOException;
-
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -35,6 +33,9 @@ import org.mobicents.protocols.ss7.cap.api.primitives.CriticalityType;
 import org.mobicents.protocols.ss7.cap.api.primitives.ExtensionField;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ByteArrayContainer;
 import org.mobicents.protocols.ss7.map.primitives.OidContainer;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 /**
  *
@@ -138,10 +139,12 @@ public class ExtensionFieldImpl implements ExtensionField, CAPAsnPrimitive {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
@@ -152,15 +155,18 @@ public class ExtensionFieldImpl implements ExtensionField, CAPAsnPrimitive {
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.localCode = null;
         this.globalCode = null;
@@ -175,76 +181,79 @@ public class ExtensionFieldImpl implements ExtensionField, CAPAsnPrimitive {
 
             int tag = ais.readTag();
             switch (num) {
-                case 0:
-                    // localCode or globalCode
-                    if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
-                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                + ": Parameter 0 bad tag class or not primitive",
-                                CAPParsingComponentExceptionReason.MistypedParameter);
-                    switch (tag) {
-                        case Tag.INTEGER:
-                            this.localCode = (int) ais.readInteger();
-                            break;
-                        case Tag.OBJECT_IDENTIFIER:
-                            this.globalCode = ais.readObjectIdentifier();
-                            break;
-                        default:
-                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + ": Parameter 0 bad tag", CAPParsingComponentExceptionReason.MistypedParameter);
-                    }
+            case 0:
+                // localCode or globalCode
+                if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
+                    throw new CAPParsingComponentException(
+                            "Error while decoding " + _PrimitiveName + ": Parameter 0 bad tag class or not primitive",
+                            CAPParsingComponentExceptionReason.MistypedParameter);
+                switch (tag) {
+                case Tag.INTEGER:
+                    this.localCode = (int) ais.readInteger();
                     break;
+                case Tag.OBJECT_IDENTIFIER:
+                    this.globalCode = ais.readObjectIdentifier();
+                    break;
+                default:
+                    throw new CAPParsingComponentException(
+                            "Error while decoding " + _PrimitiveName + ": Parameter 0 bad tag",
+                            CAPParsingComponentExceptionReason.MistypedParameter);
+                }
+                break;
 
-                default: {
-                    switch (ais.getTagClass()) {
-                        case Tag.CLASS_UNIVERSAL: {
-                            if (tag == Tag.ENUMERATED) {
-                                int i1 = (int) ais.readInteger();
-                                this.criticalityType = CriticalityType.getInstance(i1);
-                                if (this.criticalityType == null) {
-                                    throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                            + ": Bad criticalityType value",
-                                            CAPParsingComponentExceptionReason.MistypedParameter);
-                                }
-                            } else {
-                                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                        + ": Bad tag of the CLASS_UNIVERSAL field",
-                                        CAPParsingComponentExceptionReason.MistypedParameter);
-                            }
-                        }
-                            break;
-
-                        case Tag.CLASS_CONTEXT_SPECIFIC: {
-                            if (tag == _ID_value) {
-                                int len = ais.readLength();
-                                if (ais.available() < len) {
-                                    throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                            + ": not enouph data for a value field",
-                                            CAPParsingComponentExceptionReason.MistypedParameter);
-                                }
-                                this.data = new byte[len];
-                                ais.read(this.data);
-                            } else {
-                                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                        + ": Bad tag of the CLASS_CONTEXT_SPECIFIC field",
-                                        CAPParsingComponentExceptionReason.MistypedParameter);
-                            }
-                        }
-                            break;
-
-                        default:
-                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + ": Parameter 1 or 2 has bad tag class",
+            default: {
+                switch (ais.getTagClass()) {
+                case Tag.CLASS_UNIVERSAL: {
+                    if (tag == Tag.ENUMERATED) {
+                        int i1 = (int) ais.readInteger();
+                        this.criticalityType = CriticalityType.getInstance(i1);
+                        if (this.criticalityType == null) {
+                            throw new CAPParsingComponentException(
+                                    "Error while decoding " + _PrimitiveName + ": Bad criticalityType value",
                                     CAPParsingComponentExceptionReason.MistypedParameter);
+                        }
+                    } else {
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + ": Bad tag of the CLASS_UNIVERSAL field",
+                                CAPParsingComponentExceptionReason.MistypedParameter);
                     }
                 }
+                    break;
+
+                case Tag.CLASS_CONTEXT_SPECIFIC: {
+                    if (tag == _ID_value) {
+                        int len = ais.readLength();
+                        if (ais.available() < len) {
+                            throw new CAPParsingComponentException(
+                                    "Error while decoding " + _PrimitiveName + ": not enouph data for a value field",
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
+                        }
+                        this.data = new byte[len];
+                        ais.read(this.data);
+                    } else {
+                        throw new CAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + ": Bad tag of the CLASS_CONTEXT_SPECIFIC field",
+                                CAPParsingComponentExceptionReason.MistypedParameter);
+                    }
+                }
+                    break;
+
+                default:
+                    throw new CAPParsingComponentException(
+                            "Error while decoding " + _PrimitiveName + ": Parameter 1 or 2 has bad tag class",
+                            CAPParsingComponentExceptionReason.MistypedParameter);
+                }
+            }
             }
 
             num++;
         }
 
         if (this.data == null)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": value field is mandatory but not found", CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "Error while decoding " + _PrimitiveName + ": value field is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
     }
 
     @Override
@@ -270,7 +279,8 @@ public class ExtensionFieldImpl implements ExtensionField, CAPAsnPrimitive {
     public void encodeData(AsnOutputStream aos) throws CAPException {
 
         try {
-            if ((this.localCode == null && this.globalCode == null) || (this.localCode != null && this.globalCode != null))
+            if ((this.localCode == null && this.globalCode == null)
+                    || (this.localCode != null && this.globalCode != null))
                 throw new CAPException("Error while decoding " + _PrimitiveName
                         + ": at least localCode or globalCode field must not be null");
             if (this.data == null)
@@ -324,6 +334,40 @@ public class ExtensionFieldImpl implements ExtensionField, CAPAsnPrimitive {
         sb.append("]");
 
         return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((criticalityType == null) ? 0 : criticalityType.hashCode());
+        result = prime * result + Arrays.hashCode(data);
+        result = prime * result + Arrays.hashCode(globalCode);
+        result = prime * result + ((localCode == null) ? 0 : localCode.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ExtensionFieldImpl other = (ExtensionFieldImpl) obj;
+        if (criticalityType != other.criticalityType)
+            return false;
+        if (!Arrays.equals(data, other.data))
+            return false;
+        if (!Arrays.equals(globalCode, other.globalCode))
+            return false;
+        if (localCode == null) {
+            if (other.localCode != null)
+                return false;
+        } else if (!localCode.equals(other.localCode))
+            return false;
+        return true;
     }
 
     private String printDataArrLong(long[] arr) {

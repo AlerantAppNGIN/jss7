@@ -21,9 +21,6 @@ package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -46,6 +43,9 @@ import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.LSAIdentityImpl;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 /**
  * @author amit bhayani
@@ -174,7 +174,8 @@ public class LocationInformationImpl extends SequenceBase implements LocationInf
         return userCSGInformation;
     }
 
-    protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+    protected void _decode(AsnInputStream ansIS, int length)
+            throws MAPParsingComponentException, IOException, AsnException {
 
         this.ageOfLocationInformation = null;
         this.geographicalInformation = null;
@@ -202,125 +203,137 @@ public class LocationInformationImpl extends SequenceBase implements LocationInf
             if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
 
                 switch (tag) {
-                    case Tag.INTEGER: // AgeOfLocationInformation
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " AgeOfLocationInformation: Parameter is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.ageOfLocationInformation = (int) ais.readInteger();
-                        break;
+                case Tag.INTEGER: // AgeOfLocationInformation
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + " AgeOfLocationInformation: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.ageOfLocationInformation = (int) ais.readInteger();
+                    break;
 
-                    default:
-                        ais.advanceElement();
-                        break;
+                default:
+                    ais.advanceElement();
+                    break;
                 }
             } else if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
 
                 switch (tag) {
-                    case _ID_geographicalInformation:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " geographicalInformation: Parameter is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.geographicalInformation = new GeographicalInformationImpl();
-                        ((GeographicalInformationImpl) this.geographicalInformation).decodeAll(ais);
-                        break;
-                    case _ID_vlr_number:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " vlrNumber: Parameter is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.vlrNumber = new ISDNAddressStringImpl();
-                        ((ISDNAddressStringImpl) this.vlrNumber).decodeAll(ais);
-                        break;
-                    case _ID_locationNumber:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " locationNumber: Parameter is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.locationNumber = new LocationNumberMapImpl();
-                        ((LocationNumberMapImpl) this.locationNumber).decodeAll(ais);
-                        break;
-                    case _ID_cellGlobalIdOrServiceAreaIdOrLAI:
-                        this.cellGlobalIdOrServiceAreaIdOrLAI = LocationInformationGPRSImpl
-                                .decodeCellGlobalIdOrServiceAreaIdOrLAI(ais, _PrimitiveName);
-                        // if (ais.isTagPrimitive())
-                        // throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                        // + " cellGlobalIdOrServiceAreaIdOrLAI: Parameter is primitive",
-                        // MAPParsingComponentExceptionReason.MistypedParameter);
-                        // this.cellGlobalIdOrServiceAreaIdOrLAI = new CellGlobalIdOrServiceAreaIdOrLAIImpl();
-                        // AsnInputStream ais2 = ais.readSequenceStream();
-                        // ais2.readTag();
-                        // ((CellGlobalIdOrServiceAreaIdOrLAIImpl) this.cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais2);
-                        break;
-                    case _ID_extensionContainer:
-                        if (ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " extensionContainer: Parameter is primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.extensionContainer = new MAPExtensionContainerImpl();
-                        ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-                        break;
-                    case _ID_selectedLSA_Id:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " selectedLSAId: Parameter is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.selectedLSAId = new LSAIdentityImpl();
-                        ((LSAIdentityImpl) this.selectedLSAId).decodeAll(ais);
-                        break;
-                    case _ID_msc_Number:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " mscNumber: Parameter is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.mscNumber = new ISDNAddressStringImpl();
-                        ((ISDNAddressStringImpl) this.mscNumber).decodeAll(ais);
-                        break;
-                    case _ID_geodeticInformation:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " geodeticInformation: Parameter is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.geodeticInformation = new GeodeticInformationImpl();
-                        ((GeodeticInformationImpl) this.geodeticInformation).decodeAll(ais);
-                        break;
-                    case _ID_currentLocationRetrieved:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " currentLocationRetrieved: Parameter is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        ais.readNull();
-                        this.currentLocationRetrieved = true;
-                        break;
-                    case _ID_sai_Present:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " saiPresent: Parameter is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        ais.readNull();
-                        this.saiPresent = true;
-                        break;
-                    case _ID_locationInformationEPS:
-                        if (ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " locationInformationEPS: Parameter is primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.locationInformationEPS = new LocationInformationEPSImpl();
-                        ((LocationInformationEPSImpl) this.locationInformationEPS).decodeAll(ais);
-                        break;
-                    case _ID_userCSGInformation:
-                        if (ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + " userCSGInformation: Parameter is primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        this.userCSGInformation = new UserCSGInformationImpl();
-                        ((UserCSGInformationImpl) this.userCSGInformation).decodeAll(ais);
-                        break;
+                case _ID_geographicalInformation:
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + " geographicalInformation: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.geographicalInformation = new GeographicalInformationImpl();
+                    ((GeographicalInformationImpl) this.geographicalInformation).decodeAll(ais);
+                    break;
+                case _ID_vlr_number:
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + " vlrNumber: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.vlrNumber = new ISDNAddressStringImpl();
+                    ((ISDNAddressStringImpl) this.vlrNumber).decodeAll(ais);
+                    break;
+                case _ID_locationNumber:
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + " locationNumber: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.locationNumber = new LocationNumberMapImpl();
+                    ((LocationNumberMapImpl) this.locationNumber).decodeAll(ais);
+                    break;
+                case _ID_cellGlobalIdOrServiceAreaIdOrLAI:
+                    this.cellGlobalIdOrServiceAreaIdOrLAI = LocationInformationGPRSImpl
+                            .decodeCellGlobalIdOrServiceAreaIdOrLAI(ais, _PrimitiveName);
+                    // if (ais.isTagPrimitive())
+                    // throw new MAPParsingComponentException("Error while
+                    // decoding " + _PrimitiveName
+                    // + " cellGlobalIdOrServiceAreaIdOrLAI: Parameter is
+                    // primitive",
+                    // MAPParsingComponentExceptionReason.MistypedParameter);
+                    // this.cellGlobalIdOrServiceAreaIdOrLAI = new
+                    // CellGlobalIdOrServiceAreaIdOrLAIImpl();
+                    // AsnInputStream ais2 = ais.readSequenceStream();
+                    // ais2.readTag();
+                    // ((CellGlobalIdOrServiceAreaIdOrLAIImpl)
+                    // this.cellGlobalIdOrServiceAreaIdOrLAI).decodeAll(ais2);
+                    break;
+                case _ID_extensionContainer:
+                    if (ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + " extensionContainer: Parameter is primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.extensionContainer = new MAPExtensionContainerImpl();
+                    ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                    break;
+                case _ID_selectedLSA_Id:
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + " selectedLSAId: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.selectedLSAId = new LSAIdentityImpl();
+                    ((LSAIdentityImpl) this.selectedLSAId).decodeAll(ais);
+                    break;
+                case _ID_msc_Number:
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + " mscNumber: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.mscNumber = new ISDNAddressStringImpl();
+                    ((ISDNAddressStringImpl) this.mscNumber).decodeAll(ais);
+                    break;
+                case _ID_geodeticInformation:
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + " geodeticInformation: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.geodeticInformation = new GeodeticInformationImpl();
+                    ((GeodeticInformationImpl) this.geodeticInformation).decodeAll(ais);
+                    break;
+                case _ID_currentLocationRetrieved:
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + " currentLocationRetrieved: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    ais.readNull();
+                    this.currentLocationRetrieved = true;
+                    break;
+                case _ID_sai_Present:
+                    if (!ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName + " saiPresent: Parameter is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    ais.readNull();
+                    this.saiPresent = true;
+                    break;
+                case _ID_locationInformationEPS:
+                    if (ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + " locationInformationEPS: Parameter is primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.locationInformationEPS = new LocationInformationEPSImpl();
+                    ((LocationInformationEPSImpl) this.locationInformationEPS).decodeAll(ais);
+                    break;
+                case _ID_userCSGInformation:
+                    if (ais.isTagPrimitive())
+                        throw new MAPParsingComponentException(
+                                "Error while decoding " + _PrimitiveName
+                                        + " userCSGInformation: Parameter is primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.userCSGInformation = new UserCSGInformationImpl();
+                    ((UserCSGInformationImpl) this.userCSGInformation).decodeAll(ais);
+                    break;
 
-                    default:
-                        ais.advanceElement();
-                        break;
+                default:
+                    ais.advanceElement();
+                    break;
                 }
             } else {
                 ais.advanceElement();
@@ -335,14 +348,15 @@ public class LocationInformationImpl extends SequenceBase implements LocationInf
                 asnOs.writeInteger((int) ageOfLocationInformation);
 
             if (this.geographicalInformation != null)
-                ((GeographicalInformationImpl) this.geographicalInformation).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
-                        _ID_geographicalInformation);
+                ((GeographicalInformationImpl) this.geographicalInformation).encodeAll(asnOs,
+                        Tag.CLASS_CONTEXT_SPECIFIC, _ID_geographicalInformation);
 
             if (vlrNumber != null)
                 ((ISDNAddressStringImpl) vlrNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_vlr_number);
 
             if (locationNumber != null)
-                ((LocationNumberMapImpl) locationNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_locationNumber);
+                ((LocationNumberMapImpl) locationNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_locationNumber);
 
             if (cellGlobalIdOrServiceAreaIdOrLAI != null) {
                 try {
@@ -474,6 +488,98 @@ public class LocationInformationImpl extends SequenceBase implements LocationInf
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((ageOfLocationInformation == null) ? 0 : ageOfLocationInformation.hashCode());
+        result = prime * result
+                + ((cellGlobalIdOrServiceAreaIdOrLAI == null) ? 0 : cellGlobalIdOrServiceAreaIdOrLAI.hashCode());
+        result = prime * result + (currentLocationRetrieved ? 1231 : 1237);
+        result = prime * result + ((extensionContainer == null) ? 0 : extensionContainer.hashCode());
+        result = prime * result + ((geodeticInformation == null) ? 0 : geodeticInformation.hashCode());
+        result = prime * result + ((geographicalInformation == null) ? 0 : geographicalInformation.hashCode());
+        result = prime * result + ((locationInformationEPS == null) ? 0 : locationInformationEPS.hashCode());
+        result = prime * result + ((locationNumber == null) ? 0 : locationNumber.hashCode());
+        result = prime * result + ((mscNumber == null) ? 0 : mscNumber.hashCode());
+        result = prime * result + (saiPresent ? 1231 : 1237);
+        result = prime * result + ((selectedLSAId == null) ? 0 : selectedLSAId.hashCode());
+        result = prime * result + ((userCSGInformation == null) ? 0 : userCSGInformation.hashCode());
+        result = prime * result + ((vlrNumber == null) ? 0 : vlrNumber.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LocationInformationImpl other = (LocationInformationImpl) obj;
+        if (ageOfLocationInformation == null) {
+            if (other.ageOfLocationInformation != null)
+                return false;
+        } else if (!ageOfLocationInformation.equals(other.ageOfLocationInformation))
+            return false;
+        if (cellGlobalIdOrServiceAreaIdOrLAI == null) {
+            if (other.cellGlobalIdOrServiceAreaIdOrLAI != null)
+                return false;
+        } else if (!cellGlobalIdOrServiceAreaIdOrLAI.equals(other.cellGlobalIdOrServiceAreaIdOrLAI))
+            return false;
+        if (currentLocationRetrieved != other.currentLocationRetrieved)
+            return false;
+        if (extensionContainer == null) {
+            if (other.extensionContainer != null)
+                return false;
+        } else if (!extensionContainer.equals(other.extensionContainer))
+            return false;
+        if (geodeticInformation == null) {
+            if (other.geodeticInformation != null)
+                return false;
+        } else if (!geodeticInformation.equals(other.geodeticInformation))
+            return false;
+        if (geographicalInformation == null) {
+            if (other.geographicalInformation != null)
+                return false;
+        } else if (!geographicalInformation.equals(other.geographicalInformation))
+            return false;
+        if (locationInformationEPS == null) {
+            if (other.locationInformationEPS != null)
+                return false;
+        } else if (!locationInformationEPS.equals(other.locationInformationEPS))
+            return false;
+        if (locationNumber == null) {
+            if (other.locationNumber != null)
+                return false;
+        } else if (!locationNumber.equals(other.locationNumber))
+            return false;
+        if (mscNumber == null) {
+            if (other.mscNumber != null)
+                return false;
+        } else if (!mscNumber.equals(other.mscNumber))
+            return false;
+        if (saiPresent != other.saiPresent)
+            return false;
+        if (selectedLSAId == null) {
+            if (other.selectedLSAId != null)
+                return false;
+        } else if (!selectedLSAId.equals(other.selectedLSAId))
+            return false;
+        if (userCSGInformation == null) {
+            if (other.userCSGInformation != null)
+                return false;
+        } else if (!userCSGInformation.equals(other.userCSGInformation))
+            return false;
+        if (vlrNumber == null) {
+            if (other.vlrNumber != null)
+                return false;
+        } else if (!vlrNumber.equals(other.vlrNumber))
+            return false;
+        return true;
+    }
+
     /**
      * XML Serialization/Deserialization
      */
@@ -484,7 +590,8 @@ public class LocationInformationImpl extends SequenceBase implements LocationInf
         public void read(javolution.xml.XMLFormat.InputElement xml, LocationInformationImpl locationInformation)
                 throws XMLStreamException {
             locationInformation.ageOfLocationInformation = xml.get(AGE_OF_LOCATION_INFORMATION, Integer.class);
-            locationInformation.geographicalInformation = xml.get(GEOGRAPHICAL_INFORMATION, GeographicalInformationImpl.class);
+            locationInformation.geographicalInformation = xml.get(GEOGRAPHICAL_INFORMATION,
+                    GeographicalInformationImpl.class);
             locationInformation.vlrNumber = xml.get(VLR_NUMBER, ISDNAddressStringImpl.class);
             locationInformation.locationNumber = xml.get(LOCATION_NUMBER, LocationNumberMapImpl.class);
             locationInformation.cellGlobalIdOrServiceAreaIdOrLAI = xml.get(CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_OR_LAI,
@@ -501,7 +608,8 @@ public class LocationInformationImpl extends SequenceBase implements LocationInf
             bval = xml.get(SAI_PRESENT, Boolean.class);
             if (bval != null)
                 locationInformation.saiPresent = bval;
-            locationInformation.locationInformationEPS = xml.get(LOCATION_INFORMATION_EPS, LocationInformationEPSImpl.class);
+            locationInformation.locationInformationEPS = xml.get(LOCATION_INFORMATION_EPS,
+                    LocationInformationEPSImpl.class);
             locationInformation.userCSGInformation = xml.get(USER_CSG_INFORMATION, UserCSGInformationImpl.class);
         }
 
@@ -509,11 +617,12 @@ public class LocationInformationImpl extends SequenceBase implements LocationInf
         public void write(LocationInformationImpl locationInformation, javolution.xml.XMLFormat.OutputElement xml)
                 throws XMLStreamException {
             if (locationInformation.ageOfLocationInformation != null) {
-                xml.add((Integer) locationInformation.ageOfLocationInformation, AGE_OF_LOCATION_INFORMATION, Integer.class);
+                xml.add((Integer) locationInformation.ageOfLocationInformation, AGE_OF_LOCATION_INFORMATION,
+                        Integer.class);
             }
             if (locationInformation.geographicalInformation != null) {
-                xml.add((GeographicalInformationImpl) locationInformation.geographicalInformation, GEOGRAPHICAL_INFORMATION,
-                        GeographicalInformationImpl.class);
+                xml.add((GeographicalInformationImpl) locationInformation.geographicalInformation,
+                        GEOGRAPHICAL_INFORMATION, GeographicalInformationImpl.class);
             }
             if (locationInformation.vlrNumber != null) {
                 xml.add((ISDNAddressStringImpl) locationInformation.vlrNumber, VLR_NUMBER, ISDNAddressStringImpl.class);
@@ -543,14 +652,15 @@ public class LocationInformationImpl extends SequenceBase implements LocationInf
             }
 
             if (locationInformation.currentLocationRetrieved) {
-                xml.add((Boolean) locationInformation.currentLocationRetrieved, CURRENT_LOCATION_RETRIEVED, Boolean.class);
+                xml.add((Boolean) locationInformation.currentLocationRetrieved, CURRENT_LOCATION_RETRIEVED,
+                        Boolean.class);
             }
             if (locationInformation.saiPresent) {
                 xml.add((Boolean) locationInformation.saiPresent, SAI_PRESENT, Boolean.class);
             }
             if (locationInformation.locationInformationEPS != null) {
-                xml.add((LocationInformationEPSImpl) locationInformation.locationInformationEPS, LOCATION_INFORMATION_EPS,
-                        LocationInformationEPSImpl.class);
+                xml.add((LocationInformationEPSImpl) locationInformation.locationInformationEPS,
+                        LOCATION_INFORMATION_EPS, LocationInformationEPSImpl.class);
             }
             if (locationInformation.userCSGInformation != null) {
                 xml.add((UserCSGInformationImpl) locationInformation.userCSGInformation, USER_CSG_INFORMATION,

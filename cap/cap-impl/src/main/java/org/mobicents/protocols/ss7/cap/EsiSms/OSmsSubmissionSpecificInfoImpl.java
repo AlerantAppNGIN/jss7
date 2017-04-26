@@ -30,6 +30,9 @@ import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
@@ -51,5 +54,19 @@ public class OSmsSubmissionSpecificInfoImpl extends SequenceBase implements OSms
     public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
     }
+
+    protected static final XMLFormat<OSmsSubmissionSpecificInfoImpl> O_SMS_SUBMISSION_SPECIFIC_INFO_XML = new XMLFormat<OSmsSubmissionSpecificInfoImpl>(
+            OSmsSubmissionSpecificInfoImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                OSmsSubmissionSpecificInfoImpl oSmsSubmissionSpecificInfoImpl) throws XMLStreamException {
+        }
+
+        @Override
+        public void write(OSmsSubmissionSpecificInfoImpl oSmsSubmissionSpecificInfoImpl,
+                javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+        }
+    };
 
 }

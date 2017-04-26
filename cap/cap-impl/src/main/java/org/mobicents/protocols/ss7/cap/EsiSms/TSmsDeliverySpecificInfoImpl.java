@@ -30,6 +30,9 @@ import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
@@ -51,5 +54,19 @@ public class TSmsDeliverySpecificInfoImpl extends SequenceBase implements TSmsDe
     public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
     }
+
+    protected static final XMLFormat<TSmsDeliverySpecificInfoImpl> T_SMS_DELIVERY_SPECIFIC_INFO_XML = new XMLFormat<TSmsDeliverySpecificInfoImpl>(
+            TSmsDeliverySpecificInfoImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                TSmsDeliverySpecificInfoImpl tSmsDeliverySpecificInfoImpl) throws XMLStreamException {
+        }
+
+        @Override
+        public void write(TSmsDeliverySpecificInfoImpl tSmsDeliverySpecificInfoImpl,
+                javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+        }
+    };
 
 }

@@ -21,12 +21,17 @@ package org.mobicents.protocols.ss7.cap.service.sms.primitive;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.TPDataCodingScheme;
 import org.mobicents.protocols.ss7.cap.primitives.OctetStringLength1Base;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
  *
  */
 public class TPDataCodingSchemeImpl extends OctetStringLength1Base implements TPDataCodingScheme {
+
+    private static final String DATA = "data";
 
     public TPDataCodingSchemeImpl() {
         super("TPDataCodingScheme");
@@ -40,5 +45,26 @@ public class TPDataCodingSchemeImpl extends OctetStringLength1Base implements TP
     public int getData() {
         return data;
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<TPDataCodingSchemeImpl> TP_DATA_CODINGSCHEME_XML = new XMLFormat<TPDataCodingSchemeImpl>(
+            TPDataCodingSchemeImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, TPDataCodingSchemeImpl tPDataCodingSchemeImpl)
+                throws XMLStreamException {
+            tPDataCodingSchemeImpl.data = OctetStringLength1Base
+                    .octetStringLength1ToInt(xml.getAttribute(DATA, (String) null));
+        }
+
+        @Override
+        public void write(TPDataCodingSchemeImpl tPDataCodingSchemeImpl, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            xml.setAttribute(DATA, OctetStringLength1Base.intToOctetStringLength1(tPDataCodingSchemeImpl.getData()));
+        }
+
+    };
 
 }

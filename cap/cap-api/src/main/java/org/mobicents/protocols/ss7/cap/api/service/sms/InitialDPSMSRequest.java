@@ -22,6 +22,7 @@ package org.mobicents.protocols.ss7.cap.api.service.sms;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.LocationInformationGPRS;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventTypeSMS;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSAddressString;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.TPDataCodingScheme;
@@ -34,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNumber;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GPRSMSClass;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
+//import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSClassmark2;
 
 /**

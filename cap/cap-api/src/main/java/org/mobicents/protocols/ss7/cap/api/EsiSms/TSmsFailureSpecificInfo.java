@@ -33,6 +33,6 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.MTSMSCause;
  */
 public interface TSmsFailureSpecificInfo extends Serializable {
 
-    MTSMSCause GetFailureCause();
+    MTSMSCause getFailureCause();
 
 }

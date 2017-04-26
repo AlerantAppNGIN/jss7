@@ -32,12 +32,17 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.ValidityPeriod;
 import org.mobicents.protocols.ss7.map.smstpdu.AbsoluteTimeStampImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.ValidityPeriodImpl;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
  *
  */
 public class TPValidityPeriodImpl extends OctetStringBase implements TPValidityPeriod {
+
+    private static final String DATA = "data";
 
     public TPValidityPeriodImpl() {
         super(1, 7, "TPValidityPeriod");
@@ -75,7 +80,8 @@ public class TPValidityPeriodImpl extends OctetStringBase implements TPValidityP
 
         // we support RelativeFormat and AbsoluteFormat
         if (this.data.length != 1 && this.data.length != 7)
-            throw new CAPException("Error when getting ValidityPeriod: data must has length 1 or 7, found " + data.length);
+            throw new CAPException(
+                    "Error when getting ValidityPeriod: data must has length 1 or 7, found " + data.length);
 
         ValidityPeriodImpl vp;
         if (this.data.length == 1) {
@@ -103,5 +109,25 @@ public class TPValidityPeriodImpl extends OctetStringBase implements TPValidityP
             return super.toString();
         }
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<TPValidityPeriodImpl> TP_VALIDITY_PERIOD = new XMLFormat<TPValidityPeriodImpl>(
+            TPValidityPeriodImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, TPValidityPeriodImpl tPValidityPeriodImpl)
+                throws XMLStreamException {
+            tPValidityPeriodImpl.data = OctetStringBase.hexToBytes(xml.getAttribute(DATA, (String) null));
+        }
+
+        @Override
+        public void write(TPValidityPeriodImpl tPValidityPeriodImpl, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            xml.setAttribute(DATA, OctetStringBase.bytesToHex(tPValidityPeriodImpl.data));
+        }
+
+    };
 
 }

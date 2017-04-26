@@ -39,6 +39,9 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventSpecificIn
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author Lasith Waruna Perera
@@ -57,6 +60,11 @@ public class EventSpecificInformationSMSImpl implements EventSpecificInformation
     private OSmsSubmissionSpecificInfo oSmsSubmissionSpecificInfo;
     private TSmsFailureSpecificInfo tSmsFailureSpecificInfo;
     private TSmsDeliverySpecificInfo tSmsDeliverySpecificInfo;
+
+    private static final String O_SMS_FAILURE_SPECIFIC_INFO = "o-smsFailureSpecificInfo";
+    private static final String O_SMS_SUBMISSION_SPECIFIC_INFO = "o-smsSubmissionSpecificInfo";
+    private static final String T_SMS_FAILURE_SPECIFIC_INFO = "t-smsFailureSpecificInfo";
+    private static final String T_SMS_DELIVERY_SPECIFIC_INFO = "t-smsDeliverySpecificInfo";
 
     public EventSpecificInformationSMSImpl() {
         super();
@@ -131,14 +139,17 @@ public class EventSpecificInformationSMSImpl implements EventSpecificInformation
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
@@ -147,19 +158,22 @@ public class EventSpecificInformationSMSImpl implements EventSpecificInformation
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName
-                    + ": " + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+            throw new CAPParsingComponentException(
+                    "MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException,
-            AsnException, MAPParsingComponentException {
+    private void _decode(AsnInputStream ais, int length)
+            throws CAPParsingComponentException, IOException, AsnException, MAPParsingComponentException {
 
         this.oSmsFailureSpecificInfo = null;
         this.oSmsSubmissionSpecificInfo = null;
@@ -172,32 +186,36 @@ public class EventSpecificInformationSMSImpl implements EventSpecificInformation
             switch (tag) {
             case _ID_oSmsFailureSpecificInfo:
                 if (ais.isTagPrimitive())
-                    throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                            + ".oSmsFailureSpecificInfo: Parameter is primitive",
+                    throw new CAPParsingComponentException(
+                            "Error while decoding " + _PrimitiveName
+                                    + ".oSmsFailureSpecificInfo: Parameter is primitive",
                             CAPParsingComponentExceptionReason.MistypedParameter);
                 this.oSmsFailureSpecificInfo = new OSmsFailureSpecificInfoImpl();
                 ((OSmsFailureSpecificInfoImpl) this.oSmsFailureSpecificInfo).decodeData(ais, length);
                 break;
             case _ID_oSmsSubmissionSpecificInfo:
                 if (ais.isTagPrimitive())
-                    throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                            + ".oSmsSubmissionSpecificInfo: Parameter is primitive",
+                    throw new CAPParsingComponentException(
+                            "Error while decoding " + _PrimitiveName
+                                    + ".oSmsSubmissionSpecificInfo: Parameter is primitive",
                             CAPParsingComponentExceptionReason.MistypedParameter);
                 this.oSmsSubmissionSpecificInfo = new OSmsSubmissionSpecificInfoImpl();
                 ((OSmsSubmissionSpecificInfoImpl) this.oSmsSubmissionSpecificInfo).decodeData(ais, length);
                 break;
             case _ID_tSmsFailureSpecificInfo:
                 if (ais.isTagPrimitive())
-                    throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                            + ".tSmsFailureSpecificInfo: Parameter is primitive",
+                    throw new CAPParsingComponentException(
+                            "Error while decoding " + _PrimitiveName
+                                    + ".tSmsFailureSpecificInfo: Parameter is primitive",
                             CAPParsingComponentExceptionReason.MistypedParameter);
                 this.tSmsFailureSpecificInfo = new TSmsFailureSpecificInfoImpl();
                 ((TSmsFailureSpecificInfoImpl) this.tSmsFailureSpecificInfo).decodeData(ais, length);
                 break;
             case _ID_tSmsDeliverySpecificInfo:
                 if (ais.isTagPrimitive())
-                    throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                            + ".tSmsDeliverySpecificInfo: Parameter is primitive",
+                    throw new CAPParsingComponentException(
+                            "Error while decoding " + _PrimitiveName
+                                    + ".tSmsDeliverySpecificInfo: Parameter is primitive",
                             CAPParsingComponentExceptionReason.MistypedParameter);
                 this.tSmsDeliverySpecificInfo = new TSmsDeliverySpecificInfoImpl();
                 ((TSmsDeliverySpecificInfoImpl) this.tSmsDeliverySpecificInfo).decodeData(ais, length);
@@ -236,10 +254,10 @@ public class EventSpecificInformationSMSImpl implements EventSpecificInformation
 
         if ((this.oSmsFailureSpecificInfo == null && this.oSmsSubmissionSpecificInfo == null
                 && this.tSmsFailureSpecificInfo == null && this.tSmsDeliverySpecificInfo == null)
-                || (this.oSmsFailureSpecificInfo != null && this.oSmsSubmissionSpecificInfo != null || this.tSmsFailureSpecificInfo != null
-                        && this.tSmsDeliverySpecificInfo != null)) {
-            throw new CAPException("Error while decoding " + _PrimitiveName
-                    + ": One and only one choice must be selected");
+                || (this.oSmsFailureSpecificInfo != null && this.oSmsSubmissionSpecificInfo != null
+                        || this.tSmsFailureSpecificInfo != null && this.tSmsDeliverySpecificInfo != null)) {
+            throw new CAPException(
+                    "Error while decoding " + _PrimitiveName + ": One and only one choice must be selected");
         }
 
         try {
@@ -285,5 +303,87 @@ public class EventSpecificInformationSMSImpl implements EventSpecificInformation
 
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((oSmsFailureSpecificInfo == null) ? 0 : oSmsFailureSpecificInfo.hashCode());
+        result = prime * result + ((oSmsSubmissionSpecificInfo == null) ? 0 : oSmsSubmissionSpecificInfo.hashCode());
+        result = prime * result + ((tSmsDeliverySpecificInfo == null) ? 0 : tSmsDeliverySpecificInfo.hashCode());
+        result = prime * result + ((tSmsFailureSpecificInfo == null) ? 0 : tSmsFailureSpecificInfo.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EventSpecificInformationSMSImpl other = (EventSpecificInformationSMSImpl) obj;
+        if (oSmsFailureSpecificInfo == null) {
+            if (other.oSmsFailureSpecificInfo != null)
+                return false;
+        } else if (!oSmsFailureSpecificInfo.equals(other.oSmsFailureSpecificInfo))
+            return false;
+        if (oSmsSubmissionSpecificInfo == null) {
+            if (other.oSmsSubmissionSpecificInfo != null)
+                return false;
+        } else if (!oSmsSubmissionSpecificInfo.equals(other.oSmsSubmissionSpecificInfo))
+            return false;
+        if (tSmsDeliverySpecificInfo == null) {
+            if (other.tSmsDeliverySpecificInfo != null)
+                return false;
+        } else if (!tSmsDeliverySpecificInfo.equals(other.tSmsDeliverySpecificInfo))
+            return false;
+        if (tSmsFailureSpecificInfo == null) {
+            if (other.tSmsFailureSpecificInfo != null)
+                return false;
+        } else if (!tSmsFailureSpecificInfo.equals(other.tSmsFailureSpecificInfo))
+            return false;
+        return true;
+    }
+
+    protected static final XMLFormat<EventSpecificInformationSMSImpl> EVENT_SPECIFIC_INFORMATION_SMS_XML = new XMLFormat<EventSpecificInformationSMSImpl>(
+            EventSpecificInformationSMSImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                EventSpecificInformationSMSImpl eventSpecificInformationSmsRequest) throws XMLStreamException {
+            eventSpecificInformationSmsRequest.oSmsFailureSpecificInfo = xml.get(O_SMS_FAILURE_SPECIFIC_INFO,
+                    OSmsFailureSpecificInfoImpl.class);
+            eventSpecificInformationSmsRequest.oSmsSubmissionSpecificInfo = xml.get(O_SMS_SUBMISSION_SPECIFIC_INFO,
+                    OSmsSubmissionSpecificInfoImpl.class);
+            eventSpecificInformationSmsRequest.tSmsFailureSpecificInfo = xml.get(T_SMS_FAILURE_SPECIFIC_INFO,
+                    TSmsFailureSpecificInfoImpl.class);
+            eventSpecificInformationSmsRequest.tSmsDeliverySpecificInfo = xml.get(T_SMS_DELIVERY_SPECIFIC_INFO,
+                    TSmsDeliverySpecificInfoImpl.class);
+        }
+
+        @Override
+        public void write(EventSpecificInformationSMSImpl eventSpecificInformationSmsRequest,
+                javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            if (eventSpecificInformationSmsRequest.getOSmsFailureSpecificInfo() != null) {
+                xml.add((OSmsFailureSpecificInfoImpl) eventSpecificInformationSmsRequest.getOSmsFailureSpecificInfo(),
+                        O_SMS_FAILURE_SPECIFIC_INFO, OSmsFailureSpecificInfoImpl.class);
+            }
+            if (eventSpecificInformationSmsRequest.getOSmsSubmissionSpecificInfo() != null) {
+                xml.add((OSmsSubmissionSpecificInfoImpl) eventSpecificInformationSmsRequest
+                        .getOSmsSubmissionSpecificInfo(), O_SMS_SUBMISSION_SPECIFIC_INFO,
+                        OSmsSubmissionSpecificInfoImpl.class);
+            }
+            if (eventSpecificInformationSmsRequest.getTSmsFailureSpecificInfo() != null) {
+                xml.add((TSmsFailureSpecificInfoImpl) eventSpecificInformationSmsRequest.getTSmsFailureSpecificInfo(),
+                        T_SMS_FAILURE_SPECIFIC_INFO, TSmsFailureSpecificInfoImpl.class);
+            }
+            if (eventSpecificInformationSmsRequest.getTSmsDeliverySpecificInfo() != null) {
+                xml.add((TSmsDeliverySpecificInfoImpl) eventSpecificInformationSmsRequest.getTSmsDeliverySpecificInfo(),
+                        T_SMS_DELIVERY_SPECIFIC_INFO, TSmsDeliverySpecificInfoImpl.class);
+            }
+        }
+    };
 
 }

@@ -22,9 +22,6 @@ package org.mobicents.protocols.ss7.cap.primitives;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -35,6 +32,9 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.ExtensionField;
 import org.mobicents.protocols.ss7.map.primitives.ArrayListSerializingBase;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 /**
  *
@@ -89,10 +89,12 @@ public class CAPExtensionsImpl implements CAPExtensions, CAPAsnPrimitive {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
@@ -103,15 +105,18 @@ public class CAPExtensionsImpl implements CAPExtensions, CAPAsnPrimitive {
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.extensionFields = null;
 
@@ -123,8 +128,9 @@ public class CAPExtensionsImpl implements CAPExtensions, CAPAsnPrimitive {
 
             int tag = ais.readTag();
             if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.SEQUENCE || ais.isTagPrimitive())
-                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                        + ": Bad ExtensionField tag or tag class or is primitive",
+                throw new CAPParsingComponentException(
+                        "Error while decoding " + _PrimitiveName
+                                + ": Bad ExtensionField tag or tag class or is primitive",
                         CAPParsingComponentExceptionReason.MistypedParameter);
 
             ExtensionFieldImpl elem = new ExtensionFieldImpl();
@@ -158,10 +164,11 @@ public class CAPExtensionsImpl implements CAPExtensions, CAPAsnPrimitive {
     public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
         if (this.extensionFields == null)
-            throw new CAPException("Error while decoding " + _PrimitiveName + ": extensionFields field must not be null");
+            throw new CAPException(
+                    "Error while decoding " + _PrimitiveName + ": extensionFields field must not be null");
         if (this.extensionFields.size() < 1 || this.extensionFields.size() > 10)
-            throw new CAPException("Error while decoding " + _PrimitiveName
-                    + ": extensionFields field length must be from 1 to 10");
+            throw new CAPException(
+                    "Error while decoding " + _PrimitiveName + ": extensionFields field length must be from 1 to 10");
 
         for (ExtensionField fld : this.extensionFields) {
             ((ExtensionFieldImpl) fld).encodeAll(asnOs);
@@ -190,6 +197,31 @@ public class CAPExtensionsImpl implements CAPExtensions, CAPAsnPrimitive {
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((extensionFields == null) ? 0 : extensionFields.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CAPExtensionsImpl other = (CAPExtensionsImpl) obj;
+        if (extensionFields == null) {
+            if (other.extensionFields != null)
+                return false;
+        } else if (!extensionFields.equals(other.extensionFields))
+            return false;
+        return true;
+    }
+
     /**
      * XML Serialization/Deserialization
      */
@@ -197,7 +229,8 @@ public class CAPExtensionsImpl implements CAPExtensions, CAPAsnPrimitive {
             CAPExtensionsImpl.class) {
 
         @Override
-        public void read(javolution.xml.XMLFormat.InputElement xml, CAPExtensionsImpl capExtensions) throws XMLStreamException {
+        public void read(javolution.xml.XMLFormat.InputElement xml, CAPExtensionsImpl capExtensions)
+                throws XMLStreamException {
             CAPExtensions_ExtensionFields al = xml.get(EXTENSION_FIELD_LIST, CAPExtensions_ExtensionFields.class);
             if (al != null) {
                 capExtensions.extensionFields = al.getData();

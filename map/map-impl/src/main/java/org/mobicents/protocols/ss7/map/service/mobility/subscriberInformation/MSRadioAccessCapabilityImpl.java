@@ -22,12 +22,17 @@ package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSRadioAccessCapability;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  * @author amit bhayani
  * @author sergey vetyutnev
  *
  */
 public class MSRadioAccessCapabilityImpl extends OctetStringBase implements MSRadioAccessCapability {
+
+    private static final String DATA = "data";
 
     public MSRadioAccessCapabilityImpl() {
         super(1, 50, "MSRadioAccessCapability");
@@ -40,4 +45,24 @@ public class MSRadioAccessCapabilityImpl extends OctetStringBase implements MSRa
     public byte[] getData() {
         return data;
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<MSRadioAccessCapabilityImpl> MS_RADIO_ACCESS_CAPABILITY_XML = new XMLFormat<MSRadioAccessCapabilityImpl>(
+            MSRadioAccessCapabilityImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                MSRadioAccessCapabilityImpl mSRadioAccessCapabilityImpl) throws XMLStreamException {
+            mSRadioAccessCapabilityImpl.data = OctetStringBase.hexToBytes(xml.getAttribute(DATA, (String) null));
+        }
+
+        @Override
+        public void write(MSRadioAccessCapabilityImpl mSRadioAccessCapabilityImpl,
+                javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(DATA, OctetStringBase.bytesToHex(mSRadioAccessCapabilityImpl.data));
+        }
+
+    };
 }

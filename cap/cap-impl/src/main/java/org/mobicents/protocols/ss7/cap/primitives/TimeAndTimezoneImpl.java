@@ -20,9 +20,7 @@
 package org.mobicents.protocols.ss7.cap.primitives;
 
 import java.io.IOException;
-
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
+import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -32,6 +30,9 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 /**
  *
@@ -242,10 +243,12 @@ public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
             int length = ansIS.readLength();
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
@@ -256,20 +259,23 @@ public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
         try {
             this._decode(ansIS, length);
         } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+            throw new CAPParsingComponentException(
+                    "AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length)
+            throws CAPParsingComponentException, IOException, AsnException {
 
         this.data = ansIS.readOctetStringData(length);
         if (this.data.length < 8 || this.data.length > 8)
-            throw new CAPParsingComponentException("Error decoding " + _PrimitiveName
-                    + ": length must be from 8 to 8, real length = " + length,
+            throw new CAPParsingComponentException(
+                    "Error decoding " + _PrimitiveName + ": length must be from 8 to 8, real length = " + length,
                     CAPParsingComponentExceptionReason.MistypedParameter);
     }
 
@@ -327,6 +333,28 @@ public class TimeAndTimezoneImpl implements TimeAndTimezone, CAPAsnPrimitive {
         sb.append("]");
 
         return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(data);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TimeAndTimezoneImpl other = (TimeAndTimezoneImpl) obj;
+        if (!Arrays.equals(data, other.data))
+            return false;
+        return true;
     }
 
     /**
