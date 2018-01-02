@@ -623,8 +623,6 @@ public class CAPProviderImpl implements CAPProvider, NamedTCListener {
                         loger.warn("CAP Dialog is in InitialSent state but no application context name is received");
 
                         this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
-                        capDialogImpl.setState(CAPDialogState.Expunged);
-
                         return;
                     }
 
@@ -637,8 +635,6 @@ public class CAPProviderImpl implements CAPProvider, NamedTCListener {
                         // capDialogImpl.setNormalDialogShutDown();
 
                         this.deliverDialogNotice(capDialogImpl, CAPNoticeProblemDiagnostic.AbnormalDialogAction);
-                        capDialogImpl.setState(CAPDialogState.Expunged);
-
                         return;
                     }
 
@@ -669,9 +665,13 @@ public class CAPProviderImpl implements CAPProvider, NamedTCListener {
                 // capDialogImpl.setNormalDialogShutDown();
                 this.deliverDialogClose(capDialogImpl);
 
-                capDialogImpl.setState(CAPDialogState.Expunged);
             }
         } finally {
+            // Kept previous behavior by not setting this for the preview mode branch, but maybe it should be set there as well?
+            if (!this.getTCAPProvider().getPreviewMode()) {
+                // To keep the stack consistent, modify CAP dialog state even if application fails during any of the callbacks.
+                capDialogImpl.setState(CAPDialogState.Expunged);
+            }
             capDialogImpl.getTcapDialog().getDialogLock().unlock();
         }
     }
@@ -763,9 +763,9 @@ public class CAPProviderImpl implements CAPProvider, NamedTCListener {
             PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
 
             this.deliverDialogProviderAbort(capDialogImpl, pAbortCause);
-
-            capDialogImpl.setState(CAPDialogState.Expunged);
         } finally {
+            // To keep the stack consistent, modify CAP dialog state even if application fails during the callback.
+            capDialogImpl.setState(CAPDialogState.Expunged);
             capDialogImpl.getTcapDialog().getDialogLock().unlock();
         }
     }
@@ -847,9 +847,9 @@ public class CAPProviderImpl implements CAPProvider, NamedTCListener {
             }
 
             this.deliverDialogUserAbort(capDialogImpl, generalReason, userReason);
-
-            capDialogImpl.setState(CAPDialogState.Expunged);
         } finally {
+            // To keep the stack consistent, modify CAP dialog state even if application fails during the callback.
+            capDialogImpl.setState(CAPDialogState.Expunged);
             capDialogImpl.getTcapDialog().getDialogLock().unlock();
         }
     }
