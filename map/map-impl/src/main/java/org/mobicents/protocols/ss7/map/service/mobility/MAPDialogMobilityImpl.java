@@ -31,6 +31,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPOperationCode;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.DiameterIdentity;
+import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
 import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
@@ -108,6 +109,8 @@ import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.Updat
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateLocationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.ProvideSubscriberInfoRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.ProvideSubscriberInfoResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.InsertSubscriberDataRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.InsertSubscriberDataResponseImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
@@ -116,6 +119,7 @@ import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
 /**
@@ -430,6 +434,120 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         resultLast.setParameter(p);
 
         this.sendReturnResultLastComponent(resultLast);
+    }
+
+    @Override
+    public long addProvideSubscriberInfoRequest(IMSI imsi, LMSI lmsi, RequestedInfo requestedInfo, MAPExtensionContainer extensionContainer,
+            EMLPPPriority callPriority) throws MAPException {
+        return this.addProvideSubscriberInfoRequest(_Timer_Default, imsi, lmsi, requestedInfo, extensionContainer, callPriority);
+    }
+
+    @Override
+    public long addProvideSubscriberInfoRequest(long customInvokeTimeout, IMSI imsi, LMSI lmsi, RequestedInfo requestedInfo,
+            MAPExtensionContainer extensionContainer, EMLPPPriority callPriority) throws MAPException {
+
+        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.subscriberInfoEnquiryContext)
+                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+            throw new MAPException("Bad application context name for ProvideSubscriberInfoRequest: must be subscriberInfoEnquiryContext_V3");
+
+        Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+        if (customInvokeTimeout == _Timer_Default)
+            invoke.setTimeout(_Timer_m);
+        else
+            invoke.setTimeout(customInvokeTimeout);
+
+        // Operation Code
+        OperationCode oc = TcapFactory.createOperationCode();
+        oc.setLocalOperationCode((long) MAPOperationCode.provideSubscriberInfo);
+        invoke.setOperationCode(oc);
+
+        ProvideSubscriberInfoRequestImpl req = new ProvideSubscriberInfoRequestImpl(imsi, lmsi, requestedInfo, extensionContainer, callPriority);
+
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
+
+        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(req.getTagClass());
+        p.setPrimitive(req.getIsPrimitive());
+        p.setTag(req.getTag());
+        p.setData(aos.toByteArray());
+        invoke.setParameter(p);
+
+        Long invokeId;
+        try {
+            invokeId = this.tcapDialog.getNewInvokeId();
+            invoke.setInvokeId(invokeId);
+        } catch (TCAPException e) {
+            throw new MAPException(e.getMessage(), e);
+        }
+
+        this.sendInvokeComponent(invoke);
+
+        return invokeId;
+    }
+
+    @Override
+    public void addProvideSubscriberInfoResponse(long invokeId, SubscriberInfo subscriberInfo,
+            MAPExtensionContainer extensionContainer) throws MAPException {
+        doAddProvideSubscriberInfoResponse(false, invokeId, subscriberInfo, extensionContainer);
+    }
+
+    @Override
+    public void addProvideSubscriberInfoResponse_NonLast(long invokeId, SubscriberInfo subscriberInfo,
+            MAPExtensionContainer extensionContainer) throws MAPException {
+        doAddProvideSubscriberInfoResponse(true, invokeId, subscriberInfo, extensionContainer);
+    }
+
+
+    protected void doAddProvideSubscriberInfoResponse(boolean nonLast, long invokeId, SubscriberInfo subscriberInfo,
+            MAPExtensionContainer extensionContainer) throws MAPException {
+
+        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.subscriberInfoEnquiryContext)
+                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+            throw new MAPException(
+                    "Bad application context name for ProvideSubscriberInfoResponse: must be subscriberInfoEnquiryContext_V3");
+
+        ProvideSubscriberInfoResponseImpl req = new ProvideSubscriberInfoResponseImpl(subscriberInfo, extensionContainer);
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
+
+        // Operation Code
+        OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+        oc.setLocalOperationCode((long) MAPOperationCode.provideSubscriberInfo);
+
+        if (nonLast) {
+            ReturnResult resultLastNonLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
+                    .createTCResultRequest();
+
+            resultLastNonLast.setInvokeId(invokeId);
+
+            resultLastNonLast.setOperationCode(oc);
+
+            Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+            p.setTagClass(req.getTagClass());
+            p.setPrimitive(req.getIsPrimitive());
+            p.setTag(req.getTag());
+            p.setData(aos.toByteArray());
+            resultLastNonLast.setParameter(p);
+
+            this.sendReturnResultComponent(resultLastNonLast);
+        } else {
+            ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
+                    .createTCResultLastRequest();
+
+            resultLast.setInvokeId(invokeId);
+
+            resultLast.setOperationCode(oc);
+
+            Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+            p.setTagClass(req.getTagClass());
+            p.setPrimitive(req.getIsPrimitive());
+            p.setTag(req.getTag());
+            p.setData(aos.toByteArray());
+            resultLast.setParameter(p);
+
+            this.sendReturnResultLastComponent(resultLast);
+        }
     }
 
     @Override

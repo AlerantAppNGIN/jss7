@@ -66,6 +66,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.U
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateLocationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ProvideSubscriberInfoRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ProvideSubscriberInfoResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataResponse;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertServiceCentreRequest;
@@ -414,6 +416,20 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
     public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse response) {
         this.logger.debug("onAnyTimeInterrogationResponse");
         TestEvent te = TestEvent.createReceivedEvent(EventType.AnyTimeInterrogationResp, response, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onProvideSubscriberInfoRequest(ProvideSubscriberInfoRequest request) {
+        this.logger.debug("onProvideSubscriberInfoRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.ProvideSubscriberInfo, request, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onProvideSubscriberInfoResponse(ProvideSubscriberInfoResponse response) {
+        this.logger.debug("onProvideSubscriberInfoResponse");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.ProvideSubscriberInfoResp, response, sequence++);
         this.observerdEvents.add(te);
     }
 

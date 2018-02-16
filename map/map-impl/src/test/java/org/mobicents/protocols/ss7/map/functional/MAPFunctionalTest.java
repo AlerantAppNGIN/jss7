@@ -138,8 +138,12 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.U
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UsedRATType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NumberPortabilityStatus;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ProvideSubscriberInfoRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ProvideSubscriberInfoResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberState;
@@ -4757,6 +4761,132 @@ public class MAPFunctionalTest extends SccpHarness {
         serverExpectedEvents.add(te);
 
         client.sendAnyTimeInterrogation();
+        waitForEnd();
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
+
+    }
+
+    /**
+<code>
+TC-BEGIN + provideSubscriberInfoRequest
+TC-END + provideSubscriberInfoResponse
+</code>
+     */
+    @Test(groups = { "functional.flow", "dialog" })
+    public void testProvideSubscriberInfo() throws Exception {
+
+        Client client = new Client(stack1, this, peer1Address, peer2Address) {
+            @Override
+            public void onProvideSubscriberInfoResponse(ProvideSubscriberInfoResponse ind) {
+                super.onProvideSubscriberInfoResponse(ind);
+
+                SubscriberInfo si = ind.getSubscriberInfo();
+                SubscriberState ss = si.getSubscriberState();
+                Assert.assertEquals(ss.getSubscriberStateChoice(), SubscriberStateChoice.camelBusy);
+                Assert.assertNull(ss.getNotReachableReason());
+                Assert.assertNull(si.getExtensionContainer());
+                Assert.assertNull(si.getGPRSMSClass());
+                Assert.assertNull(si.getIMEI());
+                Assert.assertNull(si.getLocationInformationGPRS());
+                Assert.assertNull(si.getMNPInfoRes());
+                Assert.assertNull(si.getMSClassmark2());
+                Assert.assertNull(si.getPSSubscriberState());
+                Assert.assertNull(ind.getExtensionContainer());
+
+                LocationInformation locationInformation = si.getLocationInformation();
+                assertEquals((int) locationInformation.getAgeOfLocationInformation(), 10);
+                assertTrue(Math.abs(locationInformation.getGeographicalInformation().getLatitude() - 30) < 0.01);
+                assertTrue(Math.abs(locationInformation.getGeographicalInformation().getLongitude() - 60) < 0.01);
+                assertTrue(Math.abs(locationInformation.getGeographicalInformation().getUncertainty() - 10) < 1);
+            }
+
+        };
+
+        Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+            @Override
+            public void onProvideSubscriberInfoRequest(ProvideSubscriberInfoRequest ind) {
+                super.onProvideSubscriberInfoRequest(ind);
+
+                MAPDialogMobility d = ind.getMAPDialog();
+                assertEquals(ind.getImsi().getData(), "33334444");
+                RequestedInfo requestedInfo = ind.getRequestedInfo();
+                Assert.assertTrue(requestedInfo.getLocationInformation());
+                Assert.assertTrue(requestedInfo.getSubscriberState());
+                Assert.assertFalse(requestedInfo.getCurrentLocation());
+                Assert.assertNull(requestedInfo.getRequestedDomain());
+                Assert.assertFalse(requestedInfo.getImei());
+                Assert.assertFalse(requestedInfo.getMsClassmark());
+
+                try {
+                    GeographicalInformation geographicalInformation = this.mapParameterFactory.createGeographicalInformation(30, 60, 10);
+                    // latitude, longitude, uncertainty
+                    LocationInformation locationInformation = this.mapParameterFactory.createLocationInformation(10, geographicalInformation, null, null, null,
+                            null, null, null, null, false, false, null, null);
+                    SubscriberState ss = this.mapParameterFactory.createSubscriberState(SubscriberStateChoice.camelBusy, null);
+                    SubscriberInfo si = this.mapParameterFactory.createSubscriberInfo(locationInformation, ss, null, null, null, null, null, null,
+                            null);
+
+                    d.addProvideSubscriberInfoResponse(ind.getInvokeId(), si, null);
+                } catch (MAPException e) {
+                    this.error("Error while adding ProvideSubscriberInfoResponse", e);
+                    fail("Error while adding ProvideSubscriberInfoResponse");
+                }
+            }
+
+            @Override
+            public void onDialogDelimiter(MAPDialog mapDialog) {
+                super.onDialogDelimiter(mapDialog);
+                try {
+                    this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProvideSubscriberInfoResp, null, sequence++));
+                    mapDialog.close(false);
+                } catch (MAPException e) {
+                    this.error("Error while sending the empty ProvideSubscriberInfoResponse", e);
+                    fail("Error while sending the empty ProvideSubscriberInfoResponse");
+                }
+            }
+        };
+
+        long stamp = System.currentTimeMillis();
+        int count = 0;
+        // Client side events
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+        TestEvent te = TestEvent.createSentEvent(EventType.ProvideSubscriberInfo, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.ProvideSubscriberInfoResp, null, count++,
+                (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        count = 0;
+        // Server side events
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.ProvideSubscriberInfo, null, count++,
+                (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.ProvideSubscriberInfoResp, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        client.sendProvideSubscriberInfo();
         waitForEnd();
         client.compareEvents(clientExpectedEvents);
         server.compareEvents(serverExpectedEvents);

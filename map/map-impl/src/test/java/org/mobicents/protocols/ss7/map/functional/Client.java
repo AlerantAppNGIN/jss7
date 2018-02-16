@@ -1073,6 +1073,28 @@ public class Client extends EventTestHarness {
         clientDialogMobility.send();
     }
 
+    public void sendProvideSubscriberInfo() throws Exception {
+
+        this.mapProvider.getMAPServiceMobility().acivate();
+
+        MAPApplicationContext appCnt = null;
+
+        appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.subscriberInfoEnquiryContext, MAPApplicationContextVersion.version3);
+
+        clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null,
+                this.remoteAddress, null);
+
+        IMSI imsi = this.mapParameterFactory.createIMSI("33334444");
+        RequestedInfo requestedInfo = this.mapParameterFactory.createRequestedInfo(true, true, null, false, null, false, false,
+                false);
+
+        clientDialogMobility.addProvideSubscriberInfoRequest(imsi, null, requestedInfo, null, null);
+        // IMSI imsi, LMSI lmsi, RequestedInfo requestedInfo, MAPExtensionContainer extensionContainer, EMLPPPriority callPriority
+
+        this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProvideSubscriberInfo, null, sequence++));
+        clientDialogMobility.send();
+    }
+
     public void sendProvideSubscriberLocation() throws Exception {
 
         this.mapProvider.getMAPServiceLsm().acivate();

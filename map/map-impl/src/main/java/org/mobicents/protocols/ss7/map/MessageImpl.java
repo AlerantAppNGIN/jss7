@@ -1,20 +1,23 @@
 /*
- * TeleStax, Open Source Cloud Communications
- * Copyright 2011-2013, Telestax Inc and individual contributors
- * by the @authors tag.
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
  *
- * This program is free software: you can redistribute it and/or modify
- * under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation; either version 3 of
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
 package org.mobicents.protocols.ss7.map;
@@ -34,9 +37,11 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
 public abstract class MessageImpl implements MAPMessage {
 
     private static final String INVOKE_ID = "invokeId";
+    private static final String RETURN_RESULT_NOT_LAST = "returnResultNotLast";
 
     private long invokeId;
     private MAPDialog mapDialog;
+    private boolean returnResultNotLast = false;
 
     public long getInvokeId() {
         return this.invokeId;
@@ -54,6 +59,14 @@ public abstract class MessageImpl implements MAPMessage {
         this.mapDialog = mapDialog;
     }
 
+    public boolean isReturnResultNotLast() {
+        return returnResultNotLast;
+    }
+
+    public void setReturnResultNotLast(boolean returnResultNotLast) {
+        this.returnResultNotLast = returnResultNotLast;
+    }
+
     /**
      * XML Serialization/Deserialization
      */
@@ -62,11 +75,14 @@ public abstract class MessageImpl implements MAPMessage {
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, MessageImpl message) throws XMLStreamException {
             message.invokeId = xml.getAttribute(INVOKE_ID, -1L);
+            message.returnResultNotLast = xml.getAttribute(RETURN_RESULT_NOT_LAST, false);
         }
 
         @Override
         public void write(MessageImpl message, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
             xml.setAttribute(INVOKE_ID, message.invokeId);
+            if (message.returnResultNotLast)
+                xml.setAttribute(RETURN_RESULT_NOT_LAST, message.returnResultNotLast);
         }
     };
 

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.primitives.DiameterIdentity;
+import org.mobicents.protocols.ss7.map.api.primitives.EMLPPPriority;
 import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
@@ -183,6 +184,16 @@ public interface MAPDialogMobility extends MAPDialog {
 
     void addAnyTimeInterrogationResponse(long invokeId, SubscriberInfo subscriberInfo,
             MAPExtensionContainer extensionContainer) throws MAPException;
+
+    long addProvideSubscriberInfoRequest(IMSI imsi, LMSI lmsi, RequestedInfo requestedInfo, MAPExtensionContainer extensionContainer, EMLPPPriority callPriority)
+            throws MAPException;
+
+    long addProvideSubscriberInfoRequest(long customInvokeTimeout, IMSI imsi, LMSI lmsi, RequestedInfo requestedInfo, MAPExtensionContainer extensionContainer,
+            EMLPPPriority callPriority) throws MAPException;
+
+    void addProvideSubscriberInfoResponse(long invokeId, SubscriberInfo subscriberInfo, MAPExtensionContainer extensionContainer) throws MAPException;
+
+    void addProvideSubscriberInfoResponse_NonLast(long invokeId, SubscriberInfo subscriberInfo, MAPExtensionContainer extensionContainer) throws MAPException;
 
     // -- Subscriber Management services
     Long addInsertSubscriberDataRequest(IMSI imsi, ISDNAddressString msisdn, Category category,

@@ -43,7 +43,7 @@ public enum EventType {
     UpdateLocation, UpdateLocationResp, CancelLocation, CancelLocationResp, SendIdentification, SendIdentificationResp, UpdateGprsLocation, UpdateGprsLocationResp, PurgeMS, PurgeMSResp,
 
     // mobility.subscriberInformation EventType
-    AnyTimeInterrogation, AnyTimeInterrogationResp,
+    AnyTimeInterrogation, AnyTimeInterrogationResp, ProvideSubscriberInfo, ProvideSubscriberInfoResp,
 
     // mobility.SubscriberManagementServices EventType
     InsertSubscriberData, InsertSubscriberDataResp,
