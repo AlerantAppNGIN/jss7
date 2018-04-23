@@ -18,24 +18,20 @@
  */
 package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
-import java.io.IOException;
-
-import org.mobicents.protocols.asn.AsnException;
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.BitSetStrictLength;
-import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
-import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
+import org.mobicents.protocols.ss7.map.primitives.BitStringBase;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 /**
  * @author amit bhayani
+ * @author alerant appngin
  *
  */
-public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySets, MAPAsnPrimitive {
+public class SupportedLCSCapabilitySetsImpl extends BitStringBase
+        implements SupportedLCSCapabilitySets, MAPAsnPrimitive {
 
     private static final int _INDEX_LCS_CAPABILITY_SET1 = 0;
     private static final int _INDEX_LCS_CAPABILITY_SET2 = 1;
@@ -43,17 +39,16 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
     private static final int _INDEX_LCS_CAPABILITY_SET4 = 3;
     private static final int _INDEX_LCS_CAPABILITY_SET5 = 4;
 
-    private BitSetStrictLength bitString = new BitSetStrictLength(5);
-
     /**
      *
      */
     public SupportedLCSCapabilitySetsImpl() {
-        super();
+        super(2, 16, 5, "SupportedLCSCapabilitySets");
     }
 
     public SupportedLCSCapabilitySetsImpl(boolean lcsCapabilitySetRelease98_99, boolean lcsCapabilitySetRelease4,
             boolean lcsCapabilitySetRelease5, boolean lcsCapabilitySetRelease6, boolean lcsCapabilitySetRelease7) {
+        super(2, 16, 5, "SupportedLCSCapabilitySets");
         if (lcsCapabilitySetRelease98_99)
             this.bitString.set(_INDEX_LCS_CAPABILITY_SET1);
         if (lcsCapabilitySetRelease4)
@@ -64,123 +59,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
             this.bitString.set(_INDEX_LCS_CAPABILITY_SET4);
         if (lcsCapabilitySetRelease7)
             this.bitString.set(_INDEX_LCS_CAPABILITY_SET5);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
-     */
-    public int getTag() throws MAPException {
-        return Tag.STRING_BIT;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass()
-     */
-    public int getTagClass() {
-        return Tag.CLASS_UNIVERSAL;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive()
-     */
-    public boolean getIsPrimitive() {
-        return true;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll(org.mobicents.protocols.asn.AsnInputStream)
-     */
-    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-        try {
-            int length = ansIS.readLength();
-            this._decode(ansIS, length);
-        } catch (IOException e) {
-            throw new MAPParsingComponentException("IOException when decoding MWStatus: " + e.getMessage(), e,
-                    MAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new MAPParsingComponentException("AsnException when decoding MWStatus: " + e.getMessage(), e,
-                    MAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData(org.mobicents.protocols.asn.AsnInputStream,
-     * int)
-     */
-    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-        try {
-            this._decode(ansIS, length);
-        } catch (IOException e) {
-            throw new MAPParsingComponentException("IOException when decoding MWStatus: " + e.getMessage(), e,
-                    MAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new MAPParsingComponentException("AsnException when decoding MWStatus: " + e.getMessage(), e,
-                    MAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-        if (length < 1 || length > 3)
-            throw new MAPParsingComponentException(
-                    "Error decoding SupportedLCSCapabilitySets: the SupportedLCSCapabilitySets field must contain from 1 or 3 octets. Contains: "
-                            + length, MAPParsingComponentExceptionReason.MistypedParameter);
-
-        this.bitString = ansIS.readBitStringData(length);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream)
-     */
-    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_BIT);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll(org.mobicents.protocols.asn.AsnOutputStream,
-     * int, int)
-     */
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-        try {
-            asnOs.writeTag(tagClass, true, tag);
-            int pos = asnOs.StartContentDefiniteLength();
-            this.encodeData(asnOs);
-            asnOs.FinalizeContent(pos);
-        } catch (AsnException e) {
-            throw new MAPException("AsnException when encoding SupportedLCSCapabilitySets: " + e.getMessage(), e);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData(org.mobicents.protocols.asn.AsnOutputStream)
-     */
-    public void encodeData(AsnOutputStream asnOs) throws MAPException {
-        try {
-            asnOs.writeBitStringData(this.bitString);
-        } catch (IOException e) {
-            throw new MAPException("IOException when encoding SupportedLCSCapabilitySets: " + e.getMessage(), e);
-        } catch (AsnException e) {
-            throw new MAPException("AsnException when encoding SupportedLCSCapabilitySets: " + e.getMessage(), e);
-        }
     }
 
     /*
@@ -224,31 +102,6 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((bitString == null) ? 0 : bitString.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        SupportedLCSCapabilitySetsImpl other = (SupportedLCSCapabilitySetsImpl) obj;
-        if (bitString == null) {
-            if (other.bitString != null)
-                return false;
-        } else if (!bitString.equals(other.bitString))
-            return false;
-        return true;
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("SupportedLCSCapabilitySets [");
@@ -268,4 +121,22 @@ public class SupportedLCSCapabilitySetsImpl implements SupportedLCSCapabilitySet
 
         return sb.toString();
     }
+
+    /** XML serialization */
+    protected static final XMLFormat<SupportedLCSCapabilitySetsImpl> SUPPORTED_LCS_CAPABILITY_SETS_XML = new XMLFormat<SupportedLCSCapabilitySetsImpl>(
+            SupportedLCSCapabilitySetsImpl.class) {
+
+        @Override
+        public void write(SupportedLCSCapabilitySetsImpl obj, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            BIT_STRING_BASE_XML.write(obj, xml);
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, SupportedLCSCapabilitySetsImpl obj)
+                throws XMLStreamException {
+            BIT_STRING_BASE_XML.read(xml, obj);
+        }
+
+    };
 }

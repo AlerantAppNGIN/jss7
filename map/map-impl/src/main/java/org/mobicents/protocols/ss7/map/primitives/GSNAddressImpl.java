@@ -19,7 +19,14 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+
 import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 /**
  *
@@ -39,4 +46,53 @@ public class GSNAddressImpl extends OctetStringBase implements GSNAddress {
     public byte[] getData() {
         return data;
     }
+
+    @Override
+    public Type getAddressType() {
+        if (data == null || data.length < 1)
+            return null;
+        if (data[0] == (0 << 6 | 4) && data.length == 5)
+            return Type.IPV4;
+        else if (data[0] == ((1 << 6) | 16) && data.length == 17)
+            return Type.IPV6;
+        else
+            throw new IllegalStateException(
+                    "Invalid type + length combination: " + data[0] + ", octet count: " + data.length);
+    }
+
+    @Override
+    public InetAddress getIpAddress() {
+        try {
+            return InetAddress.getByAddress(Arrays.copyOfRange(data, 1, data.length));
+        } catch (UnknownHostException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /** XML serialization */
+    protected static final XMLFormat<GSNAddressImpl> GSN_ADDRESS_XML = new XMLFormat<GSNAddressImpl>(
+            GSNAddressImpl.class) {
+
+        private static final String DATA = "data";
+        private static final String ADDRESS_TYPE = "addressType";
+        private static final String ADDRESS = "address";
+
+        @Override
+        public void write(GSNAddressImpl obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+
+            xml.setAttribute(DATA, OctetStringBase.bytesToHex(obj.data));
+            try { // also include human-readable, decoded version
+                xml.setAttribute(ADDRESS_TYPE, obj.getAddressType().toString());
+                xml.setAttribute(ADDRESS, obj.getIpAddress().getHostAddress());
+            } catch (Exception e) {
+                throw new XMLStreamException(e);
+            }
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, GSNAddressImpl obj) throws XMLStreamException {
+            obj.data = OctetStringBase.hexToBytes(xml.getAttribute(DATA, (String) null));
+        }
+
+    };
 }

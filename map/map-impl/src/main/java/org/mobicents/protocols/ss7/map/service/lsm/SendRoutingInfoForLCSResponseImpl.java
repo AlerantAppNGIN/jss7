@@ -39,10 +39,14 @@ import org.mobicents.protocols.ss7.map.primitives.GSNAddressImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.SubscriberIdentityImpl;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  * @author amit bhayani
  *
  */
+@SuppressWarnings("serial")
 public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements SendRoutingInfoForLCSResponse {
 
     private static final int _TAG_TARGET_MS = 0;
@@ -453,4 +457,51 @@ public class SendRoutingInfoForLCSResponseImpl extends LsmMessageImpl implements
 
         return sb.toString();
     }
+
+    protected static final XMLFormat<SendRoutingInfoForLCSResponseImpl> SEND_ROUTING_INFO_FOR_LCS_RESPONSE_XML = new XMLFormat<SendRoutingInfoForLCSResponseImpl>(
+            SendRoutingInfoForLCSResponseImpl.class) {
+
+        private static final String TARGET_MS = "targetMS";
+        private static final String LCS_LOCATION_INFO = "lcsLocationInfo";
+        private static final String EXTENSION_CONTAINER = "extensionContainer";
+        private static final String V_GMLC_ADDRESS = "vGmlcAddress";
+        private static final String H_GMLC_ADDRESS = "hGmlcAddress";
+        private static final String PPR_ADDRESS = "pprAddress";
+        private static final String ADDITIONAL_V_GMLC_ADDRESS = "additionalVGmlcAddress";
+
+        @Override
+        public void write(SendRoutingInfoForLCSResponseImpl obj, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            // mandatory elements
+            xml.add((SubscriberIdentityImpl) obj.targetMS, TARGET_MS, SubscriberIdentityImpl.class);
+            xml.add((LCSLocationInfoImpl) obj.lcsLocationInfo, LCS_LOCATION_INFO, LCSLocationInfoImpl.class);
+
+            // optional elements
+            if (obj.extensionContainer != null) {
+                xml.add((MAPExtensionContainerImpl) obj.extensionContainer, EXTENSION_CONTAINER,
+                        MAPExtensionContainerImpl.class);
+            }
+            if (obj.vgmlcAddress != null)
+                xml.add((GSNAddressImpl) obj.vgmlcAddress, V_GMLC_ADDRESS, GSNAddressImpl.class);
+            if (obj.hGmlcAddress != null)
+                xml.add((GSNAddressImpl) obj.hGmlcAddress, H_GMLC_ADDRESS, GSNAddressImpl.class);
+            if (obj.pprAddress != null)
+                xml.add((GSNAddressImpl) obj.pprAddress, PPR_ADDRESS, GSNAddressImpl.class);
+            if (obj.additionalVGmlcAddress != null)
+                xml.add((GSNAddressImpl) obj.additionalVGmlcAddress, ADDITIONAL_V_GMLC_ADDRESS, GSNAddressImpl.class);
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, SendRoutingInfoForLCSResponseImpl obj)
+                throws XMLStreamException {
+            obj.targetMS = xml.get(TARGET_MS, SubscriberIdentityImpl.class);
+            obj.lcsLocationInfo = xml.get(LCS_LOCATION_INFO, LCSLocationInfoImpl.class);
+            obj.extensionContainer = xml.get(EXTENSION_CONTAINER, MAPExtensionContainerImpl.class);
+            obj.vgmlcAddress = xml.get(V_GMLC_ADDRESS, GSNAddressImpl.class);
+            obj.hGmlcAddress = xml.get(H_GMLC_ADDRESS, GSNAddressImpl.class);
+            obj.pprAddress = xml.get(PPR_ADDRESS, GSNAddressImpl.class);
+            obj.additionalVGmlcAddress = xml.get(ADDITIONAL_V_GMLC_ADDRESS, GSNAddressImpl.class);
+        }
+
+    };
 }

@@ -32,6 +32,9 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  * @author amit bhayani
  *
@@ -277,4 +280,29 @@ public class SubscriberIdentityImpl implements SubscriberIdentity, MAPAsnPrimiti
 
         return sb.toString();
     }
+
+    protected static final XMLFormat<SubscriberIdentityImpl> SUBSCRIBER_IDENTITY_XML = new XMLFormat<SubscriberIdentityImpl>(
+            SubscriberIdentityImpl.class) {
+
+        private static final String IMSI = "imsi";
+        private static final String MSISDN = "msisdn";
+
+        @Override
+        public void write(SubscriberIdentityImpl obj, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            // choice of:
+            if (obj.imsi != null)
+                xml.add((IMSIImpl) obj.imsi, IMSI, IMSIImpl.class);
+            else if (obj.msisdn != null)
+                xml.add((ISDNAddressStringImpl) obj.msisdn, MSISDN, ISDNAddressStringImpl.class);
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, SubscriberIdentityImpl obj)
+                throws XMLStreamException {
+            obj.imsi = xml.get(IMSI, IMSIImpl.class);
+            obj.msisdn = xml.get(MSISDN, ISDNAddressStringImpl.class);
+        }
+
+    };
 }

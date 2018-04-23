@@ -31,6 +31,9 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author sergey vetyutnev
@@ -165,4 +168,22 @@ public class LMSIImpl implements LMSI, MAPAsnPrimitive {
 
         return sb.toString();
     }
+
+    /** XML serialization */
+    protected static final XMLFormat<LMSIImpl> LMSI_XML = new XMLFormat<LMSIImpl>(LMSIImpl.class) {
+
+        private static final String DATA = "data";
+
+        @Override
+        public void write(LMSIImpl obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+
+            xml.setAttribute(DATA, OctetStringBase.bytesToHex(obj.data));
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, LMSIImpl obj) throws XMLStreamException {
+            obj.data = OctetStringBase.hexToBytes(xml.getAttribute(DATA, (String) null));
+        }
+
+    };
 }

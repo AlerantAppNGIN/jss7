@@ -39,14 +39,21 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
 *
 * @author sergey vetyutnev
 *
 */
+@SuppressWarnings("serial")
 public class ProvideSubscriberInfoResponseImpl extends MobilityMessageImpl implements ProvideSubscriberInfoResponse {
 
     public static final String _PrimitiveName = "ProvideSubscriberInfoResponse";
+
+    private static final String SUBSCRIBER_INFO = "subscriberInfo";
+    private static final String EXTENSION_CONTAINER = "extensionContainer";
 
     private SubscriberInfo subscriberInfo;
     private MAPExtensionContainer extensionContainer;
@@ -227,4 +234,25 @@ public class ProvideSubscriberInfoResponseImpl extends MobilityMessageImpl imple
         return sb.toString();
     }
 
+    protected static final XMLFormat<ProvideSubscriberInfoResponseImpl> PROVIDE_SUBSCRIBER_INFO_RESPONSE_XML = new XMLFormat<ProvideSubscriberInfoResponseImpl>(
+            ProvideSubscriberInfoResponseImpl.class) {
+
+        @Override
+        public void write(ProvideSubscriberInfoResponseImpl obj, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            xml.add((SubscriberInfoImpl) obj.subscriberInfo, SUBSCRIBER_INFO, SubscriberInfoImpl.class);
+            if (obj.extensionContainer != null) {
+                xml.add((MAPExtensionContainerImpl) obj.extensionContainer, EXTENSION_CONTAINER,
+                        MAPExtensionContainerImpl.class);
+            }
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, ProvideSubscriberInfoResponseImpl obj)
+                throws XMLStreamException {
+            obj.subscriberInfo = xml.get(SUBSCRIBER_INFO, SubscriberInfoImpl.class);
+            obj.extensionContainer = xml.get(EXTENSION_CONTAINER, MAPExtensionContainerImpl.class);
+        }
+
+    };
 }

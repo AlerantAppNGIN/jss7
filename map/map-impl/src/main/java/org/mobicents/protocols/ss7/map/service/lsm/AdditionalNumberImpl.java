@@ -33,6 +33,9 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  *
@@ -274,4 +277,30 @@ public class AdditionalNumberImpl implements AdditionalNumber, MAPAsnPrimitive {
         return true;
     }
 
+    /** XML serialization */
+    protected static final XMLFormat<AdditionalNumberImpl> LMSI_XML = new XMLFormat<AdditionalNumberImpl>(
+            AdditionalNumberImpl.class) {
+
+        private static final String MSC_NUMBER = "mscNumber";
+        private static final String SGSN_NUMBER = "sgsnNumber";
+
+        @Override
+        public void write(AdditionalNumberImpl obj, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            if (obj.mSCNumber != null) {
+                xml.add((ISDNAddressStringImpl) obj.mSCNumber, MSC_NUMBER, ISDNAddressStringImpl.class);
+            } else if (obj.sGSNNumber != null) {
+                xml.add((ISDNAddressStringImpl) obj.sGSNNumber, SGSN_NUMBER, ISDNAddressStringImpl.class);
+            }
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, AdditionalNumberImpl obj)
+                throws XMLStreamException {
+            obj.mSCNumber = xml.get(MSC_NUMBER, ISDNAddressStringImpl.class);
+            obj.sGSNNumber = xml.get(SGSN_NUMBER, ISDNAddressStringImpl.class);
+        }
+
+    };
 }

@@ -42,6 +42,9 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SupportedLCSCapabilitySetsImpl;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author amit bhayani
@@ -493,4 +496,64 @@ public class LCSLocationInfoImpl extends SequenceBase implements LCSLocationInfo
 
         return sb.toString();
     }
+
+    protected static final XMLFormat<LCSLocationInfoImpl> LCS_LOCATION_INFO_XML = new XMLFormat<LCSLocationInfoImpl>(
+            LCSLocationInfoImpl.class) {
+
+        private static final String NETWORK_NODE_NUMBER = "networkNodeNumber";
+        private static final String LMSI = "lmsi";
+        private static final String EXTENSION_CONTAINER = "extensionContainer";
+        private static final String GPRS_NODE_INDICATOR = "gprsNodeIndicator";
+        private static final String ADDITIONAL_NUMBER = "additionalNumber";
+        private static final String SUPPORTED_LCS_CAPABILITIY_SETS = "supportedLCSCapabilitySets";
+        private static final String ADDITIONAL_LCS_CAPABILITIY_SETS = "additionalLCSCapabilitySets";
+        private static final String MME_NAME = "mmeName";
+        private static final String AAA_SERVER_NAME = "aaaServerName";
+
+        @Override
+        public void write(LCSLocationInfoImpl obj, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            // mandatory elements
+            xml.add((ISDNAddressStringImpl) obj.networkNodeNumber, NETWORK_NODE_NUMBER, ISDNAddressStringImpl.class);
+
+            // optional elements
+            if (obj.lmsi != null)
+                xml.add((LMSIImpl) obj.lmsi, LMSI, LMSIImpl.class);
+            if (obj.extensionContainer != null)
+                xml.add((MAPExtensionContainerImpl) obj.extensionContainer, EXTENSION_CONTAINER,
+                        MAPExtensionContainerImpl.class);
+            if (obj.gprsNodeIndicator)
+                xml.add(obj.gprsNodeIndicator, GPRS_NODE_INDICATOR, Boolean.class);
+            if (obj.additionalNumber != null)
+                xml.add((AdditionalNumberImpl) obj.additionalNumber, ADDITIONAL_NUMBER, AdditionalNumberImpl.class);
+            if (obj.supportedLCSCapabilitySets != null)
+                xml.add((SupportedLCSCapabilitySetsImpl) obj.supportedLCSCapabilitySets, SUPPORTED_LCS_CAPABILITIY_SETS,
+                        SupportedLCSCapabilitySetsImpl.class);
+            if (obj.additionalLCSCapabilitySets != null)
+                xml.add((SupportedLCSCapabilitySetsImpl) obj.additionalLCSCapabilitySets,
+                        ADDITIONAL_LCS_CAPABILITIY_SETS, SupportedLCSCapabilitySetsImpl.class);
+            if (obj.mmeName != null)
+                xml.add((DiameterIdentityImpl) obj.mmeName, MME_NAME, DiameterIdentityImpl.class);
+            if (obj.aaaServerName != null)
+                xml.add((DiameterIdentityImpl) obj.aaaServerName, AAA_SERVER_NAME, DiameterIdentityImpl.class);
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, LCSLocationInfoImpl obj) throws XMLStreamException {
+            obj.networkNodeNumber = xml.get(NETWORK_NODE_NUMBER, ISDNAddressStringImpl.class);
+            obj.lmsi = xml.get(LMSI, LMSIImpl.class);
+            obj.extensionContainer = xml.get(EXTENSION_CONTAINER, MAPExtensionContainerImpl.class);
+            Boolean bool = xml.get(GPRS_NODE_INDICATOR, Boolean.class);
+            if (bool != null)
+                obj.gprsNodeIndicator = bool;
+            obj.additionalNumber = xml.get(ADDITIONAL_NUMBER, AdditionalNumberImpl.class);
+            obj.supportedLCSCapabilitySets = xml.get(SUPPORTED_LCS_CAPABILITIY_SETS,
+                    SupportedLCSCapabilitySetsImpl.class);
+            obj.additionalLCSCapabilitySets = xml.get(ADDITIONAL_LCS_CAPABILITIY_SETS,
+                    SupportedLCSCapabilitySetsImpl.class);
+            obj.mmeName = xml.get(MME_NAME, DiameterIdentityImpl.class);
+            obj.aaaServerName = xml.get(AAA_SERVER_NAME, DiameterIdentityImpl.class);
+        }
+
+    };
 }
